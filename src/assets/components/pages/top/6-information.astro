@@ -1,0 +1,462 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+// アセット
+import PaperTexture from "../../../images/common/paper-texture.png";
+import Sunburst from "../../../images/top/3-activity/sunburst.png";
+import ArrowWhite from "../../../images/top/6-information/arrow-white.svg";
+import ArrowGreen from "../../../images/top/6-information/arrow-green.svg";
+
+// カテゴリフィルタボタン
+const filters = [
+  { label: "すべて", active: true },
+  { label: "お知らせ", active: false },
+  { label: "イベント・キャンペーン", active: false },
+  { label: "スタッフブログ", active: false },
+];
+
+// お知らせ（ダミー。CMS導入後に差し替え）
+const news = [
+  { date: "2025/01/01", cat: "イベント・キャンペーン", title: "ホームページをリニューアルいたしました。" },
+  { date: "2025/01/01", cat: "イベント・キャンペーン", title: "ホームページをリニューアルいたしました。" },
+  { date: "2025/01/01", cat: "イベント・キャンペーン", title: "ホームページをリニューアルいたしました。" },
+  { date: "2025/01/01", cat: "イベント・キャンペーン", title: "ホームページをリニューアルいたしました。" },
+];
+---
+
+<section class="information">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="information__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="information__inner">
+    <!-- 見出し -->
+    <div class="information__title">
+      <img class="information__sunburst" src={Sunburst.src} alt="" />
+      <div class="information__title-heading">
+        <p class="information__title-en">INFORMATION</p>
+        <p class="information__title-ja">お知らせ</p>
+      </div>
+    </div>
+
+    <!-- カテゴリフィルタ -->
+    <div class="information__filters">
+      {
+        filters.map((f) => (
+          <button
+            type="button"
+            class:list={["information__filter", { "is-active": f.active }]}
+          >
+            <span class="information__filter-text">{f.label}</span>
+            <img
+              class="information__filter-arrow"
+              src={f.active ? ArrowWhite.src : ArrowGreen.src}
+              alt=""
+            />
+          </button>
+        ))
+      }
+    </div>
+
+    <!-- お知らせリスト -->
+    <ul class="information__list">
+      {
+        news.map((n) => (
+          <li class="information__item">
+            <div class="information__item-main">
+              <div class="information__item-head">
+                <p class="information__item-date">{n.date}</p>
+                <span class="information__item-cat">{n.cat}</span>
+              </div>
+              <p class="information__item-title">{n.title}</p>
+            </div>
+            <div class="information__item-line" aria-hidden="true" />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .information {
+    position: relative;
+    overflow: clip;
+    background-color: #c0d4a9;
+
+    // 背景の紙テクスチャ（mix-blend で下地の緑に質感を乗せる）
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include desktop-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(50);
+      padding: spx(80) spx(60);
+      @include tablet-up {
+        gap: ppx(100 * 1.2);
+        padding: ppx(150 * 1.2) ppx(40 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(100);
+        padding: ppx(150) ppx(40);
+      }
+    }
+
+    // 見出し（サンバースト＋INFORMATION＋お知らせ）
+    &__title {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(10);
+      @include tablet-up {
+        gap: ppx(25 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__sunburst {
+      display: block;
+      width: spx(263);
+      height: auto;
+      @include tablet-up {
+        width: ppx(263 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(263);
+      }
+    }
+
+    &__title-heading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(5);
+      @include tablet-up {
+        gap: ppx(10 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(10);
+      }
+    }
+
+    &__title-en {
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.1;
+      white-space: nowrap;
+      font-size: spx(79);
+      letter-spacing: spx(3.95);
+      @include tablet-up {
+        font-size: ppx(105 * 1.2);
+        letter-spacing: ppx(5.25 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(105);
+        letter-spacing: ppx(5.25);
+      }
+    }
+
+    &__title-ja {
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.7;
+      font-size: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        font-size: ppx(32 * 1.2);
+        letter-spacing: ppx(1.6 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    // カテゴリフィルタ（SP=2列 / PC=横1列）
+    &__filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: spx(10);
+      width: spx(660);
+      @include tablet-up {
+        width: auto;
+        gap: ppx(20 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(20);
+      }
+    }
+
+    &__filter {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: spx(8);
+      width: spx(325);
+      padding: spx(32) 0;
+      border: none;
+      border-radius: 999px;
+      background-color: #fffdf7;
+      box-shadow: 0 spx(8.3) spx(10) rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      transition: opacity 0.2s;
+      @include tablet-up {
+        gap: ppx(10 * 1.2);
+        width: ppx(413 * 1.2);
+        padding: ppx(35 * 1.2) ppx(40 * 1.2);
+        box-shadow: 0 ppx(10 * 1.2) ppx(12 * 1.2) rgba(0, 0, 0, 0.08);
+      }
+      @include desktop-up {
+        gap: ppx(10);
+        width: ppx(413);
+        padding: ppx(35) ppx(40);
+        box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
+      }
+
+      // アクティブ（選択中）
+      &.is-active {
+        background-color: #1a1a1a;
+      }
+      &.is-active .information__filter-text {
+        color: #fff;
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.8;
+        }
+        &.is-active:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    &__filter-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #507425;
+      white-space: nowrap;
+      font-size: spx(24);
+      line-height: spx(21.6);
+      @include tablet-up {
+        font-size: ppx(26 * 1.2);
+        line-height: ppx(26 * 1.2);
+        letter-spacing: ppx(1.3 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+    }
+
+    &__filter-arrow {
+      display: block;
+      width: spx(23);
+      height: auto;
+      @include tablet-up {
+        width: ppx(25 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(25);
+      }
+    }
+
+    // お知らせリスト
+    &__list {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin: 0;
+      padding: spx(30) 0 0;
+      list-style: none;
+      gap: spx(30);
+      width: spx(600);
+      @include tablet-up {
+        padding: 0;
+        gap: ppx(60 * 1.2);
+        width: ppx(1740 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(60);
+        width: ppx(1740);
+      }
+    }
+
+    &__item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(30 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(30);
+      }
+    }
+
+    // 日付＋カテゴリ＋タイトル（SP=2段 / PC=1行）
+    &__item-main {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: spx(5);
+      @include tablet-up {
+        flex-direction: row;
+        gap: ppx(30 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(30);
+      }
+    }
+
+    &__item-head {
+      display: flex;
+      align-items: center;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(30 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(30);
+      }
+    }
+
+    &__item-date {
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      line-height: 1.8;
+      white-space: nowrap;
+      font-size: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        width: ppx(180 * 1.2);
+        font-size: ppx(30 * 1.2);
+        letter-spacing: ppx(1.5 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(180);
+        font-size: ppx(30);
+        letter-spacing: ppx(1.5);
+      }
+    }
+
+    &__item-cat {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: spx(280);
+      height: spx(57);
+      border-radius: 999px;
+      background-color: #fffdf7;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #507425;
+      text-align: center;
+      line-height: 1;
+      white-space: nowrap;
+      font-size: spx(22);
+      @include tablet-up {
+        width: ppx(304 * 1.2);
+        height: ppx(63 * 1.2);
+        font-size: ppx(23 * 1.2);
+        letter-spacing: ppx(1.15 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(304);
+        height: ppx(63);
+        font-size: ppx(23);
+        letter-spacing: ppx(1.15);
+      }
+    }
+
+    &__item-title {
+      margin: 0;
+      padding-top: spx(5);
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      line-height: 1.7;
+      font-size: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        padding-top: ppx(5 * 1.2);
+        line-height: 1.8;
+        font-size: ppx(30 * 1.2);
+        letter-spacing: ppx(1.5 * 1.2);
+      }
+      @include desktop-up {
+        padding-top: ppx(5);
+        font-size: ppx(30);
+        letter-spacing: ppx(1.5);
+      }
+    }
+
+    // ドット区切り線（Figma: stroke-width 5, dasharray 5 9）
+    &__item-line {
+      width: 100%;
+      height: spx(5);
+      background-image: repeating-linear-gradient(
+        to right,
+        #000 0 spx(5),
+        transparent spx(5) spx(14)
+      );
+      @include tablet-up {
+        height: ppx(5 * 1.2);
+        background-image: repeating-linear-gradient(
+          to right,
+          #000 0 ppx(5 * 1.2),
+          transparent ppx(5 * 1.2) ppx(14 * 1.2)
+        );
+      }
+      @include desktop-up {
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #000 0 ppx(5),
+          transparent ppx(5) ppx(14)
+        );
+      }
+    }
+  }
+</style>

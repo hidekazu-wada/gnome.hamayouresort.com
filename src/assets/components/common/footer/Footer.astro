@@ -1,0 +1,397 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+// アセット
+import PaperTexture from "../../../images/common/paper-texture.png";
+import LogoWordmark from "../../../images/common/footer/logo-wordmark.svg";
+import CloudLeft from "../../../images/common/footer/cloud-left.png";
+import CloudRight from "../../../images/common/footer/cloud-right.png";
+import HillPc from "../../../images/common/footer/hill-pc.png";
+import HillSp from "../../../images/common/footer/hill-sp.svg";
+import LogoHamayou from "../../../images/common/footer/logo-hamayou.png";
+import LogoKuwarubi from "../../../images/common/footer/logo-kuwarubi.svg";
+import LogoIzuminoyu from "../../../images/common/footer/logo-izuminoyu.svg";
+
+// グループサイトリンク（URL確定後に差し替え）
+const partners = [
+  { name: "HAMAYOU RESORT", img: LogoHamayou, href: "#", w: 390, h: 40, wSp: 247, hSp: 25 },
+  { name: "ホテル光風閣くわるび", img: LogoKuwarubi, href: "#", w: 203, h: 123, wSp: 127, hSp: 77 },
+  { name: "いずみの湯", img: LogoIzuminoyu, href: "#", w: 260, h: 76, wSp: 164, hSp: 48 },
+];
+---
+
+<footer class="footer">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="footer__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <!-- 上段: ロゴ＋住所 -->
+  <div class="footer__top">
+    <img class="footer__cloud footer__cloud--left" src={CloudLeft.src} alt="" />
+    <img
+      class="footer__cloud footer__cloud--right"
+      src={CloudRight.src}
+      alt=""
+    />
+    <a class="footer__logo" href="/">
+      <img
+        class="footer__logo-img"
+        src={LogoWordmark.src}
+        alt="SAIKO CAMP VILLAGE GNOME"
+      />
+    </a>
+    <!-- 住所（hrefなしaタグ: Chromeモバイルの自動リンク検出対策） -->
+    <a class="footer__address no-link">
+      〒401-0332<br class="footer__br-sp" />
+      山梨県南都留郡富士河口湖町西湖１０３０
+    </a>
+  </div>
+
+  <!-- 下段: 連絡カード＋丘イラスト＋グループサイト＋コピーライト -->
+  <div class="footer__bottom">
+    <!-- 丘の風景イラスト（SP/PCで出し分け） -->
+    <picture class="footer__hill">
+      <source srcset={HillPc.src} media="(min-width: 744px)" />
+      <img class="footer__hill-img" src={HillSp.src} alt="" />
+    </picture>
+
+    <div class="footer__cards">
+      <a class="footer__card" href="tel:0555-82-2650">
+        <span class="footer__card-main">
+          <span class="footer__card-tel-label">TEL.&nbsp;</span>0555-82-2650
+        </span>
+        <span class="footer__card-note">（ 受付時間 9:00~17:00 ）</span>
+      </a>
+      <a class="footer__card" href="#">
+        <span class="footer__card-main footer__card-main--form"
+          >お問い合わせフォームはこちら</span
+        >
+        <span class="footer__card-note">（ 受付時間 24時間 ）</span>
+      </a>
+    </div>
+
+    <div class="footer__partners">
+      {
+        partners.map((p) => (
+          <a class="footer__partner" href={p.href}>
+            <img
+              class="footer__partner-img"
+              src={p.img.src}
+              alt={p.name}
+              style={`--w:${p.w}; --h:${p.h}; --w-sp:${p.wSp}; --h-sp:${p.hSp};`}
+            />
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="footer__line" aria-hidden="true"></div>
+    <p class="footer__copyright">© 2008 - 2026 HAMAYOU RESORT</p>
+  </div>
+</footer>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .footer {
+    position: relative;
+    overflow: clip;
+    background-color: #bee0e1;
+
+    // 背景の紙テクスチャ
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include desktop-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 上段（ロゴ＋住所）
+    &__top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(33);
+      @include tablet-up {
+        gap: ppx(33);
+        height: ppx(300);
+      }
+    }
+
+    &__cloud {
+      display: none;
+      @include tablet-up {
+        display: block;
+        position: absolute;
+        height: auto;
+      }
+    }
+
+    &__cloud--left {
+      @include tablet-up {
+        left: ppx(570);
+        top: ppx(167);
+        width: ppx(176);
+      }
+    }
+
+    &__cloud--right {
+      @include tablet-up {
+        left: ppx(1791);
+        top: ppx(53);
+        width: ppx(290);
+      }
+    }
+
+    &__logo {
+      display: block;
+    }
+
+    &__logo-img {
+      display: block;
+      width: spx(319);
+      height: auto;
+      @include tablet-up {
+        width: ppx(410);
+      }
+    }
+
+    &__address {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.7;
+      white-space: nowrap;
+      font-size: spx(31);
+      letter-spacing: spx(1.55);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(34);
+        letter-spacing: ppx(1.7);
+      }
+    }
+
+    // Chromeモバイルの自動リンク検出対策
+    .no-link {
+      text-decoration: none;
+      pointer-events: none;
+      color: inherit;
+    }
+
+    &__br-sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+
+    // 下段
+    &__bottom {
+      position: relative;
+      z-index: 1;
+      height: spx(1140);
+      @include tablet-up {
+        height: ppx(1125);
+      }
+    }
+
+    // 丘の風景イラスト
+    &__hill {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      display: block;
+      width: 100%;
+      line-height: 0;
+      font-size: 0;
+      pointer-events: none;
+      @include tablet-up {
+        top: ppx(15);
+        bottom: auto;
+      }
+    }
+
+    &__hill-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    // 連絡カード（TEL / お問い合わせ）
+    &__cards {
+      position: absolute;
+      top: spx(30);
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: spx(20);
+      width: 100%;
+      @include tablet-up {
+        top: ppx(47);
+        flex-direction: row;
+        align-items: stretch;
+        gap: ppx(40);
+      }
+    }
+
+    &__card {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: spx(600);
+      height: spx(140);
+      padding: spx(8) spx(60) spx(16);
+      border-radius: spx(16);
+      background-color: #fffdf7;
+      text-decoration: none;
+      text-align: center;
+      color: #138185;
+      box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
+      @include tablet-up {
+        width: auto;
+        height: auto;
+        min-height: ppx(176);
+        padding: ppx(10) ppx(75) ppx(20);
+        border-radius: ppx(20);
+        box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.85;
+        }
+      }
+    }
+
+    &__card-main {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      line-height: 1.6;
+      white-space: nowrap;
+      font-size: spx(51);
+      letter-spacing: spx(2.05);
+      @include tablet-up {
+        font-size: ppx(64);
+        letter-spacing: ppx(2.05);
+      }
+    }
+
+    &__card-main--form {
+      font-size: spx(33);
+      @include tablet-up {
+        font-size: ppx(41);
+      }
+    }
+
+    &__card-tel-label {
+      font-size: spx(33);
+      @include tablet-up {
+        font-size: ppx(41);
+      }
+    }
+
+    &__card-note {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      white-space: nowrap;
+      font-size: spx(26);
+      letter-spacing: spx(2.05);
+      @include tablet-up {
+        font-size: ppx(33);
+        letter-spacing: ppx(2.05);
+      }
+    }
+
+    // グループサイトロゴ
+    &__partners {
+      position: absolute;
+      top: spx(771);
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: spx(40);
+      width: 100%;
+      @include tablet-up {
+        top: ppx(796);
+        gap: ppx(80);
+      }
+    }
+
+    &__partner {
+      display: block;
+
+      @include hover {
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+
+    &__partner-img {
+      display: block;
+      width: calc(var(--w-sp) * 100vw / 720);
+      height: auto;
+      @include tablet-up {
+        width: calc(var(--w) * 100vw / 2560);
+      }
+    }
+
+    // 区切り線＋コピーライト
+    &__line {
+      position: absolute;
+      top: spx(874);
+      left: 0;
+      width: 100%;
+      height: spx(2);
+      background-color: #fff;
+      @include tablet-up {
+        top: ppx(971);
+        height: ppx(2);
+      }
+    }
+
+    &__copyright {
+      position: absolute;
+      top: spx(896);
+      left: 0;
+      width: 100%;
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #fff;
+      text-align: center;
+      line-height: spx(48);
+      font-size: spx(24);
+      letter-spacing: spx(4.08);
+      @include tablet-up {
+        top: ppx(1016);
+        line-height: ppx(48);
+        font-size: ppx(24);
+        letter-spacing: ppx(4.08);
+      }
+    }
+  }
+</style>

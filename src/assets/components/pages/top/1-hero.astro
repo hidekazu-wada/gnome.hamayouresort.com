@@ -1,0 +1,165 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+// アセット
+import LogoWordmark from "../../../images/top/1-hero/logo-wordmark.png";
+import LogoBadge from "../../../images/top/1-hero/logo-badge.svg";
+import LandSp from "../../../images/top/1-hero/land-sp.png";
+import LandPc from "../../../images/top/1-hero/land-pc.png";
+import Tent from "../../../images/top/1-hero/tent.svg";
+---
+
+<section class="hero">
+  <!-- 背景動画 -->
+  <div class="hero__movie">
+    <video
+      class="hero__movie-video"
+      src="/movie/hero.mp4"
+      poster="/movie/hero-poster.jpg"
+      autoplay
+      muted
+      loop
+      playsinline
+    ></video>
+  </div>
+
+  <!-- ロゴ（SP=ワードマーク / TB・PC=バッジ） -->
+  <h1 class="hero__logo">
+    <picture class="hero__logo-picture">
+      <source srcset={LogoBadge.src} media="(min-width: 744px)" />
+      <img
+        class="hero__logo-img"
+        src={LogoWordmark.src}
+        alt="Gnome 湖のほとりのキャンプ場"
+      />
+    </picture>
+  </h1>
+
+  <!-- 下部の陸地 -->
+  <div class="hero__land">
+    <picture class="hero__land-picture">
+      <source srcset={LandPc.src} media="(min-width: 744px)" />
+      <img class="hero__land-img" src={LandSp.src} alt="" />
+    </picture>
+  </div>
+
+  <!-- テント -->
+  <div class="hero__tent">
+    <img class="hero__tent-img" src={Tent.src} alt="" />
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .hero {
+    position: relative;
+    width: 100%;
+    // デザインカンプのアスペクト比に合わせる（幅100%基準で高さが決まる）
+    aspect-ratio: 720 / 1600; // SP: 720×1600
+    overflow: clip;
+    background-color: #33565f; // 動画読み込み前のフォールバック（水面の濃色）
+    @include tablet-up {
+      aspect-ratio: 2048 / 2610; // TB: 2048×2610
+    }
+    @include desktop-up {
+      aspect-ratio: 2560 / 1600; // PC: 2560×1600
+    }
+
+    // 背景動画
+    &__movie {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+
+      &-video {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    // ロゴ（SP=ワードマーク / TB・PC=バッジ）
+    &__logo {
+      position: absolute;
+      z-index: 3;
+      top: spx(50);
+      left: spx(50);
+      width: spx(229);
+      margin: 0;
+      @include tablet-up {
+        top: tpx(77);
+        left: tpx(47);
+        width: tpx(569);
+      }
+      @include desktop-up {
+        top: ppx(86);
+        left: ppx(52);
+        width: ppx(693);
+      }
+
+      &-picture {
+        display: block;
+        width: 100%;
+      }
+
+      &-img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+    }
+
+    // 下部の陸地（全幅・最下部）
+    &__land {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: 1;
+      width: 100%;
+      line-height: 0;
+
+      &-picture {
+        display: block;
+        width: 100%;
+      }
+
+      &-img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+    }
+
+    // テント（SP・TB=中央 / PC=右寄り）
+    &__tent {
+      position: absolute;
+      z-index: 2;
+      left: spx(332);
+      bottom: spx(0);
+      width: spx(340);
+      @include tablet-up {
+        left: tpx(1082);
+        width: tpx(484);
+        bottom: tpx(39);
+      }
+      @include desktop-up {
+        left: auto;
+        right: ppx(486);
+        width: ppx(484);
+        bottom: ppx(84);
+      }
+
+      &-img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+    }
+  }
+</style>

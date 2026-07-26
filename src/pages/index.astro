@@ -1,20 +1,47 @@
 ---
 // メインSCSSファイルをインポート
 import "../styles/main.scss";
+
+import Hero from "../assets/components/pages/top/1-hero.astro";
+import Concept from "../assets/components/pages/top/2-concept.astro";
+import Activity from "../assets/components/pages/top/3-activity.astro";
+import Season from "../assets/components/pages/top/4-season.astro";
+import Stay from "../assets/components/pages/top/5-stay.astro";
+import Information from "../assets/components/pages/top/6-information.astro";
+import Howto from "../assets/components/pages/top/7-howto.astro";
+import Access from "../assets/components/pages/top/8-access.astro";
+import Footer from "../assets/components/common/footer/Footer.astro";
 ---
 
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="format-detection" content="telephone=no,address=no,email=no" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
+    <title>Gnome | 湖のほとりのキャンプ場</title>
+
+    <!-- フォント Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <h1>Kuwarubi</h1>
-    <p class="test">SCSSテスト</p>
-    <p>テンプレート</p>
+    <main>
+      <Hero />
+      <Concept />
+      <Activity />
+      <Season />
+      <Stay />
+      <Information />
+      <Howto />
+      <Access />
+    </main>
+    <Footer />
   </body>
 </html>
 
@@ -24,22 +51,9 @@ import "../styles/main.scss";
   @import "../styles/functions";
   @import "../styles/mixins";
 
-  $primary-color: #ff6b35;
-
-  .test {
-    color: $primary-color;
-    font-size: spx(20);
-    @include tablet-up {
-      font-size: tpx(24);
-      color: rgb(0, 255, 110);
-    }
-    @include desktop-up {
-      font-size: ppx(28);
-      color: rgb(0, 110, 255);
-    }
-
-    &:hover {
-      color: darken($primary-color, 20%);
-    }
+  // トップページはヒーローを全面表示するため、
+  // reset.scss で main に付与される固定ヘッダー分の padding-top を打ち消す
+  main {
+    padding-top: 0;
   }
 </style>

@@ -1,0 +1,793 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+// アセット
+import PaperTexture from "../../../images/common/paper-texture.png";
+import Sunburst from "../../../images/top/3-activity/sunburst.png";
+import JoinPc from "../../../images/top/7-howto/join-pc.png";
+import JoinSp from "../../../images/top/7-howto/join-sp.png";
+import FootPc from "../../../images/top/7-howto/foot-pc.png";
+import FootSp from "../../../images/top/7-howto/foot-sp.png";
+import CircleGold from "../../../images/top/7-howto/circle-gold.svg";
+import CircleBlack from "../../../images/top/7-howto/circle-black.svg";
+import NavArrowLeft from "../../../images/top/7-howto/nav-arrow-left.svg";
+import NavArrowRight from "../../../images/top/7-howto/nav-arrow-right.svg";
+import MoreArrow from "../../../images/top/7-howto/more-arrow.svg";
+import CaseFamily from "../../../images/top/7-howto/case-family.jpg";
+import IllustTrees from "../../../images/top/7-howto/illust-trees.svg";
+import IllustCampfire from "../../../images/top/7-howto/illust-campfire.svg";
+
+// 過ごし方ケース（英字名は仮。写真・説明文はダミー）
+const cases = [
+  { ja: "ファミリー", en: "FAMILY", photo: CaseFamily },
+  { ja: "カップル", en: "COUPLE", photo: CaseFamily },
+  { ja: "女子会", en: "GIRLS", photo: CaseFamily },
+  { ja: "グルキャン", en: "GROUP", photo: CaseFamily },
+  { ja: "企業研修", en: "COMPANY", photo: CaseFamily },
+];
+
+const dummyDesc =
+  "ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。";
+---
+
+<section class="howto">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="howto__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <!-- 上端: INFORMATIONからの繋ぎ（緑ブラシ→ベージュ）。本体の上に絶対配置 -->
+  <div class="howto__join">
+    <picture class="howto__join-picture">
+      <source srcset={JoinPc.src} media="(min-width: 744px)" />
+      <img class="howto__join-img" src={JoinSp.src} alt="" />
+    </picture>
+  </div>
+
+  <!-- 装飾イラスト -->
+  <img class="howto__illust-trees" src={IllustTrees.src} alt="" />
+  <img class="howto__illust-campfire" src={IllustCampfire.src} alt="" />
+
+  <div class="howto__inner">
+    <!-- 見出し -->
+    <div class="howto__title">
+      <img class="howto__sunburst" src={Sunburst.src} alt="" />
+      <div class="howto__title-group">
+        <div class="howto__title-heading">
+          <p class="howto__title-en">HOW TO</p>
+          <p class="howto__title-ja">過ごし方</p>
+        </div>
+        <p class="howto__lead">GNOMEを120%楽しむ</p>
+      </div>
+    </div>
+
+    <div class="howto__content">
+      <!-- カテゴリ円ボタン -->
+      <div class="howto__cats">
+        {
+          cases.map((c, i) => (
+            <button
+              type="button"
+              class:list={["howto__cat", { "is-active": i === 0 }]}
+            >
+              <img
+                class="howto__cat-bg howto__cat-bg--gold"
+                src={CircleGold.src}
+                alt=""
+              />
+              <img
+                class="howto__cat-bg howto__cat-bg--black"
+                src={CircleBlack.src}
+                alt=""
+              />
+              <span class="howto__cat-text">{c.ja}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <!-- ケーススライダー -->
+      <div class="howto__slider-row">
+        <button
+          type="button"
+          class="howto__nav howto__nav--prev"
+          aria-label="前のケースへ"
+        >
+          <img class="howto__nav-img" src={NavArrowLeft.src} alt="" />
+        </button>
+
+        <div class="howto__slider swiper">
+          <div class="swiper-wrapper">
+            {
+              cases.map((c, i) => (
+                <div class="swiper-slide howto__slide">
+                  <div class="howto__case">
+                    <div class="howto__case-head">
+                      <p class="howto__case-num">
+                        CASE{String(i + 1).padStart(2, "0")}
+                      </p>
+                      <p class="howto__case-en">{c.en}</p>
+                      <p class="howto__case-ja">{c.ja}</p>
+                    </div>
+                    <div class="howto__case-photo">
+                      <img
+                        class="howto__case-img"
+                        src={c.photo.src}
+                        alt={c.ja}
+                      />
+                    </div>
+                    <p class="howto__case-desc">{dummyDesc}</p>
+                    <a class="howto__more" href="#">
+                      <span class="howto__more-text">MORE</span>
+                      <img
+                        class="howto__more-arrow"
+                        src={MoreArrow.src}
+                        alt=""
+                      />
+                    </a>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="howto__nav howto__nav--next"
+          aria-label="次のケースへ"
+        >
+          <img class="howto__nav-img" src={NavArrowRight.src} alt="" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 下端: ACCESSへの繋ぎ（緑の草スウッシュ＋木々）。ベージュ部は透過で本体背景を見せる -->
+  <div class="howto__foot">
+    <picture class="howto__foot-picture">
+      <source srcset={FootPc.src} media="(min-width: 744px)" />
+      <img class="howto__foot-img" src={FootSp.src} alt="" />
+    </picture>
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .howto {
+    position: relative;
+    overflow: clip;
+    background-color: #fffdf7;
+
+    // 背景の紙テクスチャ
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include desktop-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 上端の繋ぎ（本体の上に絶対配置）
+    &__join {
+      position: absolute;
+      top: -1vw;
+      left: 0;
+      z-index: 2;
+      width: 100%;
+      line-height: 0;
+      font-size: 0;
+      pointer-events: none;
+    }
+
+    &__join-picture {
+      display: block;
+      width: 100%;
+    }
+
+    &__join-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    // 装飾イラスト
+    // 位置はデザイン値＋繋ぎ高さ（SP:79 / PC:212）のオフセット
+    &__illust-trees {
+      position: absolute;
+      z-index: 1;
+      left: spx(34);
+      top: spx(451);
+      width: spx(132);
+      height: auto;
+      pointer-events: none;
+      @include tablet-up {
+        left: ppx(109);
+        top: ppx(607);
+        width: ppx(236);
+      }
+    }
+
+    &__illust-campfire {
+      position: absolute;
+      z-index: 1;
+      left: spx(334);
+      top: spx(51);
+      width: spx(350);
+      height: auto;
+      pointer-events: none;
+      @include tablet-up {
+        left: ppx(1790);
+        top: ppx(349);
+        width: ppx(683);
+      }
+    }
+
+    &__inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(40);
+      padding: spx(289) spx(40) spx(10);
+      @include tablet-up {
+        gap: ppx(70 * 1.2);
+        padding: ppx(302 * 1.2) ppx(40 * 1.2) ppx(10 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(70);
+        padding: ppx(302) ppx(40) ppx(10);
+      }
+    }
+
+    // 見出し（サンバースト＋HOW TO＋リード）
+    &__title {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(10);
+      @include tablet-up {
+        gap: ppx(25 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__sunburst {
+      display: block;
+      width: spx(263);
+      height: auto;
+      @include tablet-up {
+        width: ppx(263 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(263);
+      }
+    }
+
+    &__title-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(30);
+      @include tablet-up {
+        gap: ppx(50 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(50);
+      }
+    }
+
+    &__title-heading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(5);
+      @include tablet-up {
+        gap: ppx(10 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(10);
+      }
+    }
+
+    &__title-en {
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.1;
+      white-space: nowrap;
+      font-size: spx(79);
+      letter-spacing: spx(3.95);
+      @include tablet-up {
+        font-size: ppx(105 * 1.2);
+        letter-spacing: ppx(5.25 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(105);
+        letter-spacing: ppx(5.25);
+      }
+    }
+
+    &__title-ja {
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.7;
+      font-size: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        font-size: ppx(32 * 1.2);
+        letter-spacing: ppx(1.6 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__lead {
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.6;
+      font-size: spx(40);
+      letter-spacing: spx(2);
+      @include tablet-up {
+        font-size: ppx(55 * 1.2);
+        letter-spacing: ppx(2.75 * 1.2);
+      }
+      @include desktop-up {
+        line-height: 1.5;
+        font-size: ppx(55);
+        letter-spacing: ppx(2.75);
+      }
+    }
+
+    // コンテンツ（円ボタン＋スライダー）
+    // ※スライダー部はタブレット以上はPCと同じレイアウト・同じ比率（×1.2だと横にあふれる）
+    &__content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(60);
+      width: 100%;
+      @include tablet-up {
+        gap: ppx(110);
+      }
+    }
+
+    // カテゴリ円ボタン（SP=3+2で折返し / PC=横1列）
+    &__cats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: spx(10) spx(20);
+      width: spx(610);
+      @include tablet-up {
+        width: auto;
+        gap: ppx(70);
+      }
+    }
+
+    &__cat {
+      position: relative;
+      display: block;
+      width: spx(150);
+      height: spx(150);
+      padding: 0;
+      border: none;
+      background: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      @include tablet-up {
+        width: ppx(178);
+        height: ppx(178);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.8;
+        }
+        &.is-active:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    &__cat-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    &__cat-bg--gold {
+      display: none;
+    }
+
+    .howto__cat.is-active .howto__cat-bg--gold {
+      display: block;
+    }
+
+    .howto__cat.is-active .howto__cat-bg--black {
+      display: none;
+    }
+
+    &__cat-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      white-space: nowrap;
+      font-size: spx(20);
+      letter-spacing: spx(1);
+      @include tablet-up {
+        font-size: ppx(26);
+        letter-spacing: ppx(2.6);
+      }
+    }
+
+    // スライダー行（SP=スライダー下に矢印 / PC=左右に矢印）
+    &__slider-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: spx(20) spx(40);
+      width: 100%;
+      @include tablet-up {
+        flex-wrap: nowrap;
+        gap: ppx(80);
+        width: auto;
+      }
+    }
+
+    &__nav {
+      display: block;
+      flex-shrink: 0;
+      width: spx(85);
+      height: spx(85);
+      padding: 0;
+      border: none;
+      background: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      @include tablet-up {
+        width: ppx(85);
+        height: ppx(85);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.6;
+        }
+      }
+    }
+
+    &__nav--prev {
+      order: 2;
+      @include tablet-up {
+        order: 0;
+      }
+
+      // 矢印アイコンは右向き素材を左右反転して使用（デザイン同様）
+      .howto__nav-img {
+        transform: scaleX(-1);
+      }
+    }
+
+    &__nav--next {
+      order: 3;
+      @include tablet-up {
+        order: 0;
+      }
+    }
+
+    &__nav-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    // スライダー本体
+    &__slider {
+      order: 1;
+      width: spx(630);
+      max-width: 100%;
+      overflow: hidden;
+      @include tablet-up {
+        order: 0;
+        width: ppx(1920);
+      }
+    }
+
+    &__slide {
+      box-sizing: border-box;
+    }
+
+    // ケース（SP=縦積み / PC=左テキスト・右写真のグリッド）
+    &__case {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(35);
+      @include tablet-up {
+        display: grid;
+        grid-template-columns: ppx(940) ppx(920);
+        grid-template-areas:
+          "head photo"
+          "desc photo"
+          "more photo";
+        align-content: start;
+        align-items: start;
+        column-gap: ppx(60);
+        row-gap: ppx(35);
+      }
+    }
+
+    &__case-head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(15);
+      width: 100%;
+      @include tablet-up {
+        grid-area: head;
+        align-items: flex-start;
+        gap: ppx(15);
+      }
+    }
+
+    &__case-num {
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #d6b156;
+      text-align: center;
+      line-height: 1;
+      font-size: spx(36);
+      letter-spacing: spx(3.6);
+      @include tablet-up {
+        align-self: stretch;
+        padding-left: ppx(70);
+        text-align: left;
+        margin-bottom: ppx(3);
+        font-size: ppx(40);
+        letter-spacing: ppx(4);
+      }
+    }
+
+    &__case-en {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin: 0;
+      padding: spx(10) spx(50) spx(20);
+      border-radius: spx(30);
+      background-color: #fff;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      line-height: 1;
+      white-space: nowrap;
+      font-size: spx(90);
+      letter-spacing: spx(9);
+      @include tablet-up {
+        justify-content: flex-start;
+        padding: ppx(20) ppx(70) ppx(30);
+        border-radius: ppx(30);
+        font-size: ppx(120);
+        letter-spacing: ppx(12);
+      }
+    }
+
+    &__case-ja {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: spx(10) spx(50);
+      border-radius: spx(20);
+      background-color: #fff;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      line-height: 1;
+      white-space: nowrap;
+      font-size: spx(24);
+      letter-spacing: spx(2.4);
+      @include tablet-up {
+        align-self: flex-start;
+        padding: ppx(20) ppx(70);
+        border-radius: ppx(20);
+        font-size: ppx(26);
+        letter-spacing: ppx(2.6);
+      }
+    }
+
+    // 写真（白枠）
+    &__case-photo {
+      box-sizing: border-box;
+      width: spx(630);
+      height: spx(446);
+      max-width: 100%;
+      border: spx(10) solid #fff;
+      border-radius: spx(40);
+      overflow: hidden;
+      @include tablet-up {
+        grid-area: photo;
+        width: ppx(920);
+        height: ppx(651);
+        border-width: ppx(15);
+        border-radius: ppx(40);
+      }
+    }
+
+    &__case-img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &__case-desc {
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.7;
+      width: spx(600);
+      max-width: 100%;
+      font-size: spx(26);
+      letter-spacing: spx(2.6);
+      @include tablet-up {
+        grid-area: desc;
+        width: ppx(870);
+        margin-left: ppx(70);
+        font-size: ppx(26);
+        letter-spacing: ppx(2.6);
+      }
+    }
+
+    // MORE ボタン（黒枠）
+    &__more {
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: spx(15);
+      width: spx(314);
+      padding: spx(35) 0;
+      border: spx(4) solid #000;
+      border-radius: 999px;
+      text-decoration: none;
+      @include tablet-up {
+        grid-area: more;
+        justify-self: end;
+        gap: ppx(15);
+        width: ppx(314);
+        padding: ppx(35) 0;
+        border-width: ppx(4);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.6;
+        }
+      }
+    }
+
+    &__more-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      line-height: 1;
+      font-size: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        font-size: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+    }
+
+    &__more-arrow {
+      display: block;
+      width: spx(25);
+      height: auto;
+      @include tablet-up {
+        width: ppx(25);
+      }
+    }
+
+    // 下端の繋ぎ（草スウッシュ＋木々）
+    &__foot {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      // SP画像はフレーム上に木がはみ出した分（約55px）を含むため引き上げる
+      margin-top: spx(-55);
+      line-height: 0;
+      font-size: 0;
+      pointer-events: none;
+      @include tablet-up {
+        margin-top: 0;
+      }
+    }
+
+    &__foot-picture {
+      display: block;
+      width: 100%;
+    }
+
+    &__foot-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+</style>
+
+<script>
+  import Swiper from "swiper";
+  import { Navigation } from "swiper/modules";
+  import "swiper/css";
+  import "swiper/css/navigation";
+
+  const el = document.querySelector<HTMLElement>(".howto__slider");
+  if (el) {
+    const swiper = new Swiper(el, {
+      modules: [Navigation],
+      slidesPerView: 1,
+      loop: true,
+      speed: 500,
+      navigation: {
+        prevEl: ".howto__nav--prev",
+        nextEl: ".howto__nav--next",
+      },
+    });
+
+    // カテゴリ円ボタン → 該当スライドへ移動＆アクティブ同期
+    const cats = document.querySelectorAll<HTMLButtonElement>(".howto__cat");
+    cats.forEach((btn, i) => {
+      btn.addEventListener("click", () => swiper.slideToLoop(i));
+    });
+    swiper.on("slideChange", () => {
+      cats.forEach((b, i) => {
+        b.classList.toggle("is-active", i === swiper.realIndex);
+      });
+    });
+
+    // 画像・フォント読み込み後に再計測
+    window.addEventListener("load", () => swiper.update());
+  }
+</script>

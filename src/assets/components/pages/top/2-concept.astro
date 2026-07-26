@@ -1,0 +1,237 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+// アセット
+import PaperTexture from "../../../images/common/paper-texture.png";
+// ※イラストは暫定でFigma書き出し版。ユーザー提供のSVG到着後に差し替え予定
+import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
+---
+
+<section class="concept">
+  <!-- 背景テクスチャ -->
+  <div
+    class="concept__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="concept__inner">
+    <!-- 透かし文字 -->
+    <p class="concept__watermark" aria-hidden="true">CONCEPT</p>
+
+    <!-- 見出し -->
+    <h2 class="concept__heading">
+      <span class="concept__heading-lead">
+        <span class="concept__quote">“</span>森と湖と星空<span
+          class="concept__quote">”</span
+        >の<br class="concept__br-sp" />大自然の中で
+      </span>
+      <span class="concept__heading-accent">一生の思い出を</span>
+    </h2>
+
+    <!-- 本文 -->
+    <p class="concept__text">
+      ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。
+    </p>
+
+    <!-- イラスト -->
+    <div class="concept__illust">
+      <img
+        class="concept__illust-img"
+        src={ConceptIllust.src}
+        alt="森と湖と星空の大自然の中でキャンプを楽しむ人々のイラスト"
+      />
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .concept {
+    position: relative;
+    z-index: 1;
+    // ヒーロー下端の陸地画像との境目（サブピクセルの継ぎ目）を被せて隠す
+    margin-top: -2.1vw;
+    @include tablet-up {
+      margin-top: -0.6vw;
+    }
+    @include desktop-up {
+      margin-top: -0.6vw;
+    }
+    overflow: clip;
+    background-color: #bee0e1;
+
+    // 背景の紙テクスチャ（mix-blend で下地のミントに質感を乗せる）
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include desktop-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(42);
+      padding: spx(100) spx(40) spx(80);
+      @include tablet-up {
+        gap: ppx(42 * 1.2);
+        padding: ppx(90 * 1.2) ppx(40 * 1.2) ppx(80 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(42);
+        padding: ppx(90) ppx(40) ppx(80);
+      }
+    }
+
+    // 透かし文字「CONCEPT」
+    &__watermark {
+      position: absolute;
+      z-index: 0;
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      line-height: 1.7;
+      color: #fff;
+      opacity: 0.3;
+      white-space: nowrap;
+      text-align: right;
+      pointer-events: none;
+      font-size: spx(130);
+      top: spx(-27);
+      left: calc(50% + #{spx(305)});
+      transform: translateX(-100%);
+      @include tablet-up {
+        font-size: ppx(305 * 1.2);
+        top: ppx(-163 * 1.2);
+        left: calc(50% + #{ppx(305 * 1.2)});
+      }
+      @include desktop-up {
+        font-size: ppx(305);
+        top: ppx(-163);
+        left: ppx(2535);
+      }
+    }
+
+    // 見出し
+    &__heading {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      letter-spacing: spx(5.5);
+      @include tablet-up {
+        letter-spacing: ppx(7.5 * 1.2);
+      }
+      @include desktop-up {
+        letter-spacing: ppx(7.5);
+      }
+    }
+
+    &__heading-lead {
+      display: block;
+      line-height: 1.6;
+      font-size: spx(55);
+      @include tablet-up {
+        font-size: ppx(75 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(75);
+      }
+    }
+
+    &__heading-accent {
+      display: block;
+      line-height: 1.6;
+      color: #138185;
+      font-size: spx(76);
+      @include tablet-up {
+        font-size: ppx(105 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(105);
+      }
+    }
+
+    // 引用符（ティール）
+    &__quote {
+      color: #138185;
+    }
+
+    // 「の」の後の改行（SPのみ）
+    &__br-sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+
+    // 本文
+    &__text {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      font-size: spx(28);
+      letter-spacing: spx(1.12);
+      line-height: 1.8;
+      width: spx(580);
+      @include tablet-up {
+        font-size: ppx(26 * 1.2);
+        letter-spacing: ppx(1.3 * 1.2);
+        line-height: 1.7;
+        width: ppx(1800 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(26);
+        letter-spacing: ppx(1.3);
+        line-height: 1.7;
+        width: ppx(1800);
+      }
+    }
+
+    // イラスト（SP=下部中央・フロー / TB・PC=左に絶対配置）
+    &__illust {
+      position: relative;
+      z-index: 1;
+      width: spx(353);
+      @include tablet-up {
+        position: absolute;
+        left: ppx(248 * 1.2);
+        top: ppx(21 * 1.2);
+        width: ppx(453 * 1.2);
+      }
+      @include desktop-up {
+        left: ppx(248);
+        top: ppx(21);
+        width: ppx(453);
+      }
+
+      &-img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+    }
+  }
+</style>

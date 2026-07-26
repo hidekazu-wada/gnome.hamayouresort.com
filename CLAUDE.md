@@ -4,7 +4,7 @@
 
 ## プロジェクト概要
 
-これはkuwarubi.hamayouresort.com用のAstro プロジェクトです。観光・リゾート業界向けのWebサイトを開発しています。
+これはgnome.hamayouresort.com用のAstro プロジェクトです。観光・リゾート業界向けのWebサイトを開発しています。姉妹サイト `izuminoyu.hamayouresort.com` のコーディングの型（マークアップ・SCSS規約・コンポーネント設計）を踏襲します。
 
 ## 技術スタック
 
@@ -61,6 +61,45 @@ npm run astro -- --help
 - **コンポーネント**: `src/components/`にAstro/React/Vue/Svelte/Preactコンポーネントを配置
 - **静的アセット**: `public/`ディレクトリ内のファイルは直接提供されます
 - **Islands Architecture**: 必要な部分のみでJavaScriptを動作させる部分的ハイドレーション
+
+## スタイリング方針
+
+### SP-First
+このサイトは **SP-First** でスタイリングする（姉妹サイト izuminoyu と同一方針）。
+- ベース（メディアクエリ外）に SP のスタイルを書く
+- `@include tablet-up` でタブレット以上を上書き
+- `@include desktop-up` で PC 以上を上書き
+
+### タブレットの値
+特に指定がなければ、タブレットは **`desktop-up` の `ppx()` 値に 1.2 を掛ける** 形で対応する（例: `ppx(170 * 1.2)`）。指定があればそれに従う。
+
+### Figma URL の順序
+レスポンシブ用に Figma URL が複数渡された場合、SP-First に合わせて **1行目が SP、2行目が PC**。
+
+### px→vw 変換の使い分け
+- SP: `spx()`（基準ビューポート 720）
+- タブレット: `tpx()`（基準 2048）※ 基本は `ppx(値 * 1.2)` を使う
+- PC: `ppx()`（基準 2560）
+
+## コンポーネント設計（姉妹サイト踏襲）
+
+### ディレクトリ構成
+```
+src/assets/components/
+├── common/          # 全ページ共通（layout / header / footer / menu / pageHeader / pageTop など）
+│   └── layout/BaseLayout.astro   # Head/Header/Menu/slot/Footer/PageTop を束ねる
+└── pages/{ページ名}/  # ページ固有セクション。1-hero.astro, 2-xxx.astro … と番号プレフィックスで分割
+```
+
+### 下層ページの作り方
+1. `src/pages/_template.astro` をコピーしてページ名にリネーム
+2. `<BaseLayout title="...">` 内に `<PageHeader title="..." />` と各セクションコンポーネントを並べる
+3. セクションは番号順（`1-hero` → `2-...`）に分割し、1ファイル1セクション
+
+### 命名・記法
+- クラス名は BEM 風（`.page-header__title-text` など）
+- 各 `.astro` の `<style lang="scss">` 冒頭で `variables / functions / mixins` を個別 import
+- レスポンシブ上書き用に `@include tablet-up {}` / `@include desktop-up {}` の空ブロックを先に用意しておくスタイルを踏襲
 
 ## SCSS使用方法
 
@@ -124,10 +163,8 @@ $viewport_sp: 720;     // スマホ基準ビューポート
 
 $breakpoint-tablet-up: 744px;   // タブレット以上
 $breakpoint-desktop-up: 1024px; // PC以上
-
-$font-didot: "Didot", serif;
-$font-noto-serif-jp: "Noto Serif JP", serif;
 ```
+※ フォント変数・カラー変数は Figma のデザイン確定後にこのサイト用のものを定義する（現状 `_variables.scss` はビューポートとブレークポイントのみ）。
 
 **関数（_functions.scss）:**
 ```scss
@@ -141,9 +178,8 @@ spx($num_sp)   // スマホ用px→vw変換
 @mixin tablet-up { ... }     // タブレット以上のメディアクエリ
 @mixin desktop-up { ... }    // PC以上のメディアクエリ
 @mixin hover { ... }         // ホバー可能デバイス用
-@mixin zen-kaku-gothic-new-regular { ... }  // フォント設定
-@mixin zen-kaku-gothic-new-bold { ... }     // フォント設定（太字）
 ```
+※ フォント用ミックスインは現状未定義。Figma 確定後にこのサイトのフォントに合わせて追加する。
 
 ### インポート順序（重要）
 1. 変数（最初に読み込む）
@@ -153,20 +189,15 @@ spx($num_sp)   // スマホ用px→vw変換
 
 ### 使用例
 ```scss
-// レスポンシブなフォントサイズ
+// レスポンシブなフォントサイズ（SP-First）
 .title {
-  font-size: spx(20);        // スマホ: 20px相当
+  font-size: spx(20);            // スマホ: 20px相当（ベース）
   @include tablet-up {
-    font-size: tpx(24);      // タブレット: 24px相当
+    font-size: ppx(28 * 1.2);    // タブレット: PC値 × 1.2 が基本
   }
   @include desktop-up {
-    font-size: ppx(28);      // PC: 28px相当
+    font-size: ppx(28);          // PC: 28px相当
   }
-}
-
-// フォントミックスイン使用
-.heading {
-  @include zen-kaku-gothic-new-bold;
 }
 ```
 
@@ -174,6 +205,21 @@ spx($num_sp)   // スマホ用px→vw変換
 - コンポーネント内で外部のmixin/functionを使用する場合は、個別にインポートが必要
 - インポート順序を守らないと変数が未定義エラーになる可能性
 - `@import`は非推奨警告が出るが、現在は正常に動作
+
+## 横線画像（line-img）の伸ばし方ルール（姉妹サイト踏襲）
+
+見出し下などの装飾用横線画像（`*__line-img` 系）は、`width: 100%` だけだと画像のアスペクト比により細く（短く）表示される。以下を当てる。
+
+```scss
+&__line-img {
+  display: block;
+  width: 100%;
+  height: 1vw;       // 高さを明示（アスペクト比を無視させる）
+  object-fit: fill;  // cover ではなく fill。指定ボックスいっぱいに引き伸ばす
+}
+```
+- `height: auto` にしない／`object-fit` は `fill`／標準値は `height: 1vw`
+- ブレークポイントごとに値を変える必要は基本ない
 
 ## 開発のヒント
 
