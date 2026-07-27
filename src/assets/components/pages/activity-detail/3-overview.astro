@@ -1,0 +1,226 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import WavePc from "../../../images/activity/detail/wave-to-overview.svg";
+import WaveSp from "../../../images/activity/detail/wave-to-overview-sp.svg";
+import type { Activity } from "../../../../data/activities";
+
+interface Props {
+  activity: Activity;
+}
+
+const { activity } = Astro.props;
+---
+
+<!-- メインビジュアル → 概要 の繋ぎ波 -->
+<picture class="detail-wave">
+  <source srcset={WavePc.src} media="(min-width: 744px)" />
+  <img class="detail-wave__img" src={WaveSp.src} alt="" />
+</picture>
+
+<section class="detail-overview" id="overview">
+  <div class="detail-overview__head">
+    <h2 class="detail-overview__title">概要</h2>
+    <div class="detail-overview__title-line" aria-hidden="true"></div>
+  </div>
+
+  <dl class="detail-overview__table">
+    {
+      activity.overview.map((row) => (
+        <div class="detail-overview__row">
+          <div class="detail-overview__row-body">
+            <dt class="detail-overview__label">{row.label}</dt>
+            <dd class="detail-overview__value">
+              {row.lines.map((line) => (
+                <p>{line}</p>
+              ))}
+            </dd>
+          </div>
+          <div class="detail-overview__line" aria-hidden="true" />
+        </div>
+      ))
+    }
+  </dl>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 繋ぎ波（上=#bee0e1 / 下=#138185 が焼き込まれた画像）
+  .detail-wave {
+    display: block;
+    line-height: 0;
+    font-size: 0;
+
+    &__img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .detail-overview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #138185;
+    padding-top: spx(100);
+    padding-bottom: spx(86);
+    gap: spx(10);
+    @include tablet-up {
+      padding-top: ppx(100);
+      padding-bottom: ppx(86);
+      gap: ppx(40);
+    }
+
+    // Figmaでは線が高さ0で描かれるため、gapから線の太さ(5px)を引いて合わせる
+    &__head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fffdf7;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    // 見出し下の破線（SP: 4/16 / PC: 6/21）
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #fffdf7 0,
+        #fffdf7 #{spx(4)},
+        transparent #{spx(4)},
+        transparent #{spx(16)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #fffdf7 0,
+          #fffdf7 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__table {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(10);
+      @include tablet-up {
+        gap: ppx(20);
+      }
+    }
+
+    // 同上。区切り線の太さ(2px)をgapから引く
+    &__row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(8);
+      @include tablet-up {
+        align-items: flex-start;
+        gap: ppx(23);
+      }
+    }
+
+    &__row-body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: spx(20) 0;
+      gap: spx(15);
+      @include tablet-up {
+        flex-direction: row;
+        padding: ppx(20) ppx(30);
+        gap: ppx(15);
+      }
+    }
+
+    &__label {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #bee0e1;
+      line-height: 1.6;
+      width: spx(600);
+      font-size: spx(32);
+      letter-spacing: spx(1.6);
+      @include tablet-up {
+        width: ppx(220);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__value {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #fff;
+      line-height: 1.7;
+      width: spx(600);
+      font-size: spx(27);
+      letter-spacing: spx(1.6);
+      @include tablet-up {
+        line-height: 1.6;
+        width: ppx(1505);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    // 行の区切り（2pxの点線。2/10 で PC・SP 共通）
+    &__line {
+      width: spx(630);
+      height: spx(2);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #fff 0,
+        #fff #{spx(2)},
+        transparent #{spx(2)},
+        transparent #{spx(10)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(2);
+        background-image: repeating-linear-gradient(
+          to right,
+          #fff 0,
+          #fff #{ppx(2)},
+          transparent #{ppx(2)},
+          transparent #{ppx(10)}
+        );
+      }
+    }
+  }
+</style>

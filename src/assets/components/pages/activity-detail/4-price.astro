@@ -1,0 +1,188 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import type { Activity } from "../../../../data/activities";
+
+interface Props {
+  activity: Activity;
+}
+
+const { activity } = Astro.props;
+---
+
+<section class="detail-price" id="price">
+  <h2 class="detail-price__title">料金</h2>
+
+  <dl class="detail-price__table">
+    {
+      activity.price.map((row) => (
+        <div class="detail-price__row">
+          <dt class="detail-price__label">
+            <span class="detail-price__label-text">{row.label}</span>
+          </dt>
+          <dd class="detail-price__value">
+            <div class="detail-price__value-body">
+              {row.amount && (
+                <p class="detail-price__amount">
+                  <span class="detail-price__amount-main">{row.amount}</span>
+                  {row.amountNote && (
+                    <span class="detail-price__amount-note">{row.amountNote}</span>
+                  )}
+                </p>
+              )}
+              {row.lines.map((line, i) => (
+                <p
+                  class:list={[
+                    "detail-price__line",
+                    { "is-after-amount": Boolean(row.amount) && i === 0 },
+                  ]}
+                >
+                  {line}
+                </p>
+              ))}
+            </div>
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .detail-price {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #138185;
+    padding-top: spx(30);
+    padding-bottom: spx(29);
+    gap: spx(40);
+    @include tablet-up {
+      padding-top: ppx(30);
+      padding-bottom: ppx(15);
+      gap: ppx(40);
+    }
+
+    &__title {
+      width: 100%;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fffdf7;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+      }
+    }
+
+    &__table {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(10);
+      }
+    }
+
+    // SPはラベルが上、PCはラベルが左
+    &__row {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      @include tablet-up {
+        flex-direction: row;
+        align-items: stretch;
+      }
+    }
+
+    &__label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #bee0e1;
+      padding: spx(30);
+      border-radius: spx(20) spx(20) 0 0;
+      @include tablet-up {
+        padding: ppx(30);
+        border-radius: ppx(20) 0 0 ppx(20);
+      }
+    }
+
+    &__label-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      line-height: 1.6;
+      width: spx(570);
+      font-size: spx(32);
+      letter-spacing: spx(1.6);
+      @include tablet-up {
+        width: ppx(230);
+        text-align: left;
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__value {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      padding: spx(30);
+      border-radius: 0 0 spx(20) spx(20);
+      @include tablet-up {
+        padding: ppx(30);
+        border-radius: 0 ppx(20) ppx(20) 0;
+      }
+    }
+
+    &__value-body {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.7;
+      width: spx(570);
+      font-size: spx(27);
+      letter-spacing: spx(1.6);
+      @include tablet-up {
+        line-height: 1.6;
+        width: ppx(1450);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__amount-main {
+      font-weight: 700;
+      color: #c3925e;
+      font-size: spx(42);
+      @include tablet-up {
+        font-size: ppx(50);
+      }
+    }
+
+    // 金額の直後の行だけ間隔をあける
+    // （SPは空行1つ分、PCは行送り2.3で上下に広げる）
+    &__line.is-after-amount {
+      margin-top: spx(46);
+      @include tablet-up {
+        margin-top: 0;
+        line-height: 2.3;
+      }
+    }
+  }
+</style>
