@@ -49,15 +49,47 @@ export type Stay = {
   price: string;
   /** 絞り込み用の属性。該当する選択肢を全て入れる */
   filters: Record<StayFilterKey, string[]>;
+
+  // --- 詳細ページ ---
+  /** メインビジュアルの写真。自動でディゾルブ切り替えする */
+  heroPhotos: ImageMetadata[];
+  /** メインビジュアルの見出し（改行は <br> で明示） */
+  heroHeading: string;
+  /** メインビジュアルの本文 */
+  heroBody: string;
+  /** サイト概要のテーブル */
+  spec: { label: string; lines: string[] }[];
 };
 
 const photos = [site01, site02, site03, site04, site05, site06, site07, site08];
+
+// 詳細ページ（実データ確定までは全サイト共通のダミー）
+const heroPhotos = [site01, site05, site04];
+const heroBody =
+  "ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。";
+const spec = [
+  {
+    label: "広さ",
+    lines: [
+      "13.3m×6.5m",
+      "車両１台、タープ1張り、20㎡までのテント1張りを想定した広さ",
+    ],
+  },
+  { label: "チェックイン", lines: ["13:00〜15:00　※アーリーチェックインは当日受付のみ可能"] },
+  { label: "チェックアウト", lines: ["〜12:00"] },
+  { label: "車両乗入", lines: ["可　※リードまたは、ケージをご利用ください"] },
+  { label: "朝食", lines: ["なし"] },
+  { label: "夕食", lines: ["なし"] },
+  { label: "地面", lines: ["土　※推奨ペグ：スチール,ネイル"] },
+  { label: "入浴", lines: ["徒歩圏内に姉妹施設のいずみの湯がございます。※営業日時はこちら"] },
+];
 
 const base = [
   {
     key: "rinkan",
     titleLines: ["木々に囲まれた", "林間サイト"],
     lead: "木々に囲まれた林間サイト",
+    heroHeading: "林間の落ち着いた雰囲気の<br>エリア",
     code: "F-1",
     badgeLines: ["人気", "No,1"],
     tags: ["区画サイト", "最大5名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"],
@@ -76,6 +108,7 @@ const base = [
     key: "kohan",
     titleLines: ["水の音に癒される", "湖畔サイト"],
     lead: "水の音に癒される湖畔サイト",
+    heroHeading: "湖のすぐそばで過ごす<br>特別な時間",
     code: "F-2",
     badgeLines: ["湖畔沿い"],
     tags: ["フリーサイト", "最大5名", "湖畔沿い", "ACなし", "車両乗入△", "ペット◯", "キャンピングカー◯"],
@@ -94,6 +127,7 @@ const base = [
     key: "group",
     titleLines: ["大人数で楽しめる", "グループサイト"],
     lead: "大人数で楽しめるグループサイト",
+    heroHeading: "仲間と集まって過ごす<br>広々エリア",
     code: "G-1",
     badgeLines: ["最大", "15名"],
     tags: ["区画サイト", "最大15名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー◯"],
@@ -112,6 +146,7 @@ const base = [
     key: "double",
     titleLines: ["少人数グループなら", "ダブルサイト"],
     lead: "少人数グループならダブルサイト",
+    heroHeading: "2区画を贅沢に使える<br>ダブルサイト",
     code: "D-1",
     badgeLines: ["最大", "12名"],
     tags: ["区画サイト", "最大12名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"],
@@ -130,6 +165,7 @@ const base = [
     key: "omakase",
     titleLines: ["平日限定", "おまかせサイト"],
     lead: "平日限定のおまかせサイト",
+    heroHeading: "当日のお楽しみ<br>おまかせサイト",
     code: "A-1",
     badgeLines: ["最安"],
     tags: ["フリーサイト", "最大5名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"],
@@ -148,6 +184,7 @@ const base = [
     key: "gel",
     titleLines: ["心落ち着く空間の", "ゲルテント"],
     lead: "心落ち着く空間のゲルテント",
+    heroHeading: "丸い天井が包み込む<br>非日常の空間",
     code: "Y-1",
     badgeLines: ["ママに", "大人気"],
     tags: ["区画サイト", "最大5名", "林間", "ACあり", "車両乗入×", "ペット×", "キャンピングカー×"],
@@ -166,6 +203,7 @@ const base = [
     key: "trailer",
     titleLines: ["限りなく外に近い", "トレーラーハウス"],
     lead: "限りなく外に近いトレーラーハウス",
+    heroHeading: "屋根付きデッキでゆったり<br>トレーラーハウス",
     code: "T-1",
     badgeLines: ["屋根付き", "デッキ"],
     tags: ["キャビン", "最大4名", "林間", "ACなし", "車両乗入×", "ペット×", "キャンピングカー×"],
@@ -184,6 +222,7 @@ const base = [
     key: "kukaku",
     titleLines: ["場所を指定できる", "区画サイト"],
     lead: "場所を指定できる区画サイト",
+    heroHeading: "場所を選んで予約できる<br>区画サイト",
     code: "R-1",
     badgeLines: ["初心者に", "おすすめ"],
     tags: ["区画サイト", "最大5名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"],
@@ -198,7 +237,9 @@ const base = [
       camper: ["利用不可"],
     },
   },
-] satisfies Array<Omit<Stay, "slug" | "photo"> & { key: string }>;
+] satisfies Array<
+  Omit<Stay, "slug" | "photo" | "heroPhotos" | "heroBody" | "spec"> & { key: string }
+>;
 
 /** Figmaのダミー（8種 × 2周 = 16件）を再現した暫定データ */
 export const stays: Stay[] = Array.from({ length: 16 }, (_, i) => {
@@ -208,5 +249,8 @@ export const stays: Stay[] = Array.from({ length: 16 }, (_, i) => {
     ...rest,
     slug: round === 0 ? key : `${key}-${round + 1}`,
     photo: photos[i % photos.length],
+    heroPhotos,
+    heroBody,
+    spec,
   };
 });

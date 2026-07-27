@@ -5,31 +5,30 @@ import "../../../../styles/main.scss";
 import PaperTexture from "../../../images/common/paper-texture.png";
 import IconChevron from "../../../images/common/icon-chevron.svg";
 
-const links = [
-  { label: "概要", href: "#overview" },
-  { label: "料金", href: "#price" },
-  { label: "ご利用の流れ", href: "#flow" },
-  { label: "注意事項", href: "#notes" },
-  { label: "予約方法", href: "#reservation" },
-];
+interface Props {
+  /** ページ内リンク */
+  links: { label: string; href: string }[];
+}
+
+const { links } = Astro.props;
 ---
 
-<nav class="detail-anchor" aria-label="ページ内リンク">
+<nav class="anchor-nav" aria-label="ページ内リンク">
   <!-- 背景の紙テクスチャ -->
   <div
-    class="detail-anchor__texture"
+    class="anchor-nav__texture"
     aria-hidden="true"
     style={`background-image: url(${PaperTexture.src});`}
   >
   </div>
 
-  <ul class="detail-anchor__list">
+  <ul class="anchor-nav__list">
     {
       links.map((link) => (
         <li>
-          <a class="detail-anchor__pill" href={link.href}>
-            <span class="detail-anchor__pill-label">{link.label}</span>
-            <img class="detail-anchor__pill-icon" src={IconChevron.src} alt="" />
+          <a class="anchor-nav__pill" href={link.href}>
+            <span class="anchor-nav__pill-label">{link.label}</span>
+            <img class="anchor-nav__pill-icon" src={IconChevron.src} alt="" />
           </a>
         </li>
       ))
@@ -43,7 +42,7 @@ const links = [
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
-  .detail-anchor {
+  .anchor-nav {
     position: relative;
     display: flex;
     flex-direction: column;

@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
+import AnchorNav from "../../assets/components/common/anchorNav/AnchorNav.astro";
+import Hero from "../../assets/components/pages/stay-detail/1-hero.astro";
+import { stays } from "../../data/stays";
+
+export function getStaticPaths() {
+  return stays.map((stay) => ({
+    params: { slug: stay.slug },
+    props: { stay },
+  }));
+}
+
+const { stay } = Astro.props;
+const title = stay.titleLines.join("");
+---
+
+<BaseLayout
+  title={`${title} | 泊まる | Gnome 湖のほとりのキャンプ場`}
+  flush
+  breadcrumb={[
+    { label: "TOP", href: "/" },
+    { label: "泊まる", href: "/stay/" },
+    { label: title },
+  ]}
+>
+  <PageHeader titleEn="STAY" titleJa="泊まる" lead={stay.lead} />
+  <AnchorNav
+    links={[
+      { label: "概要", href: "#overview" },
+      { label: "エリアマップ", href: "#areamap" },
+      { label: "料金", href: "#price" },
+      { label: "注意事項", href: "#notes" },
+      { label: "予約方法", href: "#reservation" },
+    ]}
+  />
+  <Hero stay={stay} />
+</BaseLayout>

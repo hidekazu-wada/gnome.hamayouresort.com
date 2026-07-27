@@ -1,0 +1,434 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import type { Stay } from "../../../../data/stays";
+
+interface Props {
+  stay: Stay;
+}
+
+const { stay } = Astro.props;
+---
+
+<section class="stay-hero" id="overview">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="stay-hero__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="stay-hero__card">
+    <div class="stay-hero__main">
+      <div class="stay-hero__visual">
+        <!-- 写真は自動再生でディゾルブ切り替え -->
+        <div class="stay-hero__photos">
+          {
+            stay.heroPhotos.map((photo, i) => (
+              <img
+                class:list={["stay-hero__photo", { "is-active": i === 0 }]}
+                src={photo.src}
+                width={photo.width}
+                height={photo.height}
+                alt=""
+                loading={i === 0 ? "eager" : "lazy"}
+              />
+            ))
+          }
+        </div>
+
+        <ul class="stay-hero__dots">
+          {
+            stay.heroPhotos.map((_, i) => (
+              <li>
+                <button
+                  class:list={["stay-hero__dot", { "is-active": i === 0 }]}
+                  type="button"
+                  data-index={i}
+                  aria-label={`${i + 1}枚目の写真を表示`}
+                />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="stay-hero__body">
+        <span class="stay-hero__code">{stay.code}</span>
+        <h2 class="stay-hero__heading" set:html={stay.heroHeading} />
+        <p class="stay-hero__text">{stay.heroBody}</p>
+        <ul class="stay-hero__tags">
+          {stay.tags.map((tag) => <li class="stay-hero__tag">{tag}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <dl class="stay-hero__spec">
+      {
+        stay.spec.map((row) => (
+          <div class="stay-hero__spec-row">
+            <div class="stay-hero__spec-body">
+              <dt class="stay-hero__spec-label">{row.label}</dt>
+              <dd class="stay-hero__spec-value">
+                {row.lines.map((line) => (
+                  <p>{line}</p>
+                ))}
+              </dd>
+            </div>
+            <div class="stay-hero__spec-line" aria-hidden="true" />
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<script>
+  const hero = document.querySelector<HTMLElement>(".stay-hero");
+
+  if (hero) {
+    const photos = Array.from(hero.querySelectorAll<HTMLElement>(".stay-hero__photo"));
+    const dots = Array.from(hero.querySelectorAll<HTMLButtonElement>(".stay-hero__dot"));
+
+    if (photos.length > 1) {
+      let current = 0;
+      let timer = 0;
+
+      const show = (index: number) => {
+        current = (index + photos.length) % photos.length;
+        photos.forEach((photo, i) => photo.classList.toggle("is-active", i === current));
+        dots.forEach((dot, i) => dot.classList.toggle("is-active", i === current));
+      };
+
+      const start = () => {
+        window.clearInterval(timer);
+        timer = window.setInterval(() => show(current + 1), 5000);
+      };
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener("click", () => {
+          show(i);
+          start();
+        });
+      });
+
+      start();
+    }
+  }
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .stay-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #bee0e1;
+    padding-top: spx(50);
+    padding-bottom: spx(20);
+    @include tablet-up {
+      padding-top: ppx(80);
+      padding-bottom: ppx(20);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__card {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #fff;
+      border-radius: spx(50);
+      padding-bottom: spx(60);
+      gap: spx(40);
+      @include tablet-up {
+        border-radius: ppx(50);
+        padding-bottom: ppx(120);
+        gap: ppx(50);
+      }
+    }
+
+    &__main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: spx(25) spx(25) spx(50);
+      gap: spx(40);
+      @include tablet-up {
+        flex-direction: row;
+        padding: ppx(70) ppx(100) ppx(120);
+        gap: ppx(109);
+      }
+    }
+
+    &__visual {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(40);
+      @include tablet-up {
+        gap: ppx(50);
+      }
+    }
+
+    // 写真（重ねてディゾルブ）
+    &__photos {
+      position: relative;
+      overflow: clip;
+      width: spx(600);
+      height: spx(450);
+      border-radius: spx(30);
+      @include tablet-up {
+        width: ppx(976);
+        height: ppx(732);
+        border-radius: ppx(50);
+      }
+    }
+
+    &__photo {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    &__photo.is-active {
+      opacity: 1;
+    }
+
+    &__dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(20);
+      }
+    }
+
+    &__dot {
+      display: block;
+      border-radius: 50%;
+      background-color: #cfcfcf;
+      transition: background-color 0.3s ease;
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        width: ppx(30);
+        height: ppx(30);
+      }
+    }
+
+    &__dot.is-active {
+      background-color: #7f7f7f;
+    }
+
+    // 見出しまわり
+    &__body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: spx(30);
+      @include tablet-up {
+        gap: ppx(30);
+      }
+    }
+
+    &__code {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #8aad61;
+      border-radius: 50%;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1.11;
+      width: spx(120);
+      height: spx(120);
+      font-size: spx(40);
+      @include tablet-up {
+        width: ppx(120);
+        height: ppx(120);
+        font-size: ppx(40);
+      }
+    }
+
+    &__heading {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #8aad61;
+      line-height: 1.5;
+      width: spx(560);
+      font-size: spx(46);
+      @include tablet-up {
+        line-height: 1.6;
+        width: auto;
+        font-size: ppx(55);
+      }
+    }
+
+    &__text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.7;
+      width: spx(560);
+      font-size: spx(27);
+      @include tablet-up {
+        line-height: 1.8;
+        width: ppx(715);
+        font-size: ppx(30);
+      }
+    }
+
+    &__tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      width: spx(560);
+      gap: spx(6);
+      @include tablet-up {
+        width: ppx(715);
+        gap: ppx(6);
+      }
+    }
+
+    &__tag {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #dde9cd;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #507425;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.2;
+      min-width: spx(156);
+      padding: spx(8) spx(10) spx(10);
+      border-radius: spx(10);
+      font-size: spx(22);
+      @include tablet-up {
+        min-width: ppx(156);
+        padding: ppx(8) ppx(10) ppx(10);
+        border-radius: ppx(10);
+        font-size: ppx(22);
+      }
+    }
+
+    // サイト概要のテーブル
+    &__spec {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    // 区切り線の太さ(2px)をgapから引く
+    &__spec-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: spx(3);
+      @include tablet-up {
+        gap: ppx(3);
+      }
+    }
+
+    &__spec-body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: spx(20) spx(45);
+      gap: spx(10);
+      @include tablet-up {
+        flex-direction: row;
+        padding: ppx(20) ppx(30) ppx(20) ppx(100);
+        gap: ppx(15);
+      }
+    }
+
+    &__spec-label {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #d6b156;
+      line-height: 1.6;
+      width: spx(560);
+      font-size: spx(30);
+      letter-spacing: spx(1.5);
+      @include tablet-up {
+        width: ppx(270);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__spec-value {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #7c6351;
+      line-height: 1.6;
+      width: spx(560);
+      font-size: spx(27);
+      letter-spacing: spx(1.35);
+      @include tablet-up {
+        width: ppx(1385);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__spec-line {
+      width: spx(630);
+      height: spx(2);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #cfcfcf 0,
+        #cfcfcf #{spx(2)},
+        transparent #{spx(2)},
+        transparent #{spx(10)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(2);
+        background-image: repeating-linear-gradient(
+          to right,
+          #cfcfcf 0,
+          #cfcfcf #{ppx(2)},
+          transparent #{ppx(2)},
+          transparent #{ppx(10)}
+        );
+      }
+    }
+  }
+</style>

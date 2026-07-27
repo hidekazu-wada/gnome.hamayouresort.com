@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
 import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
-import Anchor from "../../assets/components/pages/activity-detail/1-anchor.astro";
+import AnchorNav from "../../assets/components/common/anchorNav/AnchorNav.astro";
 import Hero from "../../assets/components/pages/activity-detail/2-hero.astro";
 import Overview from "../../assets/components/pages/activity-detail/3-overview.astro";
 import Price from "../../assets/components/pages/activity-detail/4-price.astro";
@@ -35,7 +35,15 @@ const { activity } = Astro.props;
     titleJa={activity.titleJa}
     lead={activity.lead}
   />
-  <Anchor />
+  <AnchorNav
+    links={[
+      { label: "概要", href: "#overview" },
+      { label: "料金", href: "#price" },
+      { label: "ご利用の流れ", href: "#flow" },
+      { label: "注意事項", href: "#notes" },
+      { label: "予約方法", href: "#reservation" },
+    ]}
+  />
   <Hero activity={activity} />
   <Overview activity={activity} />
   <Price activity={activity} />
