@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
+import Intro from "../../assets/components/pages/hotel-set-plan/1-intro.astro";
+import Target from "../../assets/components/pages/hotel-set-plan/2-target.astro";
+---
+
+<BaseLayout
+  title="ホテルセットプラン | Gnome 湖のほとりのキャンプ場"
+  description="雨の日でも安心して楽しめる、キャンパー限定のホテルセットプラン。キャンプサイトからホテルまでは徒歩1分です。"
+  flush
+  breadcrumb={[{ label: "TOP", href: "/" }, { label: "ホテルセットプラン" }]}
+>
+  <PageHeader
+    titleEn="HOTEL SET PLAN"
+    titleJa="ホテルセットプラン"
+    lead={`雨の日でも安心して楽しめる<br><span class="page-header__lead-em">キャンパー限定プラン</span>`}
+  />
+  <Intro />
+  <Target />
+</BaseLayout>

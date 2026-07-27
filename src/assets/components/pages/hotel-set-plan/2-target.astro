@@ -1,0 +1,248 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import WavePc from "../../../images/hotel-set-plan/wave-to-target.webp";
+import WaveSp from "../../../images/hotel-set-plan/wave-to-target-sp.webp";
+import IconCheck from "../../../images/hotel-set-plan/icon-check.svg";
+import CampfirePc from "../../../images/hotel-set-plan/campfire.webp";
+import CampfireSp from "../../../images/hotel-set-plan/campfire-sp.webp";
+
+// SPだけ改行位置を指定したいものは <br class="hsp-target__br-sp"> を入れる。
+// 3つめの「キャップ好き」はFigmaの表記どおり（誤記の可能性あり・要確認）
+const list = [
+  "どうしてもキャンプしたいけど天候が心配",
+  '小さなお子様を連れてのキャンプや、<br class="hsp-target__br-sp">テント泊はちょっと不安',
+  "キャップ好きのパパと一緒にアウトドアを楽しみたいママとお子様",
+  "キャンプしながらリモートワークしたい（客室内Wi-Fi完備）",
+  "ホテルのお部屋で安心安全に休みたい",
+];
+---
+
+<!-- ホテルセットプランとは → こんな方におすすめ の繋ぎ -->
+<div class="hsp-target-wave">
+  <picture class="hsp-target-wave__picture">
+    <source srcset={WavePc.src} media="(min-width: 744px)" />
+    <img class="hsp-target-wave__img" src={WaveSp.src} alt="" />
+  </picture>
+</div>
+
+<section class="hsp-target">
+  <!-- 焚き火のイラスト。上のセクションにはみ出す -->
+  <picture class="hsp-target__illust">
+    <source srcset={CampfirePc.src} media="(min-width: 744px)" />
+    <img class="hsp-target__illust-img" src={CampfireSp.src} alt="" />
+  </picture>
+
+  <div class="hsp-target__head">
+    <h2 class="hsp-target__title">こんな方におすすめ!!</h2>
+    <div class="hsp-target__title-line" aria-hidden="true"></div>
+  </div>
+
+  <ul class="hsp-target__list">
+    {
+      list.map((text) => (
+        <li class="hsp-target__item">
+          <span class="hsp-target__item-icon">
+            <img src={IconCheck.src} alt="" />
+          </span>
+          <p class="hsp-target__item-text" set:html={text} />
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 枠の背景は下のセクションと同じ色。波は枠いっぱいに収まる
+  .hsp-target-wave {
+    position: relative;
+    background-color: #138185;
+    height: spx(90);
+    @include tablet-up {
+      height: ppx(188);
+    }
+
+    &__picture {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+    }
+
+    &__img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .hsp-target {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #138185;
+    padding-top: spx(140);
+    padding-bottom: spx(149);
+    gap: spx(40);
+    @include tablet-up {
+      padding-top: ppx(100);
+      padding-bottom: ppx(86);
+      gap: ppx(40);
+    }
+
+    // 画像には下のセクションと同じ地色が焼き込んであるため、
+    // 上端がセクションの境目にぴったり合う位置に置く
+    &__illust {
+      position: absolute;
+      z-index: 2;
+      display: block;
+      top: spx(-50.92);
+      left: spx(58);
+      width: spx(254);
+      @include tablet-up {
+        top: ppx(-163.526);
+        left: ppx(248);
+        width: ppx(445);
+      }
+    }
+
+    &__illust-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    // 線が高さ0で描かれる分、gapから5pxを引く
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fffdf7;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #fffdf7 0,
+        #fffdf7 #{spx(6)},
+        transparent #{spx(6)},
+        transparent #{spx(21)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #fffdf7 0,
+          #fffdf7 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__list {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(20);
+      }
+    }
+
+    &__item {
+      display: flex;
+      align-items: flex-start;
+      background-color: #fff;
+      padding: spx(20) spx(30);
+      border-radius: spx(20);
+      gap: spx(15);
+      @include tablet-up {
+        padding: ppx(20) ppx(30);
+        border-radius: ppx(20);
+        gap: ppx(15);
+      }
+    }
+
+    // アイコンはテキスト1行目の中心に合わせる
+    &__item-icon {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      padding-top: spx(6);
+      @include tablet-up {
+        padding-top: ppx(8);
+      }
+
+      img {
+        display: block;
+        width: spx(35);
+        height: spx(35);
+        @include tablet-up {
+          width: ppx(40);
+          height: ppx(40);
+        }
+      }
+    }
+
+    &__item-text {
+      flex-shrink: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      line-height: 1.6;
+      width: spx(515);
+      font-size: spx(27);
+      @include tablet-up {
+        width: ppx(1685);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+
+      // set:html で差し込むためスコープが付かない
+      :global(.hsp-target__br-sp) {
+        @include tablet-up {
+          display: none;
+        }
+      }
+    }
+  }
+</style>

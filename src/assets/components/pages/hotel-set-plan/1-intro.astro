@@ -1,0 +1,263 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import IconTent from "../../../images/hotel-set-plan/icon-tent.svg";
+import IconHotel from "../../../images/hotel-set-plan/icon-hotel.svg";
+---
+
+<section class="hsp-intro">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="hsp-intro__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="hsp-intro__row">
+    <div class="hsp-intro__circle">
+      <div class="hsp-intro__circle-body">
+        <img
+          class="hsp-intro__icon hsp-intro__icon--tent"
+          src={IconTent.src}
+          alt=""
+        />
+        <p class="hsp-intro__names">
+          <span class="hsp-intro__name">Gnome</span>
+          <span class="hsp-intro__sub">キャンプサイト</span>
+        </p>
+      </div>
+    </div>
+
+    <p class="hsp-intro__plus" aria-hidden="true">＋</p>
+
+    <div class="hsp-intro__circle">
+      <div class="hsp-intro__circle-body">
+        <img
+          class="hsp-intro__icon hsp-intro__icon--hotel"
+          src={IconHotel.src}
+          alt=""
+        />
+        <p class="hsp-intro__names">
+          <span class="hsp-intro__name">くわるび</span>
+          <span class="hsp-intro__sub">HOTEL</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <p class="hsp-intro__caption">
+    キャンプサイトからホテルまでは「徒歩１分」<br />
+    キャンプ場でテントに泊まりつつ、<br class="hsp-intro__br-sp" />ホテルの客室も使えちゃう！
+  </p>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .hsp-intro {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-bottom: spx(5);
+    gap: spx(10);
+    @include tablet-up {
+      padding-top: ppx(80 * 1.2);
+      padding-bottom: ppx(5 * 1.2);
+      gap: ppx(47 * 1.2);
+    }
+    @include desktop-up {
+      padding-top: ppx(80);
+      padding-bottom: ppx(5);
+      gap: ppx(47);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: spx(15);
+      @include tablet-up {
+        gap: ppx(47 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(47);
+      }
+    }
+
+    // 円。左右パディングはSPになく、テキスト幅でサイズが決まる
+    &__circle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      border-radius: 50%;
+      padding: spx(60) 0;
+      @include tablet-up {
+        padding: ppx(137 * 1.2) ppx(60 * 1.2);
+      }
+      @include desktop-up {
+        padding: ppx(137) ppx(60);
+      }
+    }
+
+    &__circle-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(7);
+      @include tablet-up {
+        gap: ppx(10 * 1.2);
+      }
+      @include desktop-up {
+        gap: ppx(10);
+      }
+    }
+
+    &__icon {
+      display: block;
+    }
+
+    &__icon--tent {
+      width: spx(81);
+      height: spx(60);
+      @include tablet-up {
+        width: ppx(100 * 1.2);
+        height: ppx(74 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(100);
+        height: ppx(74);
+      }
+    }
+
+    &__icon--hotel {
+      width: spx(60);
+      height: spx(60);
+      @include tablet-up {
+        width: ppx(74 * 1.2);
+        height: ppx(74 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(74);
+        height: ppx(74);
+      }
+    }
+
+    &__names {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      text-align: center;
+      line-height: 1.7;
+      width: spx(270);
+      letter-spacing: spx(1.4211);
+      @include tablet-up {
+        width: ppx(342 * 1.2);
+        letter-spacing: ppx(1.8 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(342);
+        letter-spacing: ppx(1.8);
+      }
+    }
+
+    &__name {
+      font-size: spx(35.526);
+      @include tablet-up {
+        font-size: ppx(45 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(45);
+      }
+    }
+
+    &__sub {
+      font-size: spx(17.368);
+      @include tablet-up {
+        font-size: ppx(22 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(22);
+      }
+    }
+
+    &__plus {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #138185;
+      text-align: center;
+      line-height: 1.8;
+      padding: spx(89.462) 0;
+      font-size: spx(57.852);
+      letter-spacing: spx(2.8926);
+      @include tablet-up {
+        padding: ppx(150 * 1.2) 0;
+        font-size: ppx(97 * 1.2);
+        letter-spacing: ppx(4.85 * 1.2);
+      }
+      @include desktop-up {
+        padding: ppx(150) 0;
+        font-size: ppx(97);
+        letter-spacing: ppx(4.85);
+      }
+    }
+
+    &__caption {
+      position: relative;
+      z-index: 1;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      line-height: 1.8;
+      width: spx(630);
+      font-size: spx(30);
+      @include tablet-up {
+        width: auto;
+        white-space: nowrap;
+        font-size: ppx(40 * 1.2);
+        letter-spacing: ppx(2 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(40);
+        letter-spacing: ppx(2);
+      }
+    }
+
+    &__br-sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+  }
+</style>
