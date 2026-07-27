@@ -1,0 +1,340 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import { faqCategories } from "../../../../data/faq";
+---
+
+{
+  faqCategories.map((category) => (
+    <section class="faq-section" id={category.id}>
+      {/* 背景の紙テクスチャ */}
+      <div
+        class="faq-section__texture"
+        aria-hidden="true"
+        style={`background-image: url(${PaperTexture.src});`}
+      />
+
+      <div class="faq-section__head">
+        <h2 class="faq-section__title">{category.title}</h2>
+        <div class="faq-section__title-line" aria-hidden="true" />
+      </div>
+
+      <ul class="faq-section__list">
+        {category.items.map((item, i) => (
+          <li class="faq-section__item">
+            <button
+              class="faq-section__q"
+              type="button"
+              aria-expanded="false"
+              aria-controls={`${category.id}-${i}`}
+            >
+              <span class="faq-section__q-body">
+                <span class="faq-section__mark">Ｑ</span>
+                <span class="faq-section__q-text">{item.q}</span>
+              </span>
+              <span class="faq-section__icon" aria-hidden="true" />
+            </button>
+
+            <div class="faq-section__a-wrap" id={`${category.id}-${i}`}>
+              <div class="faq-section__a-inner">
+                <div class="faq-section__a">
+                  <span class="faq-section__mark faq-section__mark--a">Ａ</span>
+                  <p class="faq-section__a-text">{item.a}</p>
+                </div>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))
+}
+
+<script>
+  // ClientRouter未使用のため直接初期化する
+  document.querySelectorAll<HTMLButtonElement>(".faq-section__q").forEach((button) => {
+    button.addEventListener("click", () => {
+      const item = button.closest(".faq-section__item");
+      if (!item) return;
+      const isOpen = item.classList.toggle("is-open");
+      button.setAttribute("aria-expanded", String(isOpen));
+    });
+  });
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .faq-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(100);
+    gap: spx(40);
+    @include tablet-up {
+      padding-top: ppx(100);
+      gap: ppx(40);
+    }
+
+    // SPは最後のセクションだけ下に余白がある
+    &:last-child {
+      padding-bottom: spx(80);
+      @include tablet-up {
+        padding-bottom: 0;
+      }
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // Figmaでは線が高さ0で描かれるため、gapから線の太さ(5px)を引いて合わせる
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    // 見出し下の破線。Figmaは丸キャップなので線の太さ(5px)ぶん破線が伸びる
+    // （SP: dash4+5=9 / 周期16、PC: dash6+5=11 / 周期21）
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #138185 0,
+        #138185 #{spx(9)},
+        transparent #{spx(9)},
+        transparent #{spx(16)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #138185 0,
+          #138185 #{ppx(11)},
+          transparent #{ppx(11)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__list {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      width: spx(655);
+      gap: spx(20);
+      @include tablet-up {
+        width: ppx(1655);
+        padding-top: ppx(30);
+        gap: ppx(40);
+      }
+    }
+
+    // 指示書どおり、ホバー演出なしで行全体をクリック範囲にする
+    &__q {
+      display: flex;
+      align-items: flex-start;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      padding-right: spx(20);
+      gap: spx(20);
+      @include tablet-up {
+        padding-right: 0;
+        gap: ppx(30);
+      }
+    }
+
+    &__q-body {
+      display: flex;
+      align-items: flex-start;
+      width: spx(565);
+      gap: spx(15);
+      @include tablet-up {
+        width: ppx(1565);
+        gap: ppx(15);
+      }
+    }
+
+    // Figmaでは幅を固定して右寄せ（グリフが本文側に寄る）
+    &__mark {
+      flex-shrink: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: right;
+      width: spx(50);
+      font-size: spx(35);
+      line-height: 1.2;
+      @include tablet-up {
+        width: ppx(90);
+        font-size: ppx(40);
+        line-height: 1.29;
+      }
+    }
+
+    &__mark--a {
+      color: #d6b156;
+      line-height: 1.25;
+      @include tablet-up {
+        line-height: 1.5;
+      }
+    }
+
+    &__q-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      width: spx(500);
+      font-size: spx(27);
+      line-height: 1.6;
+      @include tablet-up {
+        width: ppx(1460);
+        font-size: ppx(32);
+        line-height: 1.8;
+      }
+    }
+
+    // ＋アイコン。開くと縦棒だけ消えて − になる
+    &__icon {
+      position: relative;
+      flex-shrink: 0;
+      background-color: #d6b156;
+      border-radius: 50%;
+      width: spx(50);
+      height: spx(50);
+      @include tablet-up {
+        width: ppx(60);
+        height: ppx(60);
+      }
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        background-color: #fff;
+        border-radius: 999px;
+        transform: translate(-50%, -50%);
+      }
+
+      // 横棒
+      &::before {
+        width: spx(29);
+        height: spx(4);
+        @include tablet-up {
+          width: ppx(35);
+          height: ppx(5);
+        }
+      }
+
+      // 縦棒
+      &::after {
+        width: spx(4);
+        height: spx(29);
+        transition: opacity 0.3s ease;
+        @include tablet-up {
+          width: ppx(5);
+          height: ppx(35);
+        }
+      }
+    }
+
+    &__item.is-open &__icon::after {
+      opacity: 0;
+    }
+
+    &__a-wrap {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease;
+    }
+
+    &__item.is-open &__a-wrap {
+      grid-template-rows: 1fr;
+    }
+
+    &__a-inner {
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    &__a {
+      box-sizing: border-box;
+      display: flex;
+      align-items: flex-start;
+      background-color: #fff;
+      width: 100%;
+      margin-top: spx(20);
+      border-radius: spx(20);
+      padding: spx(30) spx(50) spx(30) 0;
+      gap: spx(15);
+      @include tablet-up {
+        margin-top: ppx(30);
+        border-radius: ppx(20);
+        padding: ppx(30) ppx(90) ppx(30) 0;
+        gap: ppx(15);
+      }
+    }
+
+    &__a-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      width: spx(540);
+      font-size: spx(27);
+      line-height: 1.6;
+      @include tablet-up {
+        width: ppx(1460);
+        font-size: ppx(32);
+        line-height: 1.8;
+      }
+    }
+  }
+</style>

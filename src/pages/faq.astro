@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../assets/components/common/pageHeader/PageHeader.astro";
+import Nav from "../assets/components/pages/faq/1-nav.astro";
+import Sections from "../assets/components/pages/faq/2-sections.astro";
+---
+
+<BaseLayout
+  title="よくあるご質問 | Gnome 湖のほとりのキャンプ場"
+  description="宿泊・施設・アクティビティ・お支払い方法について、Gnomeによくお寄せいただくご質問をまとめました。"
+  flush
+  breadcrumb={[{ label: "TOP", href: "/" }, { label: "FAQ" }]}
+>
+  <PageHeader titleEn="FAQ" titleJa="よくあるご質問" />
+  <Nav />
+  <Sections />
+</BaseLayout>

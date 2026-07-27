@@ -1,0 +1,145 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import IconChevron from "../../../images/common/icon-chevron.svg";
+import { faqCategories } from "../../../../data/faq";
+---
+
+<nav class="faq-nav" aria-label="カテゴリ内リンク">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="faq-nav__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <ul class="faq-nav__list">
+    {
+      faqCategories.map((category) => (
+        <li>
+          <a class="faq-nav__pill" href={`#${category.id}`}>
+            <span class="faq-nav__pill-label">{category.title}</span>
+            <img class="faq-nav__pill-icon" src={IconChevron.src} alt="" />
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .faq-nav {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #bee0e1;
+    padding-top: spx(80);
+    padding-bottom: spx(2);
+    @include tablet-up {
+      padding-top: ppx(80);
+      padding-bottom: ppx(1);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // SPは2列（320×2＋間隔5＝645）、PCは横1列
+    &__list {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      width: spx(645);
+      padding-bottom: spx(1);
+      gap: spx(15) spx(5);
+      @include tablet-up {
+        width: auto;
+        padding-bottom: ppx(1);
+        gap: ppx(20);
+      }
+    }
+
+    // Figmaのストロークは内側なので、線幅の分だけpaddingを引いて高さを合わせる
+    &__pill {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-style: solid;
+      border-color: #000;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      white-space: nowrap;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      width: spx(320);
+      padding: spx(23) 0;
+      border-width: spx(4);
+      gap: spx(10);
+      font-size: spx(23);
+      line-height: spx(27);
+      @include tablet-up {
+        width: ppx(390);
+        padding: ppx(23) 0;
+        border-width: ppx(4);
+        gap: ppx(10);
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+
+      // 指示書では背景が黒／文字が白に変わる（ディゾルブ）
+      @include hover {
+        &:hover {
+          background-color: #000;
+          color: #fff;
+        }
+      }
+    }
+
+    // 末尾のletter-spacing分だけ詰めて中央寄せのズレを打ち消す
+    &__pill-label {
+      @include tablet-up {
+        margin-right: ppx(-1.3);
+      }
+    }
+
+    &__pill-icon {
+      display: block;
+      transform: rotate(90deg);
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+  }
+</style>
