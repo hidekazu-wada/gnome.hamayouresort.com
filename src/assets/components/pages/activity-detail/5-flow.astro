@@ -1,0 +1,273 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import WavePc from "../../../images/activity/detail/wave-to-flow.svg";
+import WaveSp from "../../../images/activity/detail/wave-to-flow-sp.svg";
+import IconStepArrow from "../../../images/activity/detail/icon-step-arrow.svg";
+import type { Activity } from "../../../../data/activities";
+
+interface Props {
+  activity: Activity;
+}
+
+const { activity } = Astro.props;
+---
+
+<!-- 料金 → ご利用の流れ の繋ぎ波 -->
+<picture class="detail-flow-wave">
+  <source srcset={WavePc.src} media="(min-width: 744px)" />
+  <img class="detail-flow-wave__img" src={WaveSp.src} alt="" />
+</picture>
+
+<section class="detail-flow" id="flow">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="detail-flow__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="detail-flow__head">
+    <h2 class="detail-flow__title">ご利用の流れ</h2>
+    <div class="detail-flow__title-line" aria-hidden="true"></div>
+  </div>
+
+  <ol class="detail-flow__list">
+    {
+      activity.steps.map((step, i) => (
+        <li class="detail-flow__item">
+          {i > 0 && (
+            <span class="detail-flow__arrow" aria-hidden="true">
+              <img class="detail-flow__arrow-img" src={IconStepArrow.src} alt="" />
+            </span>
+          )}
+          <div class="detail-flow__card">
+            <p class="detail-flow__step">STEP{i + 1}</p>
+            <div class="detail-flow__body">
+              <p class="detail-flow__step-title">{step.title}</p>
+              <p class="detail-flow__step-text">{step.text}</p>
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 繋ぎ波（上=#138185 / 下=#fffdf7 が焼き込まれた画像）
+  .detail-flow-wave {
+    display: block;
+    line-height: 0;
+    font-size: 0;
+
+    &__img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .detail-flow {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fffdf7;
+    padding-top: spx(60);
+    padding-bottom: spx(250);
+    gap: spx(40);
+    @include tablet-up {
+      padding-top: ppx(150);
+      padding-bottom: ppx(120);
+      gap: ppx(50);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 線が高さ0で描かれる分、gapから5pxを引く
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #7c6351 0,
+        #7c6351 #{spx(4)},
+        transparent #{spx(4)},
+        transparent #{spx(16)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #7c6351 0,
+          #7c6351 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__list {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    // カード間の下向き矢印。前後のgapもここで作る
+    &__arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: spx(52);
+      height: spx(26);
+      margin: spx(25) 0;
+      @include tablet-up {
+        width: ppx(52);
+        height: ppx(26);
+        margin: ppx(30) 0;
+      }
+    }
+
+    &__arrow-img {
+      display: block;
+      transform: rotate(90deg);
+      width: spx(31);
+      height: spx(57);
+      @include tablet-up {
+        width: ppx(31);
+        height: ppx(57);
+      }
+    }
+
+    &__card {
+      display: flex;
+      align-items: flex-start;
+      background-color: #fff;
+      border-radius: spx(20);
+      padding: spx(20) spx(30);
+      gap: spx(15);
+      @include tablet-up {
+        border-radius: ppx(20);
+        padding: ppx(20) ppx(30);
+        gap: ppx(15);
+      }
+    }
+
+    &__step {
+      display: flex;
+      align-items: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #c3925e;
+      line-height: 1.6;
+      width: spx(110);
+      font-size: spx(32);
+      letter-spacing: spx(1.6);
+      @include tablet-up {
+        width: ppx(110);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      color: #138185;
+      gap: spx(5);
+      @include tablet-up {
+        gap: 0;
+      }
+    }
+
+    &__step-title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      line-height: 1.6;
+      width: spx(445);
+      font-size: spx(32);
+      letter-spacing: spx(1.6);
+      @include tablet-up {
+        width: ppx(1615);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__step-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      line-height: 1.5;
+      width: spx(445);
+      font-size: spx(27);
+      @include tablet-up {
+        line-height: 1.6;
+        width: ppx(1615);
+        font-size: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+    }
+  }
+</style>
