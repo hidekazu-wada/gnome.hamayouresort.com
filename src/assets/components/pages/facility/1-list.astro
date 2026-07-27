@@ -1,0 +1,240 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import IconArrow from "../../../images/facility/icon-arrow.svg";
+import { facilities } from "../../../../data/facilities";
+---
+
+<section class="facility-list">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="facility-list__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <ul class="facility-list__grid">
+    {
+      facilities.map((facility) => (
+        <li class="facility-list__card">
+          {facility.photo ? (
+            <img
+              class="facility-list__photo"
+              src={facility.photo.src}
+              width={facility.photo.width}
+              height={facility.photo.height}
+              alt=""
+              loading="lazy"
+            />
+          ) : (
+            <div class="facility-list__photo facility-list__photo--empty" />
+          )}
+
+          <p class="facility-list__title">
+            {facility.small && (
+              <span class="facility-list__title-small">{facility.small}</span>
+            )}
+            {facility.title}
+          </p>
+
+          <p class="facility-list__text">
+            {facility.lines.map((line, i) => (
+              <>
+                {i > 0 && <br />}
+                {line}
+              </>
+            ))}
+          </p>
+
+          {facility.href && (
+            <a class="facility-list__more" href={facility.href}>
+              <span>MORE</span>
+              <img class="facility-list__more-icon" src={IconArrow.src} alt="" />
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .facility-list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(60);
+    padding-bottom: spx(80);
+    @include tablet-up {
+      padding-top: ppx(100);
+      padding-bottom: ppx(100);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // PCは4列（490×4＋間隔20×3＝2020）
+    &__grid {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: spx(30);
+      gap: spx(50);
+      @include tablet-up {
+        width: ppx(2020);
+        padding-top: ppx(30);
+        gap: ppx(100) ppx(20);
+      }
+    }
+
+    &__card {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #fff;
+      width: spx(630);
+      padding: spx(15) 0 spx(40);
+      border-radius: spx(30);
+      gap: spx(20);
+      filter: drop-shadow(0 #{spx(10)} #{spx(12)} rgba(0, 0, 0, 0.08));
+      @include tablet-up {
+        width: ppx(490);
+        padding: ppx(15) 0 ppx(40);
+        border-radius: ppx(30);
+        gap: ppx(20);
+        filter: drop-shadow(0 #{ppx(10)} #{ppx(12)} rgba(0, 0, 0, 0.08));
+      }
+    }
+
+    &__photo {
+      display: block;
+      object-fit: cover;
+      width: spx(590);
+      height: spx(436);
+      border-radius: spx(20);
+      @include tablet-up {
+        width: ppx(460);
+        height: ppx(340);
+        border-radius: ppx(20);
+      }
+    }
+
+    // 写真が未支給のものはグレーで置いておく
+    &__photo--empty {
+      background-color: #c4c4c4;
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.6;
+      width: spx(590);
+      font-size: spx(36);
+      letter-spacing: spx(3.6);
+      @include tablet-up {
+        width: ppx(490);
+        font-size: ppx(40);
+        letter-spacing: ppx(4);
+      }
+    }
+
+    &__title-small {
+      display: block;
+      font-size: spx(24);
+      @include tablet-up {
+        display: inline;
+        font-size: ppx(26);
+      }
+    }
+
+    &__text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      text-align: center;
+      line-height: 1.6;
+      width: spx(560);
+      font-size: spx(25);
+      @include tablet-up {
+        width: ppx(440);
+        font-size: ppx(26);
+      }
+    }
+
+    &__more {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #8aad61;
+      border-style: solid;
+      border-color: #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+      padding: spx(26) spx(70);
+      border-width: spx(4);
+      gap: spx(10);
+      font-size: spx(26);
+      line-height: spx(26);
+      letter-spacing: spx(1.3);
+      filter: drop-shadow(0 #{spx(10)} #{spx(12)} rgba(0, 0, 0, 0.08));
+      @include tablet-up {
+        padding: ppx(26) ppx(70);
+        border-width: ppx(4);
+        gap: ppx(10);
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+        filter: drop-shadow(0 #{ppx(10)} #{ppx(12)} rgba(0, 0, 0, 0.08));
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    &__more-icon {
+      display: block;
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+  }
+</style>

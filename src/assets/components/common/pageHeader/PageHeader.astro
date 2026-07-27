@@ -16,12 +16,12 @@ interface Props {
   /** 和文タイトル（例: アクティビティ） */
   titleJa: string;
   /**
-   * リード文。改行や強調を含むためHTMLで渡す。
+   * リード文。改行や強調を含むためHTMLで渡す。省略可。
    * 強調: <span class="page-header__lead-em">〜</span>
    * PCのみの改行: <br class="page-header__br-pc">
    * SPのみの改行: <br class="page-header__br-sp">
    */
-  lead: string;
+  lead?: string;
 }
 
 const { titleEn, titleJa, lead } = Astro.props;
@@ -58,10 +58,10 @@ const { titleEn, titleJa, lead } = Astro.props;
     <img class="page-header__burst" src={Burst.src} alt="" />
     <div class="page-header__title-body">
       <div class="page-header__title-names">
-        <h1 class="page-header__title-en">{titleEn}</h1>
+        <h1 class="page-header__title-en" set:html={titleEn} />
         <p class="page-header__title-ja">{titleJa}</p>
       </div>
-      <p class="page-header__lead" set:html={lead} />
+      {lead && <p class="page-header__lead" set:html={lead} />}
     </div>
   </div>
 </div>

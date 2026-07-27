@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
+import List from "../../assets/components/pages/facility/1-list.astro";
+---
+
+<BaseLayout
+  title="共有施設・設備 | Gnome 湖のほとりのキャンプ場"
+  description="管理棟・炊事場・シャワールーム・温泉など、Gnomeの共有施設と設備をご紹介します。"
+  flush
+  breadcrumb={[{ label: "TOP", href: "/" }, { label: "共有施設・設備" }]}
+>
+  <PageHeader titleEn="Common<br>Facilities" titleJa="共有施設・設備" />
+  <List />
+</BaseLayout>
