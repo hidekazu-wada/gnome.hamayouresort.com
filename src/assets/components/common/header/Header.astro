@@ -1,0 +1,351 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+// アセット
+import PanelPc from "../../../images/common/header/panel-pc.png";
+import PanelSp from "../../../images/common/header/panel-sp.png";
+import IconInstagram from "../../../images/common/header/icon-instagram.svg";
+import IconMenu from "../../../images/common/header/icon-menu.svg";
+import IconCloseLine from "../../../images/common/header/icon-close-line.svg";
+
+const INSTAGRAM_URL = "https://www.instagram.com/campvillage_gnome/?hl=ja";
+---
+
+<header class="header">
+  <!-- 破れ紙のパネル背景（PC/SPで比率が異なるため出し分け） -->
+  <picture class="header__bg">
+    <source srcset={PanelPc.src} media="(min-width: 744px)" />
+    <img class="header__bg-img" src={PanelSp.src} alt="" />
+  </picture>
+
+  <a
+    class="header__instagram"
+    href={INSTAGRAM_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <img class="header__instagram-icon" src={IconInstagram.src} alt="" />
+    <span class="header__instagram-text">Instagram</span>
+  </a>
+
+  <button
+    class="header__toggle"
+    type="button"
+    aria-controls="global-menu"
+    aria-expanded="false"
+    aria-label="メニューを開く"
+  >
+    <span class="header__toggle-icon">
+      <!-- MENU（ハンバーガー） -->
+      <img class="header__toggle-bars" src={IconMenu.src} alt="" />
+      <!-- CLOSE（×）: 同じ線を±30度で重ねる -->
+      <img
+        class="header__toggle-line header__toggle-line--1"
+        src={IconCloseLine.src}
+        alt=""
+      />
+      <img
+        class="header__toggle-line header__toggle-line--2"
+        src={IconCloseLine.src}
+        alt=""
+      />
+    </span>
+    <span class="header__toggle-label">
+      <span class="header__toggle-label-text header__toggle-label-text--menu"
+        >MENU</span
+      >
+      <span class="header__toggle-label-text header__toggle-label-text--close"
+        >CLOSE</span
+      >
+    </span>
+  </button>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>(".header");
+  const toggle = header?.querySelector<HTMLButtonElement>(".header__toggle");
+
+  if (toggle) {
+    const setOpen = (isOpen: boolean) => {
+      document.body.classList.toggle("is-menu-open", isOpen);
+      toggle.setAttribute("aria-expanded", String(isOpen));
+      toggle.setAttribute(
+        "aria-label",
+        isOpen ? "メニューを閉じる" : "メニューを開く"
+      );
+    };
+
+    toggle.addEventListener("click", () => {
+      setOpen(!document.body.classList.contains("is-menu-open"));
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && document.body.classList.contains("is-menu-open")) {
+        setOpen(false);
+      }
+    });
+  }
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .header {
+    // Figmaのノード枠（PC 510x210 / SP 260x170）をそのまま固定配置し、
+    // 中身はノード枠基準の絶対配置で置く
+    position: fixed;
+    top: spx(15);
+    right: 0;
+    z-index: 110;
+    width: spx(260);
+    height: spx(170);
+    @include tablet-up {
+      top: ppx(40 * 1.2);
+      width: ppx(510 * 1.2);
+      height: ppx(210 * 1.2);
+    }
+    @include desktop-up {
+      top: ppx(40);
+      width: ppx(510);
+      height: ppx(210);
+    }
+
+    // 破れ紙のパネル背景
+    &__bg {
+      position: absolute;
+      inset: 0;
+      display: block;
+      filter: drop-shadow(#{spx(7)} #{spx(7)} #{spx(10)} rgba(0, 0, 0, 0.35));
+      pointer-events: none;
+      @include tablet-up {
+        filter: drop-shadow(
+          #{ppx(7 * 1.2)} #{ppx(7 * 1.2)} #{ppx(10 * 1.2)} rgba(0, 0, 0, 0.35)
+        );
+      }
+      @include desktop-up {
+        filter: drop-shadow(#{ppx(7)} #{ppx(7)} #{ppx(10)} rgba(0, 0, 0, 0.35));
+      }
+    }
+
+    &__bg-img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    // Instagram（Figmaフレームの20pxストローク分、設計座標から+10される）
+    &__instagram {
+      position: absolute;
+      top: spx(58);
+      left: spx(58);
+      display: flex;
+      align-items: center;
+      transition: opacity 0.3s ease;
+      @include tablet-up {
+        top: ppx(74 * 1.2);
+        left: ppx(107 * 1.2);
+        gap: ppx(13 * 1.2);
+      }
+      @include desktop-up {
+        top: ppx(74);
+        left: ppx(107);
+        gap: ppx(13);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.6;
+        }
+      }
+    }
+
+    &__instagram-icon {
+      display: block;
+      width: spx(50);
+      height: spx(50);
+      @include tablet-up {
+        width: ppx(50 * 1.2);
+        height: ppx(50 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(50);
+        height: ppx(50);
+      }
+    }
+
+    &__instagram-text {
+      display: none;
+      @include tablet-up {
+        display: block;
+        font-family: "Noto Sans JP", sans-serif;
+        font-weight: 700;
+        line-height: 1;
+        color: #000;
+        white-space: nowrap;
+        font-size: ppx(33 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(33);
+      }
+    }
+
+    // MENU / CLOSE トグル（アイコン＋ラベルまでをタップ領域にする）
+    &__toggle {
+      position: absolute;
+      top: spx(45);
+      left: spx(151.5);
+      width: spx(68);
+      height: spx(76);
+      transition: opacity 0.3s ease;
+      @include tablet-up {
+        top: ppx(61 * 1.2);
+        left: ppx(388.5 * 1.2);
+        width: ppx(68 * 1.2);
+        height: ppx(76 * 1.2);
+      }
+      @include desktop-up {
+        top: ppx(61);
+        left: ppx(388.5);
+        width: ppx(68);
+        height: ppx(76);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.6;
+        }
+      }
+    }
+
+    // アイコンの枠（68x38）。×はこの枠の中心に重ねる
+    &__toggle-icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: spx(68);
+      height: spx(38);
+      @include tablet-up {
+        width: ppx(68 * 1.2);
+        height: ppx(38 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(68);
+        height: ppx(38);
+      }
+    }
+
+    // ハンバーガー（68x38の枠に対し画像は上下に2pxずつはみ出す）
+    &__toggle-bars {
+      position: absolute;
+      top: spx(-2);
+      left: 0;
+      display: block;
+      width: spx(68);
+      height: spx(42);
+      transition: opacity 0.3s ease;
+      @include tablet-up {
+        top: ppx(-2 * 1.2);
+        width: ppx(68 * 1.2);
+        height: ppx(42 * 1.2);
+      }
+      @include desktop-up {
+        top: ppx(-2);
+        width: ppx(68);
+        height: ppx(42);
+      }
+    }
+
+    // ×（同じ線を±30度）
+    &__toggle-line {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: block;
+      width: spx(68);
+      height: spx(4);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      @include tablet-up {
+        width: ppx(68 * 1.2);
+        height: ppx(4 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(68);
+        height: ppx(4);
+      }
+    }
+
+    &__toggle-line--1 {
+      transform: translate(-50%, -50%) rotate(30deg);
+    }
+
+    &__toggle-line--2 {
+      transform: translate(-50%, -50%) rotate(-30deg) scaleY(-1);
+    }
+
+    // MENU / CLOSE のラベル（同じ位置で入れ替わる）
+    &__toggle-label {
+      position: absolute;
+      top: spx(50);
+      left: 50%;
+      display: grid;
+      transform: translateX(-50%);
+      @include tablet-up {
+        top: ppx(50 * 1.2);
+      }
+      @include desktop-up {
+        top: ppx(50);
+      }
+    }
+
+    &__toggle-label-text {
+      grid-area: 1 / 1;
+      justify-self: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      line-height: 1;
+      color: #000;
+      text-align: center;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+      font-size: spx(26);
+      letter-spacing: spx(-0.78);
+      @include tablet-up {
+        font-size: ppx(26 * 1.2);
+        letter-spacing: ppx(-0.78 * 1.2);
+      }
+      @include desktop-up {
+        font-size: ppx(26);
+        letter-spacing: ppx(-0.78);
+      }
+    }
+
+    &__toggle-label-text--close {
+      opacity: 0;
+    }
+  }
+
+  // メニューを開いている状態（ハンバーガー → ×、MENU → CLOSE）
+  :global(body.is-menu-open) {
+    .header__toggle-bars {
+      opacity: 0;
+    }
+
+    .header__toggle-line {
+      opacity: 1;
+    }
+
+    .header__toggle-label-text--menu {
+      opacity: 0;
+    }
+
+    .header__toggle-label-text--close {
+      opacity: 1;
+    }
+  }
+</style>

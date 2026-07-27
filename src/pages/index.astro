@@ -1,6 +1,5 @@
 ---
-// メインSCSSファイルをインポート
-import "../styles/main.scss";
+import BaseLayout from "../assets/components/common/layout/BaseLayout.astro";
 
 import Hero from "../assets/components/pages/top/1-hero.astro";
 import Concept from "../assets/components/pages/top/2-concept.astro";
@@ -10,50 +9,15 @@ import Stay from "../assets/components/pages/top/5-stay.astro";
 import Information from "../assets/components/pages/top/6-information.astro";
 import Howto from "../assets/components/pages/top/7-howto.astro";
 import Access from "../assets/components/pages/top/8-access.astro";
-import Footer from "../assets/components/common/footer/Footer.astro";
 ---
 
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="format-detection" content="telephone=no,address=no,email=no" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Gnome | 湖のほとりのキャンプ場</title>
-
-    <!-- フォント Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <main>
-      <Hero />
-      <Concept />
-      <Activity />
-      <Season />
-      <Stay />
-      <Information />
-      <Howto />
-      <Access />
-    </main>
-    <Footer />
-  </body>
-</html>
-
-<style lang="scss">
-  // 必要なmixin/functionをインポート
-  @import "../styles/variables";
-  @import "../styles/functions";
-  @import "../styles/mixins";
-
-  // トップページはヒーローを全面表示するため、
-  // reset.scss で main に付与される固定ヘッダー分の padding-top を打ち消す
-  main {
-    padding-top: 0;
-  }
-</style>
+<BaseLayout title="Gnome | 湖のほとりのキャンプ場" flush>
+  <Hero />
+  <Concept />
+  <Activity />
+  <Season />
+  <Stay />
+  <Information />
+  <Howto />
+  <Access />
+</BaseLayout>
