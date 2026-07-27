@@ -3,8 +3,8 @@
 import "../../../../styles/main.scss";
 
 import PaperTexture from "../../../images/common/paper-texture.png";
-import WavePc from "../../../images/activity/detail/wave-to-flow.svg";
-import WaveSp from "../../../images/activity/detail/wave-to-flow-sp.svg";
+import WavePc from "../../../images/activity/detail/wave-to-flow.webp";
+import WaveSp from "../../../images/activity/detail/wave-to-flow-sp.webp";
 import IconStepArrow from "../../../images/activity/detail/icon-step-arrow.svg";
 import type { Activity } from "../../../../data/activities";
 
@@ -63,7 +63,7 @@ const { activity } = Astro.props;
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
-  // 繋ぎ波（上=#138185 / 下=#fffdf7 が焼き込まれた画像）
+  // 繋ぎ波（背景は透過。前後セクションの背景が透けて見える）
   .detail-flow-wave {
     display: block;
     line-height: 0;

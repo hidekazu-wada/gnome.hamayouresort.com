@@ -2,8 +2,8 @@
 // メインSCSSファイルをインポート
 import "../../../../styles/main.scss";
 
-import WavePc from "../../../images/activity/detail/wave-to-overview.svg";
-import WaveSp from "../../../images/activity/detail/wave-to-overview-sp.svg";
+import WavePc from "../../../images/activity/detail/wave-to-overview.webp";
+import WaveSp from "../../../images/activity/detail/wave-to-overview-sp.webp";
 import type { Activity } from "../../../../data/activities";
 
 interface Props {
@@ -50,7 +50,7 @@ const { activity } = Astro.props;
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
-  // 繋ぎ波（上=#bee0e1 / 下=#138185 が焼き込まれた画像）
+  // 繋ぎ波（背景は透過。前後セクションの背景が透けて見える）
   .detail-wave {
     display: block;
     line-height: 0;

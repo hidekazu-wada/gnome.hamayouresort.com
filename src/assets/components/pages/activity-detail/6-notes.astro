@@ -64,21 +64,25 @@ const { activity } = Astro.props;
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
-  // 繋ぎの丘。画像は枠より下にはみ出して次セクションに重なる
+  // 繋ぎの丘。背景は透過で、木は枠の上（前セクション側）にはみ出す。
+  // 画像は繋ぎ枠より上下に広いので、枠の位置に合わせて上へずらす
   .detail-notes-wave {
     position: relative;
     z-index: 1;
     height: spx(65);
     @include tablet-up {
-      height: ppx(187.8);
+      height: ppx(187.816);
     }
 
     &__picture {
       position: absolute;
-      top: 0;
       left: 0;
       display: block;
       width: 100%;
+      top: spx(-203);
+      @include tablet-up {
+        top: ppx(-180.279);
+      }
     }
 
     &__img {

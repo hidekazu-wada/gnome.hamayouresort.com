@@ -3,7 +3,10 @@
 import "../../../../styles/main.scss";
 
 import PaperTexture from "../../../images/common/paper-texture.png";
-import Wave from "../../../images/activity/detail/wave-to-reservation.webp";
+// 繋ぎの透過部分は注意事項と同じ「色を敷かないテクスチャ」が透けて見える想定
+import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
+import WavePc from "../../../images/activity/detail/wave-to-reservation.webp";
+import WaveSp from "../../../images/activity/detail/wave-to-reservation-sp.webp";
 
 // 予約先はサイト共通（URL確定後に差し替え）
 const TEL = "0555-82-2650";
@@ -11,9 +14,15 @@ const WEB_RESERVE_URL = "https://www.nap-camp.com/yamanashi/13592";
 ---
 
 <!-- 注意事項 → 予約方法 の繋ぎ -->
-<picture class="detail-reservation-wave">
-  <img class="detail-reservation-wave__img" src={Wave.src} alt="" />
-</picture>
+<div
+  class="detail-reservation-wave"
+  style={`background-image: url(${PaperTexturePlain.src});`}
+>
+  <picture class="detail-reservation-wave__picture">
+    <source srcset={WavePc.src} media="(min-width: 744px)" />
+    <img class="detail-reservation-wave__img" src={WaveSp.src} alt="" />
+  </picture>
+</div>
 
 <section class="detail-reservation" id="reservation">
   <!-- 背景の紙テクスチャ -->
@@ -56,10 +65,30 @@ const WEB_RESERVE_URL = "https://www.nap-camp.com/yamanashi/13592";
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
+  // 背景は透過。透けた部分は注意事項と同じテクスチャを敷いて繋ぐ。
+  // SPは画像が枠より上に広いので、枠に合わせて上へずらす
   .detail-reservation-wave {
-    display: block;
-    line-height: 0;
-    font-size: 0;
+    position: relative;
+    z-index: 1;
+    background-repeat: repeat;
+    background-position: top left;
+    background-size: spx(140);
+    height: spx(89.5);
+    @include tablet-up {
+      height: ppx(289);
+      background-size: ppx(200);
+    }
+
+    &__picture {
+      position: absolute;
+      left: 0;
+      display: block;
+      width: 100%;
+      top: spx(-54.98);
+      @include tablet-up {
+        top: 0;
+      }
+    }
 
     &__img {
       display: block;
