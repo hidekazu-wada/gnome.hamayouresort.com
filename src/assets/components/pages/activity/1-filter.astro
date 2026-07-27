@@ -1,0 +1,348 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import IconChevron from "../../../images/common/icon-chevron.svg";
+import { filterGroups } from "../../../../data/activities";
+---
+
+<section class="activity-filter">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="activity-filter__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <p class="activity-filter__heading">絞り込み検索</p>
+
+  <div class="activity-filter__pills">
+    {
+      filterGroups.map((group) => (
+        <div class="activity-filter__group" data-key={group.key}>
+          <button
+            class="activity-filter__pill"
+            type="button"
+            aria-expanded="false"
+          >
+            <span class="activity-filter__pill-label">{group.label}</span>
+            <img class="activity-filter__pill-icon" src={IconChevron.src} alt="" />
+          </button>
+          <ul class="activity-filter__options">
+            {group.options.map((option) => (
+              <li>
+                <button
+                  class="activity-filter__option"
+                  type="button"
+                  data-value={option}
+                >
+                  {option}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+
+    <!-- リセットだけはデザイン上アイコンなし -->
+    <button
+      class="activity-filter__pill activity-filter__pill--reset"
+      type="button"
+      data-reset
+    >
+      <span class="activity-filter__pill-label">リセット</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  const filter = document.querySelector<HTMLElement>(".activity-filter");
+  const list = document.querySelector<HTMLElement>(".activity-list");
+
+  if (filter && list) {
+    const groups = Array.from(
+      filter.querySelectorAll<HTMLElement>(".activity-filter__group")
+    );
+    const items = Array.from(
+      list.querySelectorAll<HTMLElement>(".activity-list__item")
+    );
+    const empty = list.querySelector<HTMLElement>(".activity-list__empty");
+    const selected: Record<string, string> = {};
+    // 未選択時に戻すためのラベル
+    const defaultLabels = new Map<HTMLElement, string>();
+
+    const closeAll = (except?: HTMLElement) => {
+      groups.forEach((group) => {
+        if (group === except) return;
+        group.classList.remove("is-open");
+        group
+          .querySelector(".activity-filter__pill")
+          ?.setAttribute("aria-expanded", "false");
+      });
+    };
+
+    const apply = () => {
+      let visible = 0;
+      items.forEach((item) => {
+        const filters = JSON.parse(item.dataset.filters || "{}");
+        const matched = Object.entries(selected).every(
+          ([key, value]) => !value || (filters[key] || []).includes(value)
+        );
+        item.hidden = !matched;
+        if (matched) visible += 1;
+      });
+      if (empty) empty.hidden = visible > 0;
+    };
+
+    groups.forEach((group) => {
+      const key = group.dataset.key || "";
+      const pill = group.querySelector<HTMLButtonElement>(
+        ".activity-filter__pill"
+      );
+      const label = group.querySelector<HTMLElement>(
+        ".activity-filter__pill-label"
+      );
+      const defaultLabel = label?.textContent || "";
+      defaultLabels.set(group, defaultLabel);
+
+      pill?.addEventListener("click", () => {
+        const willOpen = !group.classList.contains("is-open");
+        closeAll(group);
+        group.classList.toggle("is-open", willOpen);
+        pill.setAttribute("aria-expanded", String(willOpen));
+      });
+
+      group
+        .querySelectorAll<HTMLButtonElement>(".activity-filter__option")
+        .forEach((option) => {
+          option.addEventListener("click", () => {
+            const value = option.dataset.value || "";
+            // 同じ項目を選び直したら解除
+            if (selected[key] === value) {
+              delete selected[key];
+              if (label) label.textContent = defaultLabel;
+              group.classList.remove("is-selected");
+            } else {
+              selected[key] = value;
+              if (label) label.textContent = value;
+              group.classList.add("is-selected");
+            }
+            group.classList.remove("is-open");
+            pill?.setAttribute("aria-expanded", "false");
+            apply();
+          });
+        });
+    });
+
+    filter
+      .querySelector<HTMLButtonElement>("[data-reset]")
+      ?.addEventListener("click", () => {
+        Object.keys(selected).forEach((key) => delete selected[key]);
+        groups.forEach((group) => {
+          const label = group.querySelector<HTMLElement>(
+            ".activity-filter__pill-label"
+          );
+          if (label) label.textContent = defaultLabels.get(group) || "";
+          group.classList.remove("is-selected", "is-open");
+        });
+        apply();
+      });
+
+    // 外側クリックで閉じる
+    document.addEventListener("click", (e) => {
+      if (!filter.contains(e.target as Node)) closeAll();
+    });
+  }
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .activity-filter {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(80);
+    padding-bottom: spx(2);
+    gap: spx(37);
+    @include tablet-up {
+      padding-top: ppx(80);
+      padding-bottom: ppx(1);
+      gap: ppx(37);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__heading {
+      position: relative;
+      z-index: 1;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      white-space: nowrap;
+      font-size: spx(30);
+      line-height: spx(30);
+      letter-spacing: spx(0.9);
+      @include tablet-up {
+        font-size: ppx(30);
+        line-height: ppx(30);
+        letter-spacing: ppx(0.9);
+      }
+    }
+
+    &__pills {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      width: spx(610);
+      gap: spx(15) spx(10);
+      @include tablet-up {
+        width: ppx(1260);
+        gap: ppx(30) ppx(20);
+      }
+    }
+
+    &__group {
+      position: relative;
+    }
+
+    // Figmaのストロークは内側なので、線幅の分だけpaddingを引いて高さ80にする
+    &__pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      background-color: transparent;
+      border-style: solid;
+      border-color: #000;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+      width: spx(300);
+      padding: spx(23) 0;
+      border-width: spx(4);
+      gap: spx(10);
+      font-size: spx(26);
+      line-height: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        width: ppx(300);
+        padding: ppx(23) 0;
+        border-width: ppx(4);
+        gap: ppx(10);
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.6;
+        }
+      }
+    }
+
+    // 選択中は反転表示（デザインに状態指定がないためリセットボタンに揃えた）
+    &__group.is-selected &__pill {
+      background-color: #138185;
+      color: #fff;
+    }
+
+    &__pill--reset {
+      background-color: #138185;
+      color: #fff;
+    }
+
+    &__pill-icon {
+      display: block;
+      transform: rotate(90deg);
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+
+    &__group.is-open &__pill-icon {
+      transform: rotate(-90deg);
+    }
+
+    // プルダウン（デザインに開いた状態がないためサイトのトーンに合わせて作成）
+    &__options {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: none;
+      background-color: #fffdf7;
+      overflow: clip;
+      width: spx(300);
+      margin-top: spx(8);
+      border-radius: spx(20);
+      box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.16);
+      @include tablet-up {
+        width: ppx(300);
+        margin-top: ppx(8);
+        border-radius: ppx(20);
+        box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.16);
+      }
+    }
+
+    &__group.is-open &__options {
+      display: block;
+    }
+
+    &__option {
+      display: block;
+      width: 100%;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      white-space: nowrap;
+      transition: background-color 0.3s ease;
+      padding: spx(18) spx(10);
+      font-size: spx(24);
+      letter-spacing: spx(1.2);
+      @include tablet-up {
+        padding: ppx(18) ppx(10);
+        font-size: ppx(24);
+        letter-spacing: ppx(1.2);
+      }
+
+      @include hover {
+        &:hover {
+          background-color: #e6f2f2;
+        }
+      }
+    }
+  }
+</style>

@@ -1,0 +1,269 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+// カードは写真の上に置くため白い矢印を使う
+import IconArrow from "../../../images/common/icon-arrow-white.svg";
+import type { Activity } from "../../../../data/activities";
+
+interface Props {
+  activity: Activity;
+}
+
+const { activity } = Astro.props;
+
+// 4文字以上のタグは2行に割って表示する（例: 事前予約 → 事前 / 予約）
+const tagLines = (tag: string) =>
+  tag.length >= 4
+    ? [tag.slice(0, Math.ceil(tag.length / 2)), tag.slice(Math.ceil(tag.length / 2))]
+    : [tag];
+---
+
+<a class="activity-card" href={`/activity/${activity.slug}/`}>
+  <p class="activity-card__title">{activity.title}</p>
+
+  <div class="activity-card__photo">
+    <span class="activity-card__photo-clip">
+      <img
+        class="activity-card__photo-img"
+        src={activity.photo.src}
+        width={activity.photo.width}
+        height={activity.photo.height}
+        alt=""
+        loading="lazy"
+      />
+    </span>
+    <span class="activity-card__badge">{activity.durationLabel}</span>
+    <img class="activity-card__arrow" src={IconArrow.src} alt="" />
+  </div>
+
+  <div class="activity-card__meta">
+    <ul class="activity-card__tags">
+      {
+        activity.tags.map((tag) => (
+          <li class="activity-card__tag">
+            {tagLines(tag).map((line) => (
+              <span class="activity-card__tag-line">{line}</span>
+            ))}
+          </li>
+        ))
+      }
+    </ul>
+    <p class="activity-card__price">{activity.priceLabel}</p>
+  </div>
+
+  <p class="activity-card__description">{activity.description}</p>
+</a>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // カードは SP / PC で同じ設計値（基準ビューポートだけ異なる）
+  .activity-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: spx(530);
+    gap: spx(20);
+    @include tablet-up {
+      width: ppx(530);
+      gap: ppx(20);
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      line-height: 1.6;
+      width: 100%;
+      font-size: spx(40);
+      letter-spacing: spx(2);
+      @include tablet-up {
+        font-size: ppx(40);
+        letter-spacing: ppx(2);
+      }
+    }
+
+    // 写真枠（白フチ＋角丸）
+    &__photo {
+      position: relative;
+      box-sizing: border-box;
+      background-color: #fff;
+      width: spx(500);
+      height: spx(580);
+      border: spx(10) solid #fff;
+      border-radius: spx(40);
+      box-shadow: 0 spx(10) spx(10) rgba(0, 0, 0, 0.08);
+      @include tablet-up {
+        width: ppx(500);
+        height: ppx(580);
+        border-width: ppx(10);
+        border-radius: ppx(40);
+        box-shadow: 0 ppx(10) ppx(10) rgba(0, 0, 0, 0.08);
+      }
+    }
+
+    &__photo-clip {
+      position: absolute;
+      inset: 0;
+      display: block;
+      overflow: clip;
+      border-radius: spx(40);
+      @include tablet-up {
+        border-radius: ppx(40);
+      }
+    }
+
+    &__photo-img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    // ホバーで写真が拡大（指示書）
+    @include hover {
+      &:hover .activity-card__photo-img {
+        transform: scale(1.08);
+      }
+    }
+
+    &__badge {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.5;
+      top: spx(483);
+      padding: spx(9) spx(20) spx(12);
+      border-radius: spx(30);
+      font-size: spx(23);
+      letter-spacing: spx(1.15);
+      @include tablet-up {
+        top: ppx(483);
+        padding: ppx(9) ppx(20) ppx(12);
+        border-radius: ppx(30);
+        font-size: ppx(23);
+        letter-spacing: ppx(1.15);
+      }
+    }
+
+    &__arrow {
+      position: absolute;
+      display: block;
+      // 50pxの枠に対し画像は上下左右5%はみ出す
+      top: spx(483.5);
+      left: spx(398);
+      width: spx(55);
+      height: spx(55);
+      @include tablet-up {
+        top: ppx(483.5);
+        left: ppx(398);
+        width: ppx(55);
+        height: ppx(55);
+      }
+    }
+
+    // タグ＋料金
+    // 左に22pxのオフセットを持つブロックごとカード内で中央寄せされる
+    &__meta {
+      display: flex;
+      align-items: stretch;
+      padding-left: spx(22);
+      gap: spx(30);
+      @include tablet-up {
+        padding-left: ppx(22);
+        gap: ppx(30);
+      }
+    }
+
+    &__tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      width: spx(255);
+      gap: spx(6);
+      @include tablet-up {
+        width: ppx(255);
+        gap: ppx(6);
+      }
+    }
+
+    &__tag {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #138185;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1.2;
+      width: spx(80);
+      height: spx(80);
+      border-radius: spx(10);
+      font-size: spx(23);
+      letter-spacing: spx(1.15);
+      @include tablet-up {
+        width: ppx(80);
+        height: ppx(80);
+        border-radius: ppx(10);
+        font-size: ppx(23);
+        letter-spacing: ppx(1.15);
+      }
+    }
+
+    &__tag-line {
+      display: block;
+      margin-right: spx(-1.15);
+      @include tablet-up {
+        margin-right: ppx(-1.15);
+      }
+    }
+
+    &__price {
+      display: flex;
+      align-items: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      line-height: 1.2;
+      white-space: nowrap;
+      width: spx(180);
+      font-size: spx(30);
+      @include tablet-up {
+        width: ppx(180);
+        font-size: ppx(30);
+      }
+    }
+
+    &__description {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.6;
+      width: spx(490);
+      font-size: spx(24);
+      letter-spacing: spx(2.4);
+      @include tablet-up {
+        width: ppx(490);
+        font-size: ppx(24);
+        letter-spacing: ppx(2.4);
+      }
+    }
+  }
+</style>

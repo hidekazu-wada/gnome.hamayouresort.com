@@ -1,0 +1,105 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import ActivityCard from "../../common/activityCard/ActivityCard.astro";
+import { activities } from "../../../../data/activities";
+---
+
+<section class="activity-list">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="activity-list__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <ul class="activity-list__items">
+    {
+      activities.map((activity) => (
+        <li
+          class="activity-list__item"
+          data-filters={JSON.stringify(activity.filters)}
+        >
+          <ActivityCard activity={activity} />
+        </li>
+      ))
+    }
+  </ul>
+
+  <!-- 絞り込み結果が0件のとき（デザインに指定がないため最小限の表示） -->
+  <p class="activity-list__empty" hidden>
+    条件に合うアクティビティが見つかりませんでした。
+  </p>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .activity-list {
+    position: relative;
+    background-color: #bee0e1;
+    padding-top: spx(80);
+    padding-bottom: spx(90);
+    @include tablet-up {
+      padding-top: ppx(110);
+      padding-bottom: ppx(100);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__items {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: spx(60);
+      @include tablet-up {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: ppx(135) ppx(10);
+      }
+    }
+
+    &__item {
+      display: block;
+    }
+
+    &__item[hidden] {
+      display: none;
+    }
+
+    &__empty {
+      position: relative;
+      z-index: 1;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      font-size: spx(28);
+      @include tablet-up {
+        font-size: ppx(30);
+      }
+    }
+  }
+</style>
