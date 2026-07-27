@@ -1,0 +1,212 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
+import type { Season } from "../../../../data/seasons";
+
+interface Props {
+  season: Season;
+}
+
+const { season } = Astro.props;
+
+// 冬だけ色を敷かずテクスチャそのものを背景にする
+const texture = season.bg ? PaperTexture : PaperTexturePlain;
+---
+
+<section
+  class:list={["season-main", { "is-plain": !season.bg }]}
+  id={season.key}
+  style={`
+    ${season.bg ? `--bg: ${season.bg};` : ""}
+    --illust-left: ${season.illustPc.left};
+    --illust-top: ${season.illustPc.top};
+    --illust-width: ${season.illustPc.width};
+  `}
+>
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="season-main__texture"
+    aria-hidden="true"
+    style={`background-image: url(${texture.src});`}
+  >
+  </div>
+
+  <div class="season-main__block">
+    <img
+      class="season-main__photo season-main__photo--main"
+      src={season.mainPhoto.src}
+      width={season.mainPhoto.width}
+      height={season.mainPhoto.height}
+      alt=""
+    />
+    <img
+      class="season-main__photo season-main__photo--sub"
+      src={season.subPhoto.src}
+      width={season.subPhoto.width}
+      height={season.subPhoto.height}
+      alt=""
+      loading="lazy"
+    />
+
+    <div class="season-main__title">
+      <p class="season-main__title-en">{season.enLarge}</p>
+      <p class="season-main__title-catch">{season.catch}</p>
+    </div>
+  </div>
+
+  <!-- 手描き風のイラスト。セクションの上にはみ出す -->
+  <img class="season-main__illust" src={season.illust} alt="" loading="lazy" />
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .season-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--bg);
+    padding-top: spx(80);
+    padding-bottom: spx(15);
+    @include tablet-up {
+      padding-top: ppx(120);
+      padding-bottom: ppx(160);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 色を敷かない節は合成モードを掛けない
+    &.is-plain &__texture {
+      mix-blend-mode: normal;
+    }
+
+    // 写真とタイトルを重ねる枠
+    &__block {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: spx(1089);
+      @include tablet-up {
+        width: ppx(2323);
+        height: ppx(1021);
+      }
+    }
+
+    &__photo {
+      position: absolute;
+      display: block;
+      object-fit: cover;
+    }
+
+    &__photo--main {
+      top: spx(-0.5);
+      left: 0;
+      width: spx(720);
+      height: spx(572);
+      @include tablet-up {
+        top: 0;
+        left: ppx(229);
+        width: ppx(1281);
+        height: ppx(1021);
+      }
+    }
+
+    &__photo--sub {
+      top: spx(698.75);
+      left: spx(40);
+      width: spx(306);
+      height: spx(306);
+      @include tablet-up {
+        top: ppx(238);
+        left: ppx(1677);
+        width: ppx(646);
+        height: ppx(647);
+      }
+    }
+
+    // SPは中央寄せの2行、PCは設計座標どおりに置く
+    &__title {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      top: spx(471.75);
+      left: spx(37);
+      padding: spx(2.832) spx(10.856);
+      gap: spx(4.72);
+      filter: drop-shadow(#{spx(2.36)} #{spx(2.36)} #{spx(2.124)} rgba(0, 0, 0, 0.65));
+      @include tablet-up {
+        display: block;
+        top: ppx(561.63);
+        left: 0;
+        width: ppx(1000);
+        height: ppx(415);
+        padding: 0;
+        filter: drop-shadow(#{ppx(5)} #{ppx(5)} #{ppx(4.5)} rgba(0, 0, 0, 0.65));
+      }
+    }
+
+    &__title-en {
+      line-height: 1;
+      font-size: spx(140);
+      @include tablet-up {
+        position: absolute;
+        top: ppx(6);
+        left: 0;
+        font-size: ppx(305);
+      }
+    }
+
+    &__title-catch {
+      line-height: 1.6;
+      font-size: spx(26);
+      letter-spacing: spx(2.6);
+      @include tablet-up {
+        position: absolute;
+        top: ppx(321);
+        left: ppx(110.5);
+        font-size: ppx(55);
+        letter-spacing: ppx(5.5);
+      }
+    }
+
+    // 位置は季節ごとに違うのでCSS変数で受ける
+    &__illust {
+      position: absolute;
+      z-index: 2;
+      display: block;
+      height: auto;
+      top: spx(811);
+      left: spx(379.6);
+      width: spx(301.4);
+      @include tablet-up {
+        top: calc(var(--illust-top) * #{ppx(1)});
+        left: calc(var(--illust-left) * #{ppx(1)});
+        width: calc(var(--illust-width) * #{ppx(1)});
+      }
+    }
+  }
+</style>

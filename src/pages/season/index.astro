@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
+import SeasonNav from "../../assets/components/pages/season/1-nav.astro";
+import SeasonMain from "../../assets/components/pages/season/2-main.astro";
+import { seasons } from "../../data/seasons";
+---
+
+<BaseLayout
+  title="四季を楽しむ | Gnome 湖のほとりのキャンプ場"
+  description="西湖のほとりで春夏秋冬それぞれの自然を楽しむ。季節ごとのおすすめポイントとアクティビティをご紹介します。"
+  flush
+  breadcrumb={[{ label: "TOP", href: "/" }, { label: "四季を楽しむ" }]}
+>
+  <PageHeader
+    titleEn="FOUR SEASON"
+    titleJa="四季"
+    lead="春夏秋冬の大自然を楽しむ"
+  />
+  <SeasonNav />
+  {seasons.map((season) => <SeasonMain season={season} />)}
+</BaseLayout>
