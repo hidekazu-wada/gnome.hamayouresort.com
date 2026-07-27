@@ -21,6 +21,12 @@ const related = activities.filter((item) => item.slug !== activity.slug);
 
 <!-- 予約方法 → 人気のアクティビティ の繋ぎ -->
 <div class="detail-related-wave">
+  <div
+    class="detail-related-wave__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
   <picture class="detail-related-wave__picture">
     <source srcset={WavePc.src} media="(min-width: 744px)" />
     <img class="detail-related-wave__img" src={WaveSp.src} alt="" />
@@ -95,13 +101,29 @@ const related = activities.filter((item) => item.slug !== activity.slug);
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
-  // 背景は透過。画像が枠より上に広いので、枠に合わせて上へずらす
+  // 枠の背景は下のセクション（人気のアクティビティ）と同じ色＋テクスチャ。
+  // 画像が枠より上に広いので、枠に合わせて上へずらす
   .detail-related-wave {
     position: relative;
     z-index: 1;
+    overflow: clip;
+    background-color: #bee0e1;
     height: spx(96);
     @include tablet-up {
       height: ppx(200);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
     }
 
     &__picture {

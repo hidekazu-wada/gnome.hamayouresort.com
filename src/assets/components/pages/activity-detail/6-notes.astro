@@ -16,7 +16,10 @@ const { activity } = Astro.props;
 ---
 
 <!-- ご利用の流れ → 注意事項 の繋ぎ（丘と木が下のセクションにはみ出す） -->
-<div class="detail-notes-wave">
+<div
+  class="detail-notes-wave"
+  style={`background-image: url(${PaperTexture.src});`}
+>
   <picture class="detail-notes-wave__picture">
     <source srcset={WavePc.src} media="(min-width: 744px)" />
     <img class="detail-notes-wave__img" src={WaveSp.src} alt="" />
@@ -69,9 +72,13 @@ const { activity } = Astro.props;
   .detail-notes-wave {
     position: relative;
     z-index: 1;
+    background-repeat: repeat;
+    background-position: top left;
+    background-size: spx(140);
     height: spx(65);
     @include tablet-up {
       height: ppx(187.816);
+      background-size: ppx(200);
     }
 
     &__picture {

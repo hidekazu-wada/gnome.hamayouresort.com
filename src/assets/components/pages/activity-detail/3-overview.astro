@@ -13,11 +13,13 @@ interface Props {
 const { activity } = Astro.props;
 ---
 
-<!-- メインビジュアル → 概要 の繋ぎ波 -->
-<picture class="detail-wave">
-  <source srcset={WavePc.src} media="(min-width: 744px)" />
-  <img class="detail-wave__img" src={WaveSp.src} alt="" />
-</picture>
+<!-- メインビジュアル → 概要 の繋ぎ波（枠の背景は下のセクション色、波の図形だけを重ねる） -->
+<div class="detail-wave">
+  <picture class="detail-wave__picture">
+    <source srcset={WavePc.src} media="(min-width: 744px)" />
+    <img class="detail-wave__img" src={WaveSp.src} alt="" />
+  </picture>
+</div>
 
 <section class="detail-overview" id="overview">
   <div class="detail-overview__head">
@@ -50,11 +52,22 @@ const { activity } = Astro.props;
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
-  // 繋ぎ波（背景は透過。前後セクションの背景が透けて見える）
+  // 繋ぎ波。Figmaの構成どおり「枠の背景＝下のセクション色」＋「波の図形（透過）」
   .detail-wave {
-    display: block;
-    line-height: 0;
-    font-size: 0;
+    position: relative;
+    background-color: #138185;
+    height: spx(90);
+    @include tablet-up {
+      height: ppx(188);
+    }
+
+    &__picture {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+    }
 
     &__img {
       display: block;

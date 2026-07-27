@@ -15,11 +15,19 @@ interface Props {
 const { activity } = Astro.props;
 ---
 
-<!-- 料金 → ご利用の流れ の繋ぎ波 -->
-<picture class="detail-flow-wave">
-  <source srcset={WavePc.src} media="(min-width: 744px)" />
-  <img class="detail-flow-wave__img" src={WaveSp.src} alt="" />
-</picture>
+<!-- 料金 → ご利用の流れ の繋ぎ波（枠の背景は下のセクションと同じ、波の図形だけを重ねる） -->
+<div class="detail-flow-wave">
+  <div
+    class="detail-flow-wave__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+  <picture class="detail-flow-wave__picture">
+    <source srcset={WavePc.src} media="(min-width: 744px)" />
+    <img class="detail-flow-wave__img" src={WaveSp.src} alt="" />
+  </picture>
+</div>
 
 <section class="detail-flow" id="flow">
   <!-- 背景の紙テクスチャ -->
@@ -63,11 +71,36 @@ const { activity } = Astro.props;
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
-  // 繋ぎ波（背景は透過。前後セクションの背景が透けて見える）
+  // 繋ぎ波。枠の背景は下のセクション（ご利用の流れ）と同じ色＋テクスチャ
   .detail-flow-wave {
-    display: block;
-    line-height: 0;
-    font-size: 0;
+    position: relative;
+    overflow: clip;
+    background-color: #fffdf7;
+    height: spx(92);
+    @include tablet-up {
+      height: ppx(324.783);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__picture {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+    }
 
     &__img {
       display: block;
