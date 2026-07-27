@@ -1,0 +1,52 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import toSchedule from "../../../images/howto/wave-to-schedule.webp";
+import toDay from "../../../images/howto/wave-to-day.webp";
+import toActivity from "../../../images/howto/wave-to-activity.webp";
+
+interface Props {
+  /** どのセクションへの繋ぎか */
+  to: "schedule" | "day" | "activity";
+}
+
+const { to } = Astro.props;
+
+// 枠の高さと画像のはみ出し量はセクションごとに違う
+const waves = {
+  schedule: { src: toSchedule.src, height: 207.816, top: -5.55, left: -0.44, width: 100.885 },
+  day: { src: toDay.src, height: 324.783, top: 0, left: 0, width: 100 },
+  activity: { src: toActivity.src, height: 200, top: -5.77, left: -0.43, width: 100.881 },
+};
+
+const wave = waves[to];
+---
+
+<div class="howto-wave" style={`--ratio: ${wave.height / 2560};`}>
+  <img
+    class="howto-wave__img"
+    src={wave.src}
+    alt=""
+    style={`top: ${wave.top}%; left: ${wave.left}%; width: ${wave.width}%; height: ${100 - wave.top}%;`}
+  />
+</div>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 高さは設計の比率で出す。SPも同じ画像を高さに合わせて縮める
+  .howto-wave {
+    position: relative;
+    height: calc(100vw * var(--ratio));
+
+    &__img {
+      position: absolute;
+      display: block;
+      object-fit: fill;
+    }
+  }
+</style>

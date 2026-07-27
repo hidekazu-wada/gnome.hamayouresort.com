@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
 import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
+import Wave from "../../assets/components/pages/howto/0-wave.astro";
 import Intro from "../../assets/components/pages/howto/1-intro.astro";
 import Schedule from "../../assets/components/pages/howto/2-schedule.astro";
 import Day from "../../assets/components/pages/howto/3-day.astro";
+import Activity from "../../assets/components/pages/howto/4-activity.astro";
 import { howtos } from "../../data/howto";
 
 export function getStaticPaths() {
@@ -32,6 +34,10 @@ const { howto } = Astro.props;
     lead="GNOMEを120%満喫する"
   />
   <Intro howto={howto} />
+  <Wave to="schedule" />
   <Schedule howto={howto} />
+  <Wave to="day" />
   {howto.days.map((day) => <Day day={day} />)}
+  <Wave to="activity" />
+  <Activity howto={howto} />
 </BaseLayout>

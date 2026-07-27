@@ -3,6 +3,7 @@
 import "../../../../styles/main.scss";
 
 import PaperTexture from "../../../images/common/paper-texture.png";
+import Trees from "../../../images/howto/trees.svg";
 import { howtos, type Howto } from "../../../../data/howto";
 
 interface Props {
@@ -20,6 +21,9 @@ const { howto } = Astro.props;
     style={`background-image: url(${PaperTexture.src});`}
   >
   </div>
+
+  <!-- 左上の木のイラスト -->
+  <img class="howto-intro__trees" src={Trees.src} alt="" />
 
   <div class="howto-intro__body">
     <!-- 表示中のケースだけ色が変わる -->
@@ -93,6 +97,22 @@ const { howto } = Astro.props;
       pointer-events: none;
       @include tablet-up {
         background-size: ppx(200);
+      }
+    }
+
+    // SPは幅が足りないので少し小さくして左端に寄せる
+    &__trees {
+      position: absolute;
+      z-index: 1;
+      display: block;
+      height: auto;
+      top: spx(30);
+      left: spx(20);
+      width: spx(120);
+      @include tablet-up {
+        top: ppx(99);
+        left: ppx(108.8);
+        width: ppx(236.3);
       }
     }
 
