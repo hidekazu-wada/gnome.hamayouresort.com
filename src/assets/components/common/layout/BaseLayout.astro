@@ -4,6 +4,7 @@ import "../../../../styles/main.scss";
 
 import Header from "../header/Header.astro";
 import Footer from "../footer/Footer.astro";
+import PageTop from "../pageTop/PageTop.astro";
 
 interface Props {
   /** <title> に入るページタイトル */
@@ -45,6 +46,7 @@ const {
       <slot />
     </main>
     <Footer />
+    <PageTop />
   </body>
 </html>
 
