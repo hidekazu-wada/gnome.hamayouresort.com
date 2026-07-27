@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../assets/components/common/pageHeader/PageHeader.astro";
+import Rental from "../assets/components/pages/rental/1-rental.astro";
+import Sale from "../assets/components/pages/rental/2-sale.astro";
+---
+
+<BaseLayout
+  title="レンタル・販売品 | Gnome 湖のほとりのキャンプ場"
+  description="Gnomeでレンタルできるキャンプ用品と、管理棟で販売している商品の一覧です。"
+  flush
+  breadcrumb={[{ label: "TOP", href: "/" }, { label: "レンタル・販売品" }]}
+>
+  <PageHeader titleEn="RENTAL" titleJa="レンタル・販売品" />
+  <Rental />
+  <Sale />
+</BaseLayout>

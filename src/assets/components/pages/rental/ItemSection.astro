@@ -1,0 +1,325 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import type { Item } from "../../../../data/rental";
+
+interface Props {
+  /** セクション見出し（例: レンタル用品） */
+  title: string;
+  /**
+   * 見出し下のリード文。改行位置を明示するためHTMLで渡す。
+   * PCのみの改行: <br class="item-section__br-pc">
+   * SPのみの改行: <br class="item-section__br-sp">
+   */
+  lead: string;
+  items: Item[];
+}
+
+const { title, lead, items } = Astro.props;
+---
+
+<section class="item-section">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="item-section__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="item-section__head">
+    <h2 class="item-section__title">{title}</h2>
+    <div class="item-section__title-line" aria-hidden="true"></div>
+  </div>
+
+  <div class="item-section__body">
+    <p class="item-section__lead" set:html={lead} />
+
+    <ul class="item-section__grid">
+      {
+        items.map((item) => (
+          <li class="item-section__card">
+            <img
+              class="item-section__photo"
+              src={item.photo.src}
+              width={item.photo.width}
+              height={item.photo.height}
+              alt=""
+              loading="lazy"
+            />
+
+            {/* 品名と補足の間に空白を作らないよう改行を入れない */}
+            <p class="item-section__name">{item.name}{item.small && <span class="item-section__name-small">{item.small}</span>}</p>
+
+            <div class="item-section__price-row">
+              {item.badge && (
+                <span class="item-section__badge">{item.badge}</span>
+              )}
+              <span class="item-section__price">{item.price}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .item-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(50);
+    @include tablet-up {
+      padding-top: ppx(100);
+      gap: ppx(40);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // Figmaでは線が高さ0で描かれるため、gapから線の太さ(5px)を引いて合わせる
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    // 見出し下の破線（SP: 4/16 / PC: 6/21）
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #138185 0,
+        #138185 #{spx(4)},
+        transparent #{spx(4)},
+        transparent #{spx(16)}
+      );
+      @include tablet-up {
+        width: ppx(2020);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #138185 0,
+          #138185 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__body {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: spx(30);
+      padding-bottom: spx(70);
+      gap: spx(40);
+      @include tablet-up {
+        padding-top: ppx(30);
+        padding-bottom: ppx(70);
+        gap: ppx(40);
+      }
+    }
+
+    &__lead {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.8;
+      white-space: nowrap;
+      font-size: spx(27);
+      @include tablet-up {
+        font-size: ppx(32);
+      }
+
+      // 改行位置は断面ごとに出し分ける。set:html で差し込むためスコープが付かない
+      :global(.item-section__br-pc) {
+        display: none;
+        @include tablet-up {
+          display: inline;
+        }
+      }
+
+      :global(.item-section__br-sp) {
+        display: inline;
+        @include tablet-up {
+          display: none;
+        }
+      }
+    }
+
+    // SPは2列（310×2＋間隔10＝630）、PCは4列（490×4＋間隔20×3＝2020）
+    &__grid {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      width: spx(630);
+      gap: spx(30) spx(10);
+      @include tablet-up {
+        width: ppx(2020);
+        padding-top: ppx(30);
+        gap: ppx(100) ppx(20);
+      }
+    }
+
+    &__card {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #fff;
+      width: spx(310);
+      padding: spx(10) 0 spx(25);
+      border-radius: spx(20);
+      gap: spx(13);
+      filter: drop-shadow(0 #{spx(10)} #{spx(12)} rgba(0, 0, 0, 0.08));
+      @include tablet-up {
+        width: ppx(490);
+        padding: ppx(15) 0 ppx(40);
+        border-radius: ppx(30);
+        gap: ppx(20);
+        filter: drop-shadow(0 #{ppx(10)} #{ppx(12)} rgba(0, 0, 0, 0.08));
+      }
+    }
+
+    &__photo {
+      display: block;
+      object-fit: cover;
+      width: spx(290);
+      height: spx(215);
+      border-radius: spx(12);
+      @include tablet-up {
+        width: ppx(460);
+        height: ppx(340);
+        border-radius: ppx(20);
+      }
+    }
+
+    &__name {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.6;
+      width: spx(310);
+      font-size: spx(26);
+      letter-spacing: spx(2.6);
+      margin-right: spx(-2.6);
+      @include tablet-up {
+        width: ppx(490);
+        font-size: ppx(40);
+        letter-spacing: ppx(4);
+        margin-right: ppx(-4);
+      }
+    }
+
+    &__name-small {
+      font-size: spx(19);
+      letter-spacing: spx(1.9);
+      @include tablet-up {
+        font-size: ppx(30);
+        letter-spacing: ppx(3);
+      }
+    }
+
+    &__price-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: spx(12);
+      @include tablet-up {
+        gap: ppx(20);
+      }
+    }
+
+    // letter-spacingの分だけ右paddingを詰めて、ピル内の文字を中央に見せる
+    &__badge {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #dde9cd;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #507425;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.6;
+      font-size: spx(16.43);
+      letter-spacing: spx(1.643);
+      padding: spx(6) spx(10.357) spx(6) spx(12);
+      @include tablet-up {
+        font-size: ppx(26);
+        letter-spacing: ppx(2.6);
+        padding: ppx(10) ppx(17.4) ppx(10) ppx(20);
+      }
+    }
+
+    &__price {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.5;
+      font-size: spx(25);
+      letter-spacing: spx(1.25);
+      margin-right: spx(-1.25);
+      @include tablet-up {
+        font-size: ppx(40);
+        letter-spacing: ppx(2);
+        margin-right: ppx(-2);
+      }
+    }
+  }
+</style>

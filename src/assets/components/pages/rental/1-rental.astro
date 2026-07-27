@@ -1,0 +1,16 @@
+---
+import ItemSection from "./ItemSection.astro";
+import { rentalItems } from "../../../../data/rental";
+
+const lead = [
+  "レンタル用品はサイトご予約の際に",
+  '<br class="item-section__br-sp">',
+  "お申込みいただけます。",
+  "<br>",
+  "※ご予約サイト（なっぷ）のマイページから",
+  '<br class="item-section__br-sp">',
+  "追加や削除をすることも可能です。",
+].join("");
+---
+
+<ItemSection title="レンタル用品" lead={lead} items={rentalItems} />

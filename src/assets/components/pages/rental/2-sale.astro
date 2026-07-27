@@ -1,0 +1,14 @@
+---
+import ItemSection from "./ItemSection.astro";
+import { saleItems } from "../../../../data/rental";
+
+const lead = [
+  "キャンプビレッジ・ノーム管理棟で販売中です。",
+  "<br>",
+  "※品切れや価格の変動がある場合もございます。",
+  "<br>",
+  "※電子マネー「PAYPAY」がご利用いただけます。",
+].join("");
+---
+
+<ItemSection title="販売品" lead={lead} items={saleItems} />
