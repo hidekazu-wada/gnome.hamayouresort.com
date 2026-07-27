@@ -4,6 +4,7 @@ import PageHeader from "../../assets/components/common/pageHeader/PageHeader.ast
 import AnchorNav from "../../assets/components/common/anchorNav/AnchorNav.astro";
 import Hero from "../../assets/components/pages/stay-detail/1-hero.astro";
 import AreaMap from "../../assets/components/pages/stay-detail/2-areamap.astro";
+import Price from "../../assets/components/pages/stay-detail/3-price.astro";
 import { stays } from "../../data/stays";
 
 export function getStaticPaths() {
@@ -38,4 +39,5 @@ const title = stay.titleLines.join("");
   />
   <Hero stay={stay} />
   <AreaMap stay={stay} />
+  <Price stay={stay} />
 </BaseLayout>

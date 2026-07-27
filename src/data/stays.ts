@@ -61,6 +61,10 @@ export type Stay = {
   spec: { label: string; lines: string[] }[];
   /** エリアマップ上の位置。マップ画像(1868×1401)内の設計px */
   mapMarker: { left: number; top: number; width: number; height: number };
+  /** 料金表の1行目に出す金額 */
+  priceAmount: string;
+  /** 料金表。amountは大きく、notesは小さく表示する */
+  priceRows: { label: string; amount?: string; lines?: string[]; notes?: string[] }[];
 };
 
 const photos = [site01, site02, site03, site04, site05, site06, site07, site08];
@@ -69,6 +73,42 @@ const photos = [site01, site02, site03, site04, site05, site06, site07, site08];
 const heroPhotos = [site01, site05, site04];
 const heroBody =
   "ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。";
+const priceRows = [
+  { label: "料金", amount: "" },
+  {
+    label: "支払方法",
+    lines: ["オンラインカード決済のみ（VISA,MASTER,JCB,AMEX）"],
+  },
+  {
+    label: "駐車場代",
+    lines: ["１台目：無料", "２台目：550円（税込）"],
+    notes: [
+      "※当日の受付も可能ですのでチェックイン時にお申し付けください。",
+      "※駐車場所は管理棟前の砂利の駐車場です。",
+      "※荷物の搬入、搬出時には乗り入れ可能です。",
+    ],
+  },
+  {
+    label: "アーリー<br>チェックイン",
+    lines: ["9:00～　3,300円", "12:00～　1,650円"],
+    notes: [
+      "※当日受付",
+      "※受付時に現金でお支払いください",
+      "※心配な方は前日の15～17時にご連絡いただけば状況のご案内は可能です。",
+      "　　キャンプ場直通　0555-82-2650または090-6196-2170",
+    ],
+  },
+  {
+    label: "レイト<br>チェックアウト",
+    lines: ["～16:00　3,300円"],
+    notes: ["※チェックイン時にお伝えください", "※受付時に現金でお支払いください"],
+  },
+  {
+    label: "キャンセル料",
+    lines: ["3日前・・・30％　前日・・・50％　当日・・・100％"],
+  },
+];
+
 const spec = [
   {
     label: "広さ",
@@ -242,7 +282,14 @@ const base = [
 ] satisfies Array<
   Omit<
     Stay,
-    "slug" | "photo" | "heroPhotos" | "heroBody" | "spec" | "mapMarker"
+    | "slug"
+    | "photo"
+    | "heroPhotos"
+    | "heroBody"
+    | "spec"
+    | "mapMarker"
+    | "priceAmount"
+    | "priceRows"
   > & { key: string }
 >;
 
@@ -264,5 +311,7 @@ export const stays: Stay[] = Array.from({ length: 16 }, (_, i) => {
       width: 76,
       height: 134,
     },
+    priceAmount: `${rest.price.replace("¥", "").replace("〜", "")}円（税込）〜/1泊`,
+    priceRows,
   };
 });
