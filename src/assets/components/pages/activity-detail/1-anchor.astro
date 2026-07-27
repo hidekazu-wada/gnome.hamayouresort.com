@@ -1,0 +1,139 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import IconChevron from "../../../images/common/icon-chevron.svg";
+
+const links = [
+  { label: "概要", href: "#overview" },
+  { label: "料金", href: "#price" },
+  { label: "ご利用の流れ", href: "#flow" },
+  { label: "注意事項", href: "#notes" },
+  { label: "予約方法", href: "#reservation" },
+];
+---
+
+<nav class="detail-anchor" aria-label="ページ内リンク">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="detail-anchor__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <ul class="detail-anchor__list">
+    {
+      links.map((link) => (
+        <li>
+          <a class="detail-anchor__pill" href={link.href}>
+            <span class="detail-anchor__pill-label">{link.label}</span>
+            <img class="detail-anchor__pill-icon" src={IconChevron.src} alt="" />
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .detail-anchor {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #bee0e1;
+    padding-top: spx(80);
+    padding-bottom: spx(2);
+    @include tablet-up {
+      padding-top: ppx(80);
+      padding-bottom: ppx(20);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__list {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      width: spx(610);
+      gap: spx(15) spx(10);
+      @include tablet-up {
+        width: auto;
+        gap: ppx(20);
+      }
+    }
+
+    // Figmaのストロークは内側なので、線幅の分だけpaddingを引いて高さ80にする
+    &__pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      border-style: solid;
+      border-color: #000;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+      width: spx(300);
+      padding: spx(23) 0;
+      border-width: spx(4);
+      gap: spx(10);
+      font-size: spx(26);
+      line-height: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        width: ppx(300);
+        padding: ppx(23) 0;
+        border-width: ppx(4);
+        gap: ppx(10);
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.6;
+        }
+      }
+    }
+
+    &__pill-icon {
+      display: block;
+      transform: rotate(90deg);
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+  }
+</style>

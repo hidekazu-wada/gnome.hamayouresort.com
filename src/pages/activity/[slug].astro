@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
+import Anchor from "../../assets/components/pages/activity-detail/1-anchor.astro";
+import Hero from "../../assets/components/pages/activity-detail/2-hero.astro";
+import { activities } from "../../data/activities";
+
+export function getStaticPaths() {
+  return activities.map((activity) => ({
+    params: { slug: activity.slug },
+    props: { activity },
+  }));
+}
+
+const { activity } = Astro.props;
+---
+
+<BaseLayout
+  title={`${activity.title} | アクティビティ | Gnome 湖のほとりのキャンプ場`}
+  flush
+  breadcrumb={[
+    { label: "TOP", href: "/" },
+    { label: "アクティビティ", href: "/activity/" },
+    { label: activity.title },
+  ]}
+>
+  <PageHeader
+    titleEn={activity.titleEn}
+    titleJa={activity.titleJa}
+    lead={activity.lead}
+  />
+  <Anchor />
+  <Hero activity={activity} />
+</BaseLayout>

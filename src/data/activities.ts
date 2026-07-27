@@ -9,6 +9,7 @@ import card05 from "../assets/images/activity/cards/card-05.jpg";
 import card06 from "../assets/images/activity/cards/card-06.jpg";
 import card07 from "../assets/images/activity/cards/card-07.jpg";
 import card08 from "../assets/images/activity/cards/card-08.jpg";
+import hero01 from "../assets/images/activity/detail/hero-01.jpg";
 
 /**
  * 絞り込み検索の項目と選択肢。
@@ -48,12 +49,28 @@ export type Activity = {
   description: string;
   /** 絞り込み用の属性。該当する選択肢を全て入れる */
   filters: Record<FilterKey, string[]>;
+
+  // --- 詳細ページ ---
+  /** メインビジュアルの写真。自動でディゾルブ切り替えする */
+  heroPhotos: ImageMetadata[];
+  /** メインビジュアルの見出し（改行は <br> で明示） */
+  heroHeading: string;
+  /** メインビジュアルの本文。1要素＝1段落 */
+  heroBody: string[];
 };
 
 const photos = [card01, card02, card03, card04, card05, card06, card07, card08];
 
 const description =
   "ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。";
+
+// 詳細ページのメインビジュアル（実データ確定までは全アクティビティ共通のダミー）
+const heroPhotos = [hero01, card01, card05];
+const heroBody = [
+  "1日のうちで最もコンディションがよくなる確率が高いのが早朝と夕方です。",
+  "1組限定のプライベートツアーで朝ならではの見どころをご案内いたします。",
+  "約1時間半のツアーです。もちろんレクチャー付きなので初めてでも大丈夫です。",
+];
 
 const base = [
   {
@@ -62,6 +79,7 @@ const base = [
     titleEn: "SUP",
     titleJa: "サップツアー",
     lead: "新しい景色と出会える水上散歩",
+    heroHeading: "天気が良ければ<br>富士山が見える水上散歩",
     durationLabel: "所要時間：約60分",
     priceLabel: "¥4,400〜",
     tags: ["事前予約", "個人", "こども"],
@@ -81,6 +99,7 @@ const base = [
     titleEn: "CAMPFIRE",
     titleJa: "キャンプファイヤー",
     lead: "火を囲んで過ごす特別な夜",
+    heroHeading: "揺れる炎を眺めながら<br>語り合う特別な夜",
     durationLabel: "所要時間：約60分",
     priceLabel: "¥4,400〜",
     tags: ["事前予約", "個人", "こども"],
@@ -100,6 +119,7 @@ const base = [
     titleEn: "KAYAK",
     titleJa: "ホビー足漕ぎカヤック",
     lead: "足で漕いで両手が自由になるカヤック",
+    heroHeading: "両手が自由だから<br>写真も釣りも楽しめる",
     durationLabel: "所要時間：約60分",
     priceLabel: "¥4,400〜",
     tags: ["事前予約", "個人", "こども"],
@@ -119,6 +139,7 @@ const base = [
     titleEn: "TRAIL",
     titleJa: "樹海トレイル",
     lead: "ガイドと歩く青木ヶ原樹海",
+    heroHeading: "ガイドと歩く<br>苔むした原生林の道",
     durationLabel: "所要時間：約60分",
     priceLabel: "¥4,400〜",
     tags: ["事前予約", "個人", "こども"],
@@ -132,7 +153,11 @@ const base = [
       reservation: ["要予約"],
     },
   },
-] satisfies Array<Omit<Activity, "slug" | "photo" | "description"> & { key: string }>;
+] satisfies Array<
+  Omit<Activity, "slug" | "photo" | "description" | "heroPhotos" | "heroBody"> & {
+    key: string;
+  }
+>;
 
 /** Figmaのダミー（4種 × 3周 = 12件）を再現した暫定データ */
 export const activities: Activity[] = Array.from({ length: 12 }, (_, i) => {
@@ -143,5 +168,10 @@ export const activities: Activity[] = Array.from({ length: 12 }, (_, i) => {
     slug: round === 0 ? key : `${key}-${round + 1}`,
     photo: photos[i % photos.length],
     description,
+    heroPhotos,
+    heroBody,
   };
 });
+
+export const getActivity = (slug: string) =>
+  activities.find((activity) => activity.slug === slug);

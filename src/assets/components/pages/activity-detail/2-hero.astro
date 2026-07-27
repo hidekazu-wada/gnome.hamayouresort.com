@@ -1,0 +1,263 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import type { Activity } from "../../../../data/activities";
+
+interface Props {
+  activity: Activity;
+}
+
+const { activity } = Astro.props;
+---
+
+<section class="detail-hero">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="detail-hero__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="detail-hero__card">
+    <div class="detail-hero__visual">
+      <!-- 写真は自動再生でディゾルブ切り替え（指示書） -->
+      <div class="detail-hero__photos">
+        {
+          activity.heroPhotos.map((photo, i) => (
+            <img
+              class:list={["detail-hero__photo", { "is-active": i === 0 }]}
+              src={photo.src}
+              width={photo.width}
+              height={photo.height}
+              alt=""
+              loading={i === 0 ? "eager" : "lazy"}
+            />
+          ))
+        }
+      </div>
+
+      <ul class="detail-hero__dots">
+        {
+          activity.heroPhotos.map((_, i) => (
+            <li>
+              <button
+                class:list={["detail-hero__dot", { "is-active": i === 0 }]}
+                type="button"
+                data-index={i}
+                aria-label={`${i + 1}枚目の写真を表示`}
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="detail-hero__body">
+      <h2 class="detail-hero__heading" set:html={activity.heroHeading} />
+      <div class="detail-hero__text">
+        {activity.heroBody.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const hero = document.querySelector<HTMLElement>(".detail-hero");
+
+  if (hero) {
+    const photos = Array.from(
+      hero.querySelectorAll<HTMLElement>(".detail-hero__photo")
+    );
+    const dots = Array.from(
+      hero.querySelectorAll<HTMLButtonElement>(".detail-hero__dot")
+    );
+
+    if (photos.length > 1) {
+      let current = 0;
+      let timer = 0;
+
+      const show = (index: number) => {
+        current = (index + photos.length) % photos.length;
+        photos.forEach((photo, i) =>
+          photo.classList.toggle("is-active", i === current)
+        );
+        dots.forEach((dot, i) => dot.classList.toggle("is-active", i === current));
+      };
+
+      const start = () => {
+        window.clearInterval(timer);
+        timer = window.setInterval(() => show(current + 1), 5000);
+      };
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener("click", () => {
+          show(i);
+          start();
+        });
+      });
+
+      start();
+    }
+  }
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .detail-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding: spx(50) 0;
+    @include tablet-up {
+      padding: ppx(90) 0;
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__card {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      border-radius: spx(50);
+      padding: spx(25) spx(25) spx(50);
+      gap: spx(40);
+      @include tablet-up {
+        flex-direction: row;
+        border-radius: ppx(50);
+        padding: ppx(70) ppx(100) ppx(50);
+        gap: ppx(109);
+      }
+    }
+
+    &__visual {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(40);
+      @include tablet-up {
+        gap: ppx(50);
+      }
+    }
+
+    // 写真（重ねてディゾルブ）
+    &__photos {
+      position: relative;
+      overflow: clip;
+      width: spx(600);
+      height: spx(450);
+      border-radius: spx(30);
+      @include tablet-up {
+        width: ppx(976);
+        height: ppx(732);
+        border-radius: ppx(50);
+      }
+    }
+
+    &__photo {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    &__photo.is-active {
+      opacity: 1;
+    }
+
+    &__dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(20);
+      }
+    }
+
+    &__dot {
+      display: block;
+      border-radius: 50%;
+      background-color: #cfcfcf;
+      transition: background-color 0.3s ease;
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        width: ppx(30);
+        height: ppx(30);
+      }
+    }
+
+    &__dot.is-active {
+      background-color: #7f7f7f;
+    }
+
+    // 見出し＋本文
+    &__body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: spx(30);
+      @include tablet-up {
+        height: ppx(558);
+        gap: ppx(30);
+      }
+    }
+
+    &__heading {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #8aad61;
+      line-height: 1.5;
+      width: spx(560);
+      font-size: spx(46);
+      @include tablet-up {
+        line-height: 1.6;
+        width: auto;
+        font-size: ppx(55);
+      }
+    }
+
+    &__text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.7;
+      width: spx(560);
+      font-size: spx(27);
+      @include tablet-up {
+        line-height: 1.8;
+        width: ppx(715);
+        font-size: ppx(30);
+      }
+    }
+  }
+</style>
