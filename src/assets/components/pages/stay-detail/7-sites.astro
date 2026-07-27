@@ -1,0 +1,326 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import WaveInPc from "../../../images/stay/detail/wave-to-sites.webp";
+import WaveInSp from "../../../images/stay/detail/wave-to-sites-sp.webp";
+import WaveOutPc from "../../../images/stay/detail/wave-to-footer.webp";
+import WaveOutSp from "../../../images/stay/detail/wave-to-footer-sp.webp";
+import IconArrow from "../../../images/common/icon-arrow-white.svg";
+import StayCard from "../../common/stayCard/StayCard.astro";
+import { stays, type Stay } from "../../../../data/stays";
+
+interface Props {
+  stay: Stay;
+}
+
+const { stay } = Astro.props;
+
+// 表示中のサイトを除いた一覧
+const others = stays.filter((item) => item.slug !== stay.slug);
+---
+
+<!-- おすすめのアクティビティ → サイト一覧 の繋ぎ -->
+<div class="stay-sites-wave">
+  <div
+    class="stay-sites-wave__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+  <picture class="stay-sites-wave__picture">
+    <source srcset={WaveInPc.src} media="(min-width: 744px)" />
+    <img class="stay-sites-wave__img" src={WaveInSp.src} alt="" />
+  </picture>
+</div>
+
+<section class="stay-sites">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="stay-sites__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="stay-sites__slider swiper">
+    <ul class="swiper-wrapper">
+      {
+        others.map((item) => (
+          <li class="stay-sites__slide swiper-slide">
+            <StayCard stay={item} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="stay-sites__pagination"></div>
+
+  <a class="stay-sites__button" href="/stay/">
+    <span class="stay-sites__button-label">サイト一覧</span>
+    <img class="stay-sites__button-icon" src={IconArrow.src} alt="" />
+  </a>
+</section>
+
+<!-- サイト一覧 → フッター の繋ぎ -->
+<div class="stay-footer-wave">
+  <div
+    class="stay-footer-wave__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+  <picture class="stay-footer-wave__picture">
+    <source srcset={WaveOutPc.src} media="(min-width: 744px)" />
+    <img class="stay-footer-wave__img" src={WaveOutSp.src} alt="" />
+  </picture>
+</div>
+
+<script>
+  import Swiper from "swiper";
+  import { Autoplay, Pagination } from "swiper/modules";
+  import "swiper/css";
+  import "swiper/css/pagination";
+
+  const el = document.querySelector<HTMLElement>(".stay-sites__slider");
+  if (el) {
+    const swiper = new Swiper(el, {
+      modules: [Autoplay, Pagination],
+      loop: true,
+      autoplay: { delay: 4000, disableOnInteraction: false },
+      slidesPerView: 1.15,
+      spaceBetween: 12,
+      centeredSlides: true,
+      pagination: {
+        el: ".stay-sites__pagination",
+        clickable: true,
+      },
+      breakpoints: {
+        744: { slidesPerView: "auto", spaceBetween: 0, centeredSlides: false },
+      },
+    });
+    // フォント・画像読み込み後に幅を再計測（vw幅の初期計測ずれ対策）
+    window.addEventListener("load", () => swiper.update());
+  }
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 枠の背景は上のセクション（おすすめのアクティビティ）と同じ色＋テクスチャ
+  .stay-sites-wave {
+    position: relative;
+    z-index: 1;
+    background-color: #bee0e1;
+    height: spx(96);
+    @include tablet-up {
+      height: ppx(200);
+    }
+
+    // z-index を付けて合成の基準をこの枠内に閉じる（無いと body の背景と混ざる）
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__picture {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+    }
+
+    &__img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .stay-sites {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fffdf7;
+    padding-bottom: spx(80);
+    @include tablet-up {
+      padding-bottom: ppx(44);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // PCは設計どおり4枚（530×4＋間隔25×3＝2195）が収まる幅に絞って中央寄せ
+    &__slider {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      @include tablet-up {
+        width: ppx(2195);
+        margin: 0 auto;
+      }
+    }
+
+    &__slide {
+      display: flex;
+      justify-content: center;
+      height: auto;
+      @include tablet-up {
+        width: ppx(530);
+        margin-right: ppx(25);
+      }
+    }
+
+    &__pagination {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: spx(40);
+      gap: spx(20);
+      @include tablet-up {
+        padding-top: ppx(100);
+        gap: ppx(20);
+      }
+
+      :global(.swiper-pagination-bullet) {
+        opacity: 1;
+        background-color: #cfcfcf;
+        margin: 0 !important;
+        width: spx(25);
+        height: spx(25);
+        @include tablet-up {
+          width: ppx(30);
+          height: ppx(30);
+        }
+      }
+
+      :global(.swiper-pagination-bullet-active) {
+        background-color: #7f7f7f;
+      }
+    }
+
+    &__button {
+      position: relative;
+      z-index: 1;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #8aad61;
+      border-style: solid;
+      border-color: #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+      margin-top: spx(60);
+      padding: spx(35) spx(80);
+      border-width: spx(4);
+      gap: spx(10);
+      font-size: spx(26);
+      line-height: spx(26);
+      letter-spacing: spx(1.3);
+      box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
+      @include tablet-up {
+        margin-top: ppx(126);
+        padding: ppx(35) ppx(110);
+        border-width: ppx(4);
+        gap: ppx(10);
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+        box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    &__button-icon {
+      display: block;
+      width: spx(28);
+      height: spx(28);
+      @include tablet-up {
+        width: ppx(28);
+        height: ppx(28);
+      }
+    }
+  }
+
+  // 枠の背景は下のフッターと同じ色＋テクスチャ。波は枠より上にはみ出す
+  .stay-footer-wave {
+    position: relative;
+    z-index: 1;
+    background-color: #bee0e1;
+    height: spx(96);
+    @include tablet-up {
+      height: ppx(200);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__picture {
+      position: absolute;
+      left: 0;
+      display: block;
+      width: 100%;
+      top: spx(-11.54);
+      @include tablet-up {
+        top: ppx(-11.54);
+      }
+    }
+
+    &__img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+</style>

@@ -86,7 +86,7 @@ const HOTEL_PLAN_URL = "#";
   .stay-price-wave {
     position: relative;
     background-color: #fffdf7;
-    height: spx(59);
+    height: spx(59.0625);
     @include tablet-up {
       height: ppx(210);
     }
@@ -106,12 +106,16 @@ const HOTEL_PLAN_URL = "#";
       }
     }
 
+    // 波は枠より上（エリアマップ側）にはみ出すので、枠に合わせて上へずらす
     &__picture {
       position: absolute;
-      top: 0;
       left: 0;
       display: block;
       width: 100%;
+      top: spx(-3.0845);
+      @include tablet-up {
+        top: ppx(-10.966);
+      }
     }
 
     &__img {

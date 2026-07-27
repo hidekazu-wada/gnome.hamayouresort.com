@@ -1,0 +1,263 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+// 繋ぎの透過部分は注意事項と同じ「色を敷かないテクスチャ」が透けて見える
+import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
+// 注意事項→予約方法の繋ぎはアクティビティ詳細と同じ図形（Frame 777）
+import WavePc from "../../../images/activity/detail/wave-to-reservation.webp";
+import WaveSp from "../../../images/activity/detail/wave-to-reservation-sp.webp";
+
+// サイトごとの予約プランページ（実データ確定後に差し替え）
+const WEB_RESERVE_URL = "https://www.nap-camp.com/yamanashi/13592/plans/20042714";
+
+const notes = [
+  "※ご宿泊日の30日前の午前0時から受付開始となります。",
+  "※電話予約は承っておりません。",
+  "※大型連休などは、連泊で予約が取れるように日にちを決めて一斉に受付開始をさせていただきます。",
+  "　受付開始日はHPのお知らせやなっぷのブログでご案内します。",
+];
+---
+
+<!-- 注意事項 → 予約方法 の繋ぎ -->
+<div
+  class="stay-reservation-wave"
+  style={`background-image: url(${PaperTexturePlain.src});`}
+>
+  <picture class="stay-reservation-wave__picture">
+    <source srcset={WavePc.src} media="(min-width: 744px)" />
+    <img class="stay-reservation-wave__img" src={WaveSp.src} alt="" />
+  </picture>
+</div>
+
+<section class="stay-reservation" id="reservation">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="stay-reservation__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="stay-reservation__head">
+    <h2 class="stay-reservation__title">予約方法</h2>
+    <div class="stay-reservation__title-line" aria-hidden="true"></div>
+  </div>
+
+  <a
+    class="stay-reservation__card"
+    href={WEB_RESERVE_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <span class="stay-reservation__card-main">WEB予約はこちら</span>
+    <span class="stay-reservation__card-note">（ 受付時間 24時間 ）</span>
+  </a>
+
+  <div class="stay-reservation__notes">
+    {notes.map((note) => <p>{note}</p>)}
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 背景は透過。透けた部分は注意事項と同じテクスチャを敷いて繋ぐ。
+  // SPは画像が枠より上に広いので、枠に合わせて上へずらす
+  .stay-reservation-wave {
+    position: relative;
+    z-index: 1;
+    background-repeat: repeat;
+    background-position: top left;
+    background-size: spx(140);
+    height: spx(89.5);
+    @include tablet-up {
+      height: ppx(289);
+      background-size: ppx(200);
+    }
+
+    &__picture {
+      position: absolute;
+      left: 0;
+      display: block;
+      width: 100%;
+      top: spx(-54.98);
+      @include tablet-up {
+        top: 0;
+      }
+    }
+
+    &__img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .stay-reservation {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #c0d4a9;
+    padding-top: spx(80);
+    padding-bottom: spx(60);
+    gap: spx(50);
+    @include tablet-up {
+      padding-top: ppx(150);
+      padding-bottom: ppx(35);
+      gap: ppx(100);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 線が高さ0で描かれる分、gapから5pxを引く
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #7c6351 0,
+        #7c6351 #{spx(4)},
+        transparent #{spx(4)},
+        transparent #{spx(16)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #7c6351 0,
+          #7c6351 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    // 設計ではテキスト幅567（＋左右パディング75でカード幅717）
+    &__card {
+      position: relative;
+      z-index: 1;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #fffdf7;
+      color: #7c6351;
+      text-align: center;
+      transition: opacity 0.3s ease;
+      width: spx(600);
+      padding: spx(8) spx(60) spx(16);
+      border-radius: spx(16);
+      box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
+      @include tablet-up {
+        width: auto;
+        height: ppx(176);
+        padding: ppx(10) ppx(75) ppx(20);
+        border-radius: ppx(20);
+        box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.85;
+        }
+      }
+    }
+
+    &__card-main {
+      display: block;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      line-height: 1.4;
+      white-space: nowrap;
+      font-size: spx(33);
+      letter-spacing: spx(2.05);
+      @include tablet-up {
+        width: ppx(567);
+        font-size: ppx(41);
+        letter-spacing: ppx(2.05);
+      }
+    }
+
+    &__card-note {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      white-space: nowrap;
+      font-size: spx(26);
+      letter-spacing: spx(2.05);
+      @include tablet-up {
+        font-size: ppx(33);
+        letter-spacing: ppx(2.05);
+      }
+    }
+
+    &__notes {
+      position: relative;
+      z-index: 1;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.8;
+      width: spx(600);
+      font-size: spx(24);
+      letter-spacing: spx(1.2);
+      @include tablet-up {
+        width: ppx(1685);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+  }
+</style>

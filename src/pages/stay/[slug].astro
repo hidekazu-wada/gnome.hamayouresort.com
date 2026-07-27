@@ -5,6 +5,10 @@ import AnchorNav from "../../assets/components/common/anchorNav/AnchorNav.astro"
 import Hero from "../../assets/components/pages/stay-detail/1-hero.astro";
 import AreaMap from "../../assets/components/pages/stay-detail/2-areamap.astro";
 import Price from "../../assets/components/pages/stay-detail/3-price.astro";
+import Notes from "../../assets/components/pages/stay-detail/4-notes.astro";
+import Reservation from "../../assets/components/pages/stay-detail/5-reservation.astro";
+import Related from "../../assets/components/pages/stay-detail/6-related.astro";
+import Sites from "../../assets/components/pages/stay-detail/7-sites.astro";
 import { stays } from "../../data/stays";
 
 export function getStaticPaths() {
@@ -40,4 +44,8 @@ const title = stay.titleLines.join("");
   <Hero stay={stay} />
   <AreaMap stay={stay} />
   <Price stay={stay} />
+  <Notes stay={stay} />
+  <Reservation />
+  <Related />
+  <Sites stay={stay} />
 </BaseLayout>
