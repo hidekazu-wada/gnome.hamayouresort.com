@@ -14,12 +14,15 @@ interface Props {
   description?: string;
   /** ヒーローを全面表示するページ（トップ）で固定ヘッダー分の余白を消す */
   flush?: boolean;
+  /** パンくず。下層ページでフッター先頭に出す */
+  breadcrumb?: { label: string; href?: string }[];
 }
 
 const {
   title = "Gnome | 湖のほとりのキャンプ場",
   description = "",
   flush = false,
+  breadcrumb,
 } = Astro.props;
 ---
 
@@ -47,7 +50,7 @@ const {
     <main class:list={["layout-main", { "is-flush": flush }]}>
       <slot />
     </main>
-    <Footer />
+    <Footer breadcrumb={breadcrumb} />
     <PageTop />
   </body>
 </html>
