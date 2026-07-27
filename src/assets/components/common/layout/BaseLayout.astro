@@ -3,6 +3,7 @@
 import "../../../../styles/main.scss";
 
 import Header from "../header/Header.astro";
+import Menu from "../menu/Menu.astro";
 import Footer from "../footer/Footer.astro";
 import PageTop from "../pageTop/PageTop.astro";
 
@@ -42,6 +43,7 @@ const {
   </head>
   <body>
     <Header />
+    <Menu />
     <main class:list={["layout-main", { "is-flush": flush }]}>
       <slot />
     </main>

@@ -13,6 +13,13 @@ import LogoHamayou from "../../../images/common/footer/logo-hamayou.png";
 import LogoKuwarubi from "../../../images/common/footer/logo-kuwarubi.svg";
 import LogoIzuminoyu from "../../../images/common/footer/logo-izuminoyu.svg";
 
+interface Props {
+  /** 上段（ロゴ＋住所）を出すか。メニュー内では下段のみ使う */
+  showTop?: boolean;
+}
+
+const { showTop = true } = Astro.props;
+
 // グループサイトリンク（URL確定後に差し替え）
 const partners = [
   { name: "HAMAYOU RESORT", img: LogoHamayou, href: "#", w: 390, h: 40, wSp: 247, hSp: 25 },
@@ -31,26 +38,35 @@ const partners = [
   </div>
 
   <!-- 上段: ロゴ＋住所 -->
-  <div class="footer__top">
-    <img class="footer__cloud footer__cloud--left" src={CloudLeft.src} alt="" />
-    <img
-      class="footer__cloud footer__cloud--right"
-      src={CloudRight.src}
-      alt=""
-    />
-    <a class="footer__logo" href="/">
-      <img
-        class="footer__logo-img"
-        src={LogoWordmark.src}
-        alt="SAIKO CAMP VILLAGE GNOME"
-      />
-    </a>
-    <!-- 住所（hrefなしaタグ: Chromeモバイルの自動リンク検出対策） -->
-    <a class="footer__address no-link">
-      〒401-0332<br class="footer__br-sp" />
-      山梨県南都留郡富士河口湖町西湖１０３０
-    </a>
-  </div>
+  {
+    showTop && (
+      <div class="footer__top">
+        <img
+          class="footer__cloud footer__cloud--left"
+          src={CloudLeft.src}
+          alt=""
+        />
+        <img
+          class="footer__cloud footer__cloud--right"
+          src={CloudRight.src}
+          alt=""
+        />
+        <a class="footer__logo" href="/">
+          <img
+            class="footer__logo-img"
+            src={LogoWordmark.src}
+            alt="SAIKO CAMP VILLAGE GNOME"
+          />
+        </a>
+        {/* 住所（hrefなしaタグ: Chromeモバイルの自動リンク検出対策） */}
+        <a class="footer__address no-link">
+          〒401-0332
+          <br class="footer__br-sp" />
+          山梨県南都留郡富士河口湖町西湖１０３０
+        </a>
+      </div>
+    )
+  }
 
   <!-- 下段: 連絡カード＋丘イラスト＋グループサイト＋コピーライト -->
   <div class="footer__bottom">
