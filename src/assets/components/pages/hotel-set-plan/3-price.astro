@@ -5,6 +5,8 @@ import "../../../../styles/main.scss";
 import PaperTexture from "../../../images/common/paper-texture.png";
 import WavePc from "../../../images/hotel-set-plan/wave-to-price.svg";
 import WaveSp from "../../../images/hotel-set-plan/wave-to-price-sp.svg";
+import Beds from "../../../images/hotel-set-plan/beds.svg";
+import Hotel from "../../../images/hotel-set-plan/hotel.svg";
 
 const priceNotes = [
   "※キャンプサイト料は別途かかります。",
@@ -29,6 +31,9 @@ const priceNotes = [
     <source srcset={WavePc.src} media="(min-width: 744px)" />
     <img class="hsp-price-wave__img" src={WaveSp.src} alt="" />
   </picture>
+
+  <!-- ベッドのイラスト。波の枠より上にはみ出す -->
+  <img class="hsp-price-wave__beds" src={Beds.src} alt="" />
 </div>
 
 <section class="hsp-price" id="price">
@@ -56,6 +61,9 @@ const priceNotes = [
       {priceNotes.map((note) => <p>{note}</p>)}
     </div>
   </div>
+
+  <!-- ホテルのイラスト。SPは流れの中、PCは左上に絶対配置 -->
+  <img class="hsp-price__hotel" src={Hotel.src} alt="" />
 
   <div class="hsp-price__head">
     <h2 class="hsp-price__title">キャンセル料</h2>
@@ -125,6 +133,21 @@ const priceNotes = [
       width: 100%;
       height: auto;
     }
+
+    &__beds {
+      position: absolute;
+      z-index: 1;
+      display: block;
+      height: auto;
+      top: spx(-118.62);
+      left: spx(305.86);
+      width: spx(311.98);
+      @include tablet-up {
+        top: ppx(-10);
+        left: ppx(1545.73);
+        width: ppx(452.09);
+      }
+    }
   }
 
   .hsp-price {
@@ -153,6 +176,20 @@ const priceNotes = [
       pointer-events: none;
       @include tablet-up {
         background-size: ppx(200);
+      }
+    }
+
+    &__hotel {
+      position: relative;
+      z-index: 1;
+      display: block;
+      height: auto;
+      width: spx(486);
+      @include tablet-up {
+        position: absolute;
+        top: ppx(-119.83);
+        left: 0;
+        width: ppx(550.9);
       }
     }
 
