@@ -1,0 +1,412 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import WavePc from "../../../images/hotel-set-plan/wave-to-price.svg";
+import WaveSp from "../../../images/hotel-set-plan/wave-to-price-sp.svg";
+
+const priceNotes = [
+  "※キャンプサイト料は別途かかります。",
+  "※2名様を超える場合は1名様につき2,200円追加。",
+  "※小学生以上は人数に換算",
+  "※未就学で寝具不要（添い寝）のお子様は大人1名様につき1名様まで無料",
+  "※1室の最大定員は5名様まで（幼児を含む）",
+  "※ホテルのご精算はGnome受付時にお願いいたします（決済方法は現金、クレジットカード、Paypayが可能）",
+  "※ホテルセットプランをご予約された方は、Gnomeの受付時に、ホテルのチェックイン手続きも完了いただけます。",
+];
+---
+
+<!-- こんな方におすすめ → 料金 の繋ぎ。図形は上下反転して使う -->
+<div class="hsp-price-wave">
+  <div
+    class="hsp-price-wave__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+  <picture class="hsp-price-wave__picture">
+    <source srcset={WavePc.src} media="(min-width: 744px)" />
+    <img class="hsp-price-wave__img" src={WaveSp.src} alt="" />
+  </picture>
+</div>
+
+<section class="hsp-price" id="price">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="hsp-price__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="hsp-price__head">
+    <h2 class="hsp-price__title">料金</h2>
+    <div class="hsp-price__title-line" aria-hidden="true"></div>
+  </div>
+
+  <div class="hsp-price__block hsp-price__block--fee">
+    <p class="hsp-price__amount">
+      <span class="hsp-price__amount-num">6,600～11,000</span>
+      <span class="hsp-price__amount-unit">円(税込)</span>
+    </p>
+    <p class="hsp-price__amount-note">1室　2～4名利用時</p>
+    <div class="hsp-price__divider" aria-hidden="true"></div>
+    <div class="hsp-price__notes">
+      {priceNotes.map((note) => <p>{note}</p>)}
+    </div>
+  </div>
+
+  <div class="hsp-price__head">
+    <h2 class="hsp-price__title">キャンセル料</h2>
+    <div class="hsp-price__title-line" aria-hidden="true"></div>
+  </div>
+
+  <div class="hsp-price__block">
+    <!-- 全角スペースはビルド時に詰められてしまうため、間隔はgapで作る -->
+    <p class="hsp-price__cancel">
+      <span>2日前：20%</span>
+      <span>前日：50%</span>
+      <span>当日：100%</span>
+    </p>
+    <div class="hsp-price__divider" aria-hidden="true"></div>
+    <p class="hsp-price__cancel-note">
+      台風、自然災害等、宿泊客の責めに帰さない理由による事由により交通機関が停止し、当館へ来館できなかった場合等を除き、キャンセル規定にかかるお日にちにキャンセルをする場合は、キャンセル料が発生します。
+    </p>
+    <p class="hsp-price__checkin">
+      <span>客室チェックイン　15:00</span>
+      <span>チェックアウト　10:00</span>
+    </p>
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 枠の背景は下のセクション（料金）と同じ色＋テクスチャ
+  .hsp-price-wave {
+    position: relative;
+    background-color: #fffdf7;
+    height: spx(91);
+    @include tablet-up {
+      height: ppx(324.783);
+    }
+
+    // z-index を付けて合成の基準をこの枠内に閉じる
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // Figmaでは上下反転して配置されている
+    &__picture {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      transform: scaleY(-1);
+    }
+
+    &__img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .hsp-price {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fffdf7;
+    padding-top: spx(100);
+    padding-bottom: spx(190);
+    gap: spx(50);
+    @include tablet-up {
+      padding-top: ppx(150);
+      padding-bottom: ppx(120);
+      gap: ppx(50);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 線が高さ0で描かれる分、gapから5pxを引く
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #7c6351 0,
+        #7c6351 #{spx(6)},
+        transparent #{spx(6)},
+        transparent #{spx(21)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #7c6351 0,
+          #7c6351 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__block {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding-bottom: spx(60);
+      gap: spx(15);
+      @include tablet-up {
+        padding-bottom: ppx(60);
+        gap: ppx(15);
+      }
+    }
+
+    // 料金ブロックだけSPは下の余白を持たない
+    &__block--fee {
+      padding-bottom: 0;
+      @include tablet-up {
+        padding-bottom: ppx(60);
+      }
+    }
+
+    &__amount {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1;
+      white-space: nowrap;
+      gap: spx(9);
+      @include tablet-up {
+        gap: ppx(9);
+      }
+    }
+
+    &__amount-num {
+      font-size: spx(55);
+      @include tablet-up {
+        font-size: ppx(78);
+        letter-spacing: ppx(3.9);
+      }
+    }
+
+    &__amount-unit {
+      font-size: spx(34);
+      letter-spacing: spx(1.7);
+      @include tablet-up {
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+      }
+    }
+
+    &__amount-note {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.8;
+      white-space: nowrap;
+      font-size: spx(34);
+      letter-spacing: spx(1.7);
+      @include tablet-up {
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+      }
+    }
+
+    // 高さ30の枠の下端に2pxの点線が引かれている
+    &__divider {
+      width: spx(630);
+      height: spx(30);
+      background-repeat: repeat-x;
+      background-position: left bottom;
+      background-size: spx(10) spx(2);
+      background-image: linear-gradient(
+        to right,
+        #7c6351 0,
+        #7c6351 #{spx(2)},
+        transparent #{spx(2)},
+        transparent #{spx(10)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(30);
+        background-size: ppx(10) ppx(2);
+        background-image: linear-gradient(
+          to right,
+          #7c6351 0,
+          #7c6351 #{ppx(2)},
+          transparent #{ppx(2)},
+          transparent #{ppx(10)}
+        );
+      }
+    }
+
+    &__notes {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #7c6351;
+      line-height: 1.7;
+      width: spx(630);
+      margin-top: spx(30);
+      font-size: spx(27);
+      @include tablet-up {
+        line-height: 1.8;
+        width: auto;
+        white-space: nowrap;
+        margin-top: ppx(30);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    // SPは縦積み、PCは全角スペース2つ分（48px×2）あけて横並び
+    &__cancel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.6;
+      width: spx(630);
+      font-size: spx(40);
+      letter-spacing: spx(2);
+      @include tablet-up {
+        flex-direction: row;
+        line-height: 1;
+        width: ppx(2184);
+        gap: ppx(96);
+        font-size: ppx(48);
+        letter-spacing: ppx(2.4);
+      }
+    }
+
+    &__cancel-note {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #7c6351;
+      line-height: 1.7;
+      width: spx(630);
+      margin-top: spx(30);
+      font-size: spx(27);
+      @include tablet-up {
+        line-height: 1.8;
+        width: ppx(1685);
+        margin-top: ppx(30);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    // 白いピル。SPは2行、PCは全角スペース1つ分（48px）あけて1行
+    &__checkin {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.5;
+      width: spx(630);
+      margin-top: spx(30);
+      padding: spx(25) spx(60) spx(30);
+      border-radius: spx(40);
+      font-size: spx(40);
+      letter-spacing: spx(2);
+      @include tablet-up {
+        flex-direction: row;
+        line-height: 1;
+        white-space: nowrap;
+        // 設計はテキスト枠1344＋左右パディング60
+        width: ppx(1464);
+        margin-top: ppx(80);
+        padding: ppx(25) ppx(60) ppx(30);
+        border-radius: ppx(40);
+        gap: ppx(48);
+        font-size: ppx(48);
+        letter-spacing: ppx(2.4);
+      }
+    }
+
+    &__br-sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+  }
+</style>
