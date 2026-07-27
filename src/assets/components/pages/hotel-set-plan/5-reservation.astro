@@ -1,0 +1,373 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+// 繋ぎの背景は注意事項と同じ「色を敷かないテクスチャ」
+import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
+import HillLarge from "../../../images/hotel-set-plan/hill-large.svg";
+import Tree1 from "../../../images/hotel-set-plan/tree-1.svg";
+import Tree2 from "../../../images/hotel-set-plan/tree-2.svg";
+import Chevron from "../../../images/hotel-set-plan/chevron.svg";
+
+const steps = [
+  {
+    step: "STEP1",
+    title: "キャンプサイトをご予約",
+    text: "ホテルセットプランのご利用にはGnomeのキャンプサイトのご予約が必要です。",
+  },
+  {
+    step: "STEP2",
+    title: "ホテルのお申し込み",
+    text: "お申し込みフォームはこちらです。",
+  },
+  {
+    step: "STEP3",
+    title: "送信完了メール",
+    text: "ご記入いただいたメールアドレスへ自動返信メールが届きます。",
+  },
+  {
+    step: "STEP4",
+    title: "担当者よりご連絡",
+    text: "施設の空き状況を確認後、担当者より予約の可否のお知らせをさせていただきます。",
+  },
+];
+---
+
+<!-- 注意事項 → 予約方法 の繋ぎ -->
+<div
+  class="hsp-reservation-wave"
+  style={`background-image: url(${PaperTexturePlain.src});`}
+>
+  <img class="hsp-reservation-wave__hill" src={HillLarge.src} alt="" />
+  <img class="hsp-reservation-wave__tree hsp-reservation-wave__tree--1" src={Tree1.src} alt="" />
+  <img class="hsp-reservation-wave__tree hsp-reservation-wave__tree--2" src={Tree2.src} alt="" />
+</div>
+
+<section class="hsp-reservation" id="reservation">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="hsp-reservation__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="hsp-reservation__head">
+    <h2 class="hsp-reservation__title">予約方法</h2>
+    <div class="hsp-reservation__title-line" aria-hidden="true"></div>
+  </div>
+
+  <ol class="hsp-reservation__steps">
+    {
+      steps.map((item, i) => (
+        <li class="hsp-reservation__step">
+          {i > 0 && (
+            <span class="hsp-reservation__arrow" aria-hidden="true">
+              <img src={Chevron.src} alt="" />
+            </span>
+          )}
+          <div class="hsp-reservation__card">
+            <span class="hsp-reservation__step-label">{item.step}</span>
+            <div class="hsp-reservation__step-body">
+              <p class="hsp-reservation__step-title">{item.title}</p>
+              <p class="hsp-reservation__step-text">{item.text}</p>
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  <p class="hsp-reservation__note">空室があれば当日17時まで受付可能</p>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 枠の背景は上のセクション（注意事項）と同じテクスチャ。
+  // 丘は上下反転、木は左右反転して置かれている
+  .hsp-reservation-wave {
+    position: relative;
+    z-index: 1;
+    background-repeat: repeat;
+    background-position: top left;
+    background-size: spx(140);
+    height: spx(89.5);
+    @include tablet-up {
+      height: ppx(289);
+      background-size: ppx(200);
+    }
+
+    &__hill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      height: 100%;
+      width: spx(466.313);
+      transform: scaleY(-1);
+      @include tablet-up {
+        width: ppx(1658);
+      }
+    }
+
+    &__tree {
+      position: absolute;
+      display: block;
+      height: auto;
+      transform: scaleX(-1);
+      width: spx(59.2);
+      @include tablet-up {
+        width: ppx(104.4);
+      }
+    }
+
+    &__tree--1 {
+      top: spx(-54.98);
+      left: spx(568);
+      @include tablet-up {
+        top: ppx(37.7);
+        left: ppx(2128.4);
+      }
+    }
+
+    &__tree--2 {
+      top: spx(-33.4);
+      left: spx(614.8);
+      @include tablet-up {
+        top: ppx(72.3);
+        left: ppx(2210.8);
+      }
+    }
+  }
+
+  .hsp-reservation {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(60);
+    padding-bottom: spx(110);
+    gap: spx(40);
+    @include tablet-up {
+      padding-top: ppx(90);
+      padding-bottom: ppx(80);
+      gap: ppx(42);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 線が高さ0で描かれる分、gapから5pxを引く
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #138185 0,
+        #138185 #{spx(6)},
+        transparent #{spx(6)},
+        transparent #{spx(21)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #138185 0,
+          #138185 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__steps {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    // 矢印を含めた間隔が設計のgapになるよう、上下に半分ずつ持たせる
+    &__step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(30);
+      }
+
+      & + & {
+        margin-top: spx(25);
+        @include tablet-up {
+          margin-top: ppx(30);
+        }
+      }
+    }
+
+    &__arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: spx(52);
+      height: spx(26);
+      @include tablet-up {
+        width: ppx(52);
+        height: ppx(26);
+      }
+
+      img {
+        display: block;
+        transform: rotate(90deg);
+        width: spx(26);
+        height: spx(52);
+        @include tablet-up {
+          width: ppx(26);
+          height: ppx(52);
+        }
+      }
+    }
+
+    &__card {
+      display: flex;
+      align-items: flex-start;
+      background-color: #fff;
+      padding: spx(20) spx(30);
+      border-radius: spx(20);
+      gap: spx(15);
+      @include tablet-up {
+        padding: ppx(20) ppx(30);
+        border-radius: ppx(20);
+        gap: ppx(15);
+      }
+    }
+
+    &__step-label {
+      flex-shrink: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #c3925e;
+      line-height: 1.6;
+      width: spx(110);
+      font-size: spx(32);
+      letter-spacing: spx(1.6);
+      @include tablet-up {
+        width: ppx(110);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__step-body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      color: #138185;
+      gap: spx(5);
+      @include tablet-up {
+        gap: 0;
+      }
+    }
+
+    &__step-title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      line-height: 1.6;
+      width: spx(445);
+      font-size: spx(32);
+      letter-spacing: spx(1.6);
+      @include tablet-up {
+        width: ppx(1615);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__step-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      line-height: 1.5;
+      width: spx(445);
+      font-size: spx(27);
+      @include tablet-up {
+        line-height: 1.6;
+        width: ppx(1615);
+        font-size: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+    }
+
+    // 下に白い破線が引かれる
+    &__note {
+      position: relative;
+      z-index: 1;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 2.2;
+      border-bottom-style: dashed;
+      border-bottom-color: #fff;
+      border-bottom-width: spx(8);
+      font-size: spx(34);
+      letter-spacing: spx(1.7);
+      @include tablet-up {
+        margin-top: ppx(40);
+        border-bottom-width: ppx(8);
+        font-size: ppx(40);
+        letter-spacing: ppx(2);
+      }
+    }
+  }
+</style>

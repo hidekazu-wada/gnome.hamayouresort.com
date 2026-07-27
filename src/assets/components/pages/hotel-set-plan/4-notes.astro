@@ -1,0 +1,279 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+// この節は色を敷かず、テクスチャ画像そのものを背景にする（Figma同様）
+import PaperTexture from "../../../images/common/paper-texture-plain.png";
+import Wave from "../../../images/hotel-set-plan/wave-to-notes.webp";
+import Hill from "../../../images/hotel-set-plan/hill.svg";
+
+const notes = [
+  "ホテルにご宿泊されるお客様以外の入館はご遠慮ください。",
+  "こちらのプランにはアメニティは付いてません。タオルや歯ブラシ、寝間着はご持参ください。",
+  "夜間のキャンプ場とホテル間の移動はご遠慮ください。",
+  "ルームキーは、ホテルフロントにご返却ください。",
+  "鍵は紛失しないようにお願い致します。<br />（紛失された場合鍵の再発行費として22,000 円(税込)を弁償していただきます）",
+];
+---
+
+<!-- 料金 → 注意事項 の繋ぎ -->
+<div
+  class="hsp-notes-wave"
+  style={`background-image: url(${PaperTexture.src});`}
+>
+  <img class="hsp-notes-wave__img" src={Wave.src} alt="" />
+  <!-- 丘と木。料金セクションの上まではみ出す -->
+  <img class="hsp-notes-wave__hill" src={Hill.src} alt="" />
+</div>
+
+<section class="hsp-notes" id="notes">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="hsp-notes__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="hsp-notes__head">
+    <h2 class="hsp-notes__title">注意事項</h2>
+    <div class="hsp-notes__title-line" aria-hidden="true"></div>
+  </div>
+
+  <div class="hsp-notes__list">
+    {
+      notes.map((note) => (
+        <div class="hsp-notes__item">
+          <ul class="hsp-notes__text">
+            <li set:html={note} />
+          </ul>
+          <div class="hsp-notes__line" aria-hidden="true" />
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 枠の背景は下のセクション（注意事項）と同じテクスチャ。
+  // 波も丘も枠より上にはみ出すので、枠に合わせてずらす
+  .hsp-notes-wave {
+    position: relative;
+    background-repeat: repeat;
+    background-position: top left;
+    background-size: spx(140);
+    height: spx(66);
+    @include tablet-up {
+      height: ppx(187.816);
+      background-size: ppx(200);
+    }
+
+    &__img {
+      position: absolute;
+      display: block;
+      height: auto;
+      top: spx(-11.51);
+      left: spx(-11.16);
+      width: spx(742.671);
+      @include tablet-up {
+        top: ppx(-11.53);
+        left: ppx(-11.26);
+        width: ppx(2582.656);
+      }
+    }
+
+    // Figmaでは左右反転して配置されている
+    &__hill {
+      position: absolute;
+      display: block;
+      height: auto;
+      transform: scaleX(-1);
+      top: spx(-202.81);
+      left: spx(272);
+      width: spx(448);
+      @include tablet-up {
+        top: ppx(-230.28);
+        left: ppx(1855);
+        width: ppx(705);
+      }
+    }
+  }
+
+  .hsp-notes {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: spx(120);
+    padding-bottom: spx(80);
+    gap: spx(40);
+    @include tablet-up {
+      padding-top: ppx(120);
+      padding-bottom: ppx(15);
+      gap: ppx(40);
+    }
+
+    // 色を敷かずテクスチャそのものを見せるため、合成モードは掛けない
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 線が高さ0で描かれる分、gapから5pxを引く
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #7c6351 0,
+        #7c6351 #{spx(6)},
+        transparent #{spx(6)},
+        transparent #{spx(21)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #7c6351 0,
+          #7c6351 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__list {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    // 区切り線の太さ(2px)をgapから引く
+    &__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(18);
+      @include tablet-up {
+        gap: ppx(23);
+      }
+    }
+
+    // SPは「・」、PCはdiscの行頭記号
+    &__text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #7c6351;
+      line-height: 1.5;
+      width: spx(630);
+      font-size: spx(27);
+      @include tablet-up {
+        width: ppx(1685);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+
+      li {
+        position: relative;
+        padding-left: spx(40);
+        @include tablet-up {
+          display: list-item;
+          list-style: disc;
+          margin-left: ppx(48);
+          padding-left: 0;
+        }
+
+        &::before {
+          content: "・";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: spx(15);
+          font-size: spx(32);
+          line-height: 1.3;
+          letter-spacing: spx(1.6);
+          @include tablet-up {
+            content: none;
+          }
+        }
+      }
+    }
+
+    &__line {
+      width: spx(630);
+      height: spx(2);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #7c6351 0,
+        #7c6351 #{spx(2)},
+        transparent #{spx(2)},
+        transparent #{spx(10)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(2);
+        background-image: repeating-linear-gradient(
+          to right,
+          #7c6351 0,
+          #7c6351 #{ppx(2)},
+          transparent #{ppx(2)},
+          transparent #{ppx(10)}
+        );
+      }
+    }
+  }
+</style>
