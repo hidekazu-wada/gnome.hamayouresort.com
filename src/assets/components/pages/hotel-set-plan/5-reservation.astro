@@ -10,6 +10,9 @@ import Tree1 from "../../../images/hotel-set-plan/tree-1.svg";
 import Tree2 from "../../../images/hotel-set-plan/tree-2.svg";
 import Chevron from "../../../images/hotel-set-plan/chevron.svg";
 
+// ホテルの申し込みは外部フォームを利用予定。URL確定後に差し替える
+const FORM_URL = "#";
+
 const steps = [
   {
     step: "STEP1",
@@ -19,7 +22,7 @@ const steps = [
   {
     step: "STEP2",
     title: "ホテルのお申し込み",
-    text: "お申し込みフォームはこちらです。",
+    text: `お申し込みフォームは<a class="hsp-reservation__link" href="${FORM_URL}" target="_blank" rel="noopener noreferrer">こちら</a>です。`,
   },
   {
     step: "STEP3",
@@ -71,7 +74,7 @@ const steps = [
             <span class="hsp-reservation__step-label">{item.step}</span>
             <div class="hsp-reservation__step-body">
               <p class="hsp-reservation__step-title">{item.title}</p>
-              <p class="hsp-reservation__step-text">{item.text}</p>
+              <p class="hsp-reservation__step-text" set:html={item.text} />
             </div>
           </div>
         </li>
@@ -344,6 +347,18 @@ const steps = [
         width: ppx(1615);
         font-size: ppx(26);
         letter-spacing: ppx(1.3);
+      }
+
+      // set:html で差し込むためスコープが付かない
+      :global(.hsp-reservation__link) {
+        text-decoration: underline;
+        transition: opacity 0.3s ease;
+
+        @include hover {
+          &:hover {
+            opacity: 0.7;
+          }
+        }
       }
     }
 
