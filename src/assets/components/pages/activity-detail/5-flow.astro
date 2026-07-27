@@ -74,16 +74,17 @@ const { activity } = Astro.props;
   // 繋ぎ波。枠の背景は下のセクション（ご利用の流れ）と同じ色＋テクスチャ
   .detail-flow-wave {
     position: relative;
-    overflow: clip;
     background-color: #fffdf7;
     height: spx(92);
     @include tablet-up {
       height: ppx(324.783);
     }
 
+    // z-index を付けて合成の基準をこの枠内に閉じる（無いと body の背景と混ざる）
     &__texture {
       position: absolute;
       inset: 0;
+      z-index: 0;
       background-repeat: repeat;
       background-position: top left;
       background-size: spx(140);
@@ -124,6 +125,7 @@ const { activity } = Astro.props;
       gap: ppx(50);
     }
 
+    // z-index を付けて合成の基準をこの枠内に閉じる（無いと body の背景と混ざる）
     &__texture {
       position: absolute;
       inset: 0;

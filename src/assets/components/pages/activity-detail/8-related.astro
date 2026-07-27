@@ -106,16 +106,17 @@ const related = activities.filter((item) => item.slug !== activity.slug);
   .detail-related-wave {
     position: relative;
     z-index: 1;
-    overflow: clip;
     background-color: #bee0e1;
     height: spx(96);
     @include tablet-up {
       height: ppx(200);
     }
 
+    // z-index を付けて合成の基準をこの枠内に閉じる（無いと body の背景と混ざる）
     &__texture {
       position: absolute;
       inset: 0;
+      z-index: 0;
       background-repeat: repeat;
       background-position: top left;
       background-size: spx(140);
