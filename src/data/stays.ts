@@ -59,6 +59,8 @@ export type Stay = {
   heroBody: string;
   /** サイト概要のテーブル */
   spec: { label: string; lines: string[] }[];
+  /** エリアマップ上の位置。マップ画像(1868×1401)内の設計px */
+  mapMarker: { left: number; top: number; width: number; height: number };
 };
 
 const photos = [site01, site02, site03, site04, site05, site06, site07, site08];
@@ -238,7 +240,10 @@ const base = [
     },
   },
 ] satisfies Array<
-  Omit<Stay, "slug" | "photo" | "heroPhotos" | "heroBody" | "spec"> & { key: string }
+  Omit<
+    Stay,
+    "slug" | "photo" | "heroPhotos" | "heroBody" | "spec" | "mapMarker"
+  > & { key: string }
 >;
 
 /** Figmaのダミー（8種 × 2周 = 16件）を再現した暫定データ */
@@ -252,5 +257,12 @@ export const stays: Stay[] = Array.from({ length: 16 }, (_, i) => {
     heroPhotos,
     heroBody,
     spec,
+    // 実データ確定までは区画ごとに位置をずらしたダミー
+    mapMarker: {
+      left: 1221 - (i % 4) * 210,
+      top: 785 - Math.floor((i % 8) / 4) * 180,
+      width: 76,
+      height: 134,
+    },
   };
 });
