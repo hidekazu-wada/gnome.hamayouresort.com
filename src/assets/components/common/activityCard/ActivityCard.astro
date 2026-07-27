@@ -8,9 +8,11 @@ import type { Activity } from "../../../../data/activities";
 
 interface Props {
   activity: Activity;
+  /** 配色。一覧は青緑、詳細の「人気のアクティビティ」は緑 */
+  variant?: "teal" | "green";
 }
 
-const { activity } = Astro.props;
+const { activity, variant = "teal" } = Astro.props;
 
 // 4文字以上のタグは2行に割って表示する（例: 事前予約 → 事前 / 予約）
 const tagLines = (tag: string) =>
@@ -19,7 +21,10 @@ const tagLines = (tag: string) =>
     : [tag];
 ---
 
-<a class="activity-card" href={`/activity/${activity.slug}/`}>
+<a
+  class:list={["activity-card", `activity-card--${variant}`]}
+  href={`/activity/${activity.slug}/`}
+>
   <p class="activity-card__title">{activity.title}</p>
 
   <div class="activity-card__photo">
@@ -63,6 +68,9 @@ const tagLines = (tag: string) =>
 
   // カードは SP / PC で同じ設計値（基準ビューポートだけ異なる）
   .activity-card {
+    // 配色（variantで切り替える）
+    --accent: #138185;
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -73,10 +81,14 @@ const tagLines = (tag: string) =>
       gap: ppx(20);
     }
 
+    &--green {
+      --accent: #507425;
+    }
+
     &__title {
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 700;
-      color: #138185;
+      color: var(--accent);
       text-align: center;
       line-height: 1.6;
       width: 100%;
@@ -143,7 +155,7 @@ const tagLines = (tag: string) =>
       background-color: #fff;
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 700;
-      color: #138185;
+      color: var(--accent);
       text-align: center;
       white-space: nowrap;
       line-height: 1.5;
@@ -207,7 +219,7 @@ const tagLines = (tag: string) =>
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background-color: #138185;
+      background-color: var(--accent);
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 700;
       color: #fff;

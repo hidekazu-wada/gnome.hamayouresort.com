@@ -7,6 +7,8 @@ import Overview from "../../assets/components/pages/activity-detail/3-overview.a
 import Price from "../../assets/components/pages/activity-detail/4-price.astro";
 import Flow from "../../assets/components/pages/activity-detail/5-flow.astro";
 import Notes from "../../assets/components/pages/activity-detail/6-notes.astro";
+import Reservation from "../../assets/components/pages/activity-detail/7-reservation.astro";
+import Related from "../../assets/components/pages/activity-detail/8-related.astro";
 import { activities } from "../../data/activities";
 
 export function getStaticPaths() {
@@ -39,4 +41,6 @@ const { activity } = Astro.props;
   <Price activity={activity} />
   <Flow activity={activity} />
   <Notes activity={activity} />
+  <Reservation />
+  <Related activity={activity} />
 </BaseLayout>
