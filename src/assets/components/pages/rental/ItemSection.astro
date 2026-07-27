@@ -128,7 +128,8 @@ const { title, lead, items } = Astro.props;
       }
     }
 
-    // 見出し下の破線（SP: 4/16 / PC: 6/21）
+    // 見出し下の破線。Figmaは丸キャップなので線の太さ(5px)ぶん破線が伸びる
+    // （SP: dash4+5=9 / 周期16、PC: dash6+5=11 / 周期21）
     &__title-line {
       width: spx(630);
       height: spx(5);
@@ -136,8 +137,8 @@ const { title, lead, items } = Astro.props;
       background-image: repeating-linear-gradient(
         to right,
         #138185 0,
-        #138185 #{spx(4)},
-        transparent #{spx(4)},
+        #138185 #{spx(9)},
+        transparent #{spx(9)},
         transparent #{spx(16)}
       );
       @include tablet-up {
@@ -146,8 +147,8 @@ const { title, lead, items } = Astro.props;
         background-image: repeating-linear-gradient(
           to right,
           #138185 0,
-          #138185 #{ppx(6)},
-          transparent #{ppx(6)},
+          #138185 #{ppx(11)},
+          transparent #{ppx(11)},
           transparent #{ppx(21)}
         );
       }
