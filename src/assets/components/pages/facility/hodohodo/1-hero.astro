@@ -1,0 +1,237 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../../styles/main.scss";
+
+import Hero from "../../../../images/facility/hodohodo/hero.webp";
+---
+
+<section class="hodo-hero">
+  <div class="hodo-hero__head">
+    <h1 class="hodo-hero__title">ほどほどの森</h1>
+    <div class="hodo-hero__title-line" aria-hidden="true"></div>
+    <p class="hodo-hero__badge">ご利用料：無料</p>
+    <p class="hodo-hero__note">
+      ※源泉、サウナ、貸切のご利用は有料となります。<br />
+      ※貸切利用中はご利用いただけません。また、ご利用はご宿泊されているお客様に限ります。
+    </p>
+  </div>
+
+  <div class="hodo-hero__card">
+    <div class="hodo-hero__visual">
+      <img
+        class="hodo-hero__photo"
+        src={Hero.src}
+        width={Hero.width}
+        height={Hero.height}
+        alt=""
+      />
+    </div>
+
+    <div class="hodo-hero__text">
+      <p class="hodo-hero__lead">
+        <span>すべてがちょうどいい！</span>
+        <span>プライベートな森！</span>
+      </p>
+      <p class="hodo-hero__body">
+        道路を渡ってすぐ隣に広がる1,000㎡のカラマツ林。ほどよい間隔で間伐してあり、夏は涼しい木陰に、秋は林が黄金色に輝き、冬は沢山の陽の光が差し込みます。西湖唯一の天然温泉をかけ流しにした足湯やサウナ小屋、キャンプ、アウトドア体験が楽しめます。
+      </p>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../../styles/variables";
+  @import "../../../../../styles/functions";
+  @import "../../../../../styles/mixins";
+
+  .hodo-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #d6b156;
+    padding-top: spx(80);
+    padding-bottom: spx(60);
+    gap: spx(40);
+    @include tablet-up {
+      padding-top: ppx(120);
+      padding-bottom: ppx(150);
+      gap: ppx(70);
+    }
+
+    // 線が高さ0で描かれる分、gapから5pxを引く
+    &__head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.8;
+      font-size: spx(56);
+      letter-spacing: spx(5.6);
+      margin-right: spx(-5.6);
+      @include tablet-up {
+        font-size: ppx(100);
+        letter-spacing: ppx(10);
+        margin-right: ppx(-10);
+      }
+    }
+
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #000 0,
+        #000 #{spx(6)},
+        transparent #{spx(6)},
+        transparent #{spx(21)}
+      );
+      @include tablet-up {
+        width: ppx(2000);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #000 0,
+          #000 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #507425;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.6;
+      margin-top: spx(15);
+      padding: spx(16) spx(36.4) spx(16) spx(40);
+      font-size: spx(30);
+      letter-spacing: spx(3);
+      @include tablet-up {
+        margin-top: ppx(20);
+        padding: ppx(20) ppx(36.4) ppx(20) ppx(40);
+        font-size: ppx(36);
+        letter-spacing: ppx(3.6);
+      }
+    }
+
+    &__note {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      text-align: center;
+      line-height: 1.7;
+      width: spx(630);
+      font-size: spx(24);
+      letter-spacing: spx(1.2);
+      @include tablet-up {
+        width: auto;
+        white-space: nowrap;
+        font-size: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+    }
+
+    // 白いカード
+    &__card {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #fffdf7;
+      width: spx(690);
+      padding: spx(40) spx(30);
+      border-radius: spx(30);
+      gap: spx(30);
+      @include tablet-up {
+        flex-direction: row;
+        align-items: flex-start;
+        width: ppx(2000);
+        padding: ppx(70) ppx(100) ppx(50);
+        border-radius: ppx(50);
+        gap: ppx(109);
+      }
+    }
+
+    &__visual {
+      overflow: clip;
+      flex-shrink: 0;
+      line-height: 0;
+      width: spx(630);
+      border-radius: spx(30);
+      @include tablet-up {
+        width: ppx(976);
+        border-radius: ppx(50);
+      }
+    }
+
+    &__photo {
+      display: block;
+      width: 100%;
+      object-fit: cover;
+      height: spx(473);
+      @include tablet-up {
+        height: ppx(732);
+      }
+    }
+
+    &__text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: spx(20);
+      @include tablet-up {
+        padding-top: ppx(190);
+        gap: ppx(30);
+      }
+    }
+
+    &__lead {
+      display: flex;
+      flex-direction: column;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #8aad61;
+      line-height: 1.6;
+      font-size: spx(40);
+      @include tablet-up {
+        font-size: ppx(55);
+      }
+    }
+
+    &__body {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.7;
+      width: spx(630);
+      font-size: spx(27);
+      @include tablet-up {
+        line-height: 1.8;
+        width: ppx(715);
+        font-size: ppx(30);
+      }
+    }
+  }
+</style>

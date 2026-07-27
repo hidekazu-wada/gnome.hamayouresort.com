@@ -1,0 +1,162 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../../styles/main.scss";
+
+import { hodohodoSpec } from "../../../../../data/hodohodo";
+---
+
+<section class="hodo-spec">
+  <div class="hodo-spec__head">
+    <h2 class="hodo-spec__title">施設概要</h2>
+    <div class="hodo-spec__title-line" aria-hidden="true"></div>
+  </div>
+
+  <dl class="hodo-spec__table">
+    {
+      hodohodoSpec.map((row) => (
+        <div class="hodo-spec__row">
+          <dt class="hodo-spec__label">{row.label}</dt>
+          <dd class="hodo-spec__value">
+            {row.lines.map((line) => (
+              <p>{line}</p>
+            ))}
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../../styles/variables";
+  @import "../../../../../styles/functions";
+  @import "../../../../../styles/mixins";
+
+  .hodo-spec {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #d6b156;
+    padding-top: spx(80);
+    padding-bottom: spx(100);
+    gap: spx(40);
+    @include tablet-up {
+      padding-top: ppx(120);
+      padding-bottom: ppx(150);
+      gap: ppx(70);
+    }
+
+    // 線が高さ0で描かれる分、gapから5pxを引く
+    &__head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.8;
+      font-size: spx(42);
+      letter-spacing: spx(2.1);
+      margin-right: spx(-2.1);
+      @include tablet-up {
+        font-size: ppx(60);
+        letter-spacing: ppx(3);
+        margin-right: ppx(-3);
+      }
+    }
+
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #000 0,
+        #000 #{spx(6)},
+        transparent #{spx(6)},
+        transparent #{spx(21)}
+      );
+      @include tablet-up {
+        width: ppx(2000);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #000 0,
+          #000 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__table {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(20);
+      }
+    }
+
+    // SPはラベルが上、PCはラベルが左
+    &__row {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      background-color: #fff;
+      width: spx(690);
+      padding: spx(20) spx(30);
+      border-radius: spx(20);
+      gap: spx(8);
+      @include tablet-up {
+        flex-direction: row;
+        width: auto;
+        padding: ppx(20) ppx(30);
+        border-radius: ppx(20);
+        gap: ppx(15);
+      }
+    }
+
+    &__label {
+      flex-shrink: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      line-height: 1.6;
+      font-size: spx(28);
+      letter-spacing: spx(1.4);
+      @include tablet-up {
+        width: ppx(200);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__value {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.6;
+      width: spx(600);
+      font-size: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        width: ppx(1525);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+  }
+</style>

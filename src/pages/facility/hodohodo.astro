@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
+import Hero from "../../assets/components/pages/facility/hodohodo/1-hero.astro";
+import Items from "../../assets/components/pages/facility/hodohodo/2-items.astro";
+import Spec from "../../assets/components/pages/facility/hodohodo/3-spec.astro";
+---
+
+<BaseLayout
+  title="ほどほどの森 | 共有施設・設備 | Gnome 湖のほとりのキャンプ場"
+  description="道路を渡ってすぐ隣に広がる1,000㎡のカラマツ林。天然温泉の足湯やサウナ小屋、キャンプ、アウトドア体験が楽しめます。"
+  flush
+  breadcrumb={[
+    { label: "TOP", href: "/" },
+    { label: "共有施設・設備", href: "/facility/" },
+    { label: "ほどほどの森" },
+  ]}
+>
+  <Hero />
+  <Items />
+  <Spec />
+</BaseLayout>
