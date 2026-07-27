@@ -1,0 +1,199 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import type { Howto } from "../../../../data/howto";
+
+interface Props {
+  howto: Howto;
+}
+
+const { howto } = Astro.props;
+
+// 時間軸は日をまたいで1列に並べる
+const items = howto.schedule.flatMap((day) => day.items);
+---
+
+<section class="howto-schedule">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="howto-schedule__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="howto-schedule__head">
+    <div class="howto-schedule__days">
+      {howto.schedule.map((day) => <p>{day.day}</p>)}
+    </div>
+    <div class="howto-schedule__line" aria-hidden="true"></div>
+  </div>
+
+  <ul class="howto-schedule__list">
+    {
+      items.map((item) => (
+        <li class="howto-schedule__item">
+          <p class="howto-schedule__time">{item.time}</p>
+          <p class="howto-schedule__label">{item.label}</p>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .howto-schedule {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #e2dbc1;
+    padding-top: spx(90);
+    gap: spx(35);
+    @include tablet-up {
+      padding-top: ppx(150);
+      gap: ppx(47);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 区切り線の太さ(2px)をgapから引く
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__days {
+      box-sizing: border-box;
+      display: flex;
+      align-items: flex-start;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.8;
+      width: spx(630);
+      padding-left: spx(20);
+      gap: spx(300);
+      font-size: spx(36);
+      letter-spacing: spx(1.8);
+      @include tablet-up {
+        width: ppx(2120);
+        padding-left: ppx(74);
+        gap: ppx(1143);
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+      }
+    }
+
+    &__line {
+      width: spx(630);
+      height: spx(2);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #000 0,
+        #000 #{spx(2)},
+        transparent #{spx(2)},
+        transparent #{spx(10)}
+      );
+      @include tablet-up {
+        width: ppx(2120);
+        height: ppx(2);
+        background-image: repeating-linear-gradient(
+          to right,
+          #000 0,
+          #000 #{ppx(2)},
+          transparent #{ppx(2)},
+          transparent #{ppx(10)}
+        );
+      }
+    }
+
+    // SPは入りきらないので横スクロールさせる
+    &__list {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      max-width: 100%;
+      overflow-x: auto;
+      padding: 0 spx(45) spx(40);
+      gap: spx(40);
+      @include tablet-up {
+        overflow-x: visible;
+        padding: 0;
+        gap: ppx(90);
+      }
+    }
+
+    &__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      text-align: center;
+      width: spx(60);
+      gap: spx(11);
+      @include tablet-up {
+        width: ppx(94);
+        gap: ppx(11);
+      }
+    }
+
+    &__time {
+      width: 100%;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #c3925e;
+      line-height: 1.8;
+      font-size: spx(26);
+      @include tablet-up {
+        font-size: ppx(35);
+      }
+    }
+
+    // 1文字ずつ折り返して縦組みに見せる
+    &__label {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.2;
+      width: spx(24);
+      font-size: spx(24);
+      letter-spacing: spx(1.2);
+      @include tablet-up {
+        width: ppx(30);
+        font-size: ppx(30);
+        letter-spacing: ppx(1.5);
+      }
+    }
+  }
+</style>

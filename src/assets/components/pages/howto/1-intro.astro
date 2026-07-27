@@ -1,0 +1,293 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import { howtos, type Howto } from "../../../../data/howto";
+
+interface Props {
+  howto: Howto;
+}
+
+const { howto } = Astro.props;
+---
+
+<section class="howto-intro">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="howto-intro__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="howto-intro__body">
+    <!-- 表示中のケースだけ色が変わる -->
+    <ul class="howto-intro__nav">
+      {
+        howtos.map((item) => (
+          <li>
+            <a
+              class:list={[
+                "howto-intro__nav-item",
+                { "is-current": item.slug === howto.slug },
+              ]}
+              href={`/howto/${item.slug}/`}
+              aria-current={item.slug === howto.slug ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="howto-intro__main">
+      <div class="howto-intro__text">
+        <p class="howto-intro__case">{howto.caseNo}</p>
+        <h1 class="howto-intro__en">{howto.en}</h1>
+        <p class="howto-intro__label">{howto.label}</p>
+        <p class="howto-intro__lead">{howto.lead}</p>
+      </div>
+
+      <div class="howto-intro__photo">
+        <img
+          class="howto-intro__photo-img"
+          src={howto.photo.src}
+          width={howto.photo.width}
+          height={howto.photo.height}
+          alt=""
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .howto-intro {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(60);
+    padding-bottom: spx(10);
+    @include tablet-up {
+      padding-top: ppx(90);
+      padding-bottom: ppx(10);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__body {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(60);
+      @include tablet-up {
+        align-items: flex-start;
+        gap: ppx(110);
+      }
+    }
+
+    // 円形のケース切り替え
+    &__nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+      gap: spx(20);
+      @include tablet-up {
+        flex-wrap: nowrap;
+        gap: ppx(70);
+      }
+    }
+
+    &__nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #000;
+      border-radius: 50%;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1;
+      transition: opacity 0.3s ease;
+      width: spx(120);
+      height: spx(120);
+      font-size: spx(20);
+      letter-spacing: spx(2);
+      @include tablet-up {
+        width: ppx(178);
+        height: ppx(178);
+        font-size: ppx(26);
+        letter-spacing: ppx(2.6);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.75;
+        }
+      }
+    }
+
+    &__nav-item.is-current {
+      background-color: #d6b156;
+    }
+
+    &__main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(30);
+      @include tablet-up {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: ppx(60);
+      }
+    }
+
+    // 白いピルの左右パディング70で、CASE01とリード文の字面が揃う
+    &__text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: spx(630);
+      @include tablet-up {
+        width: ppx(940);
+      }
+    }
+
+    &__case {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #d6b156;
+      line-height: 1;
+      padding-left: spx(30);
+      font-size: spx(30);
+      letter-spacing: spx(3);
+      @include tablet-up {
+        padding-left: ppx(70);
+        font-size: ppx(40);
+        letter-spacing: ppx(4);
+      }
+    }
+
+    &__en {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      line-height: 1;
+      white-space: nowrap;
+      margin-top: spx(12);
+      padding: spx(14) spx(23.6) spx(20) spx(30);
+      border-radius: spx(20);
+      font-size: spx(64);
+      letter-spacing: spx(6.4);
+      @include tablet-up {
+        margin-top: ppx(18);
+        padding: ppx(20) ppx(58) ppx(30) ppx(70);
+        border-radius: ppx(30);
+        font-size: ppx(120);
+        letter-spacing: ppx(12);
+      }
+    }
+
+    &__label {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      line-height: 1;
+      white-space: nowrap;
+      margin-top: spx(12);
+      padding: spx(14) spx(27.8) spx(14) spx(30);
+      border-radius: spx(14);
+      font-size: spx(22);
+      letter-spacing: spx(2.2);
+      @include tablet-up {
+        margin-top: ppx(15);
+        padding: ppx(20) ppx(67.4) ppx(20) ppx(70);
+        border-radius: ppx(20);
+        font-size: ppx(26);
+        letter-spacing: ppx(2.6);
+      }
+    }
+
+    &__lead {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.7;
+      margin-top: spx(25);
+      padding-left: spx(30);
+      width: spx(600);
+      font-size: spx(26);
+      letter-spacing: spx(2.6);
+      @include tablet-up {
+        margin-top: ppx(35);
+        padding-left: ppx(70);
+        width: ppx(940);
+        font-size: ppx(26);
+        letter-spacing: ppx(2.6);
+      }
+    }
+
+    // 白い枠付きの写真
+    &__photo {
+      box-sizing: border-box;
+      overflow: clip;
+      border-style: solid;
+      border-color: #fff;
+      width: spx(630);
+      border-width: spx(10);
+      border-radius: spx(30);
+      @include tablet-up {
+        width: ppx(920);
+        border-width: ppx(15);
+        border-radius: ppx(40);
+      }
+    }
+
+    &__photo-img {
+      display: block;
+      width: 100%;
+      object-fit: cover;
+      height: spx(420);
+      @include tablet-up {
+        height: ppx(621);
+      }
+    }
+  }
+</style>
