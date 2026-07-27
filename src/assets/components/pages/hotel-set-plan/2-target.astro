@@ -5,15 +5,13 @@ import "../../../../styles/main.scss";
 import WavePc from "../../../images/hotel-set-plan/wave-to-target.webp";
 import WaveSp from "../../../images/hotel-set-plan/wave-to-target-sp.webp";
 import IconCheck from "../../../images/hotel-set-plan/icon-check.svg";
-import CampfirePc from "../../../images/hotel-set-plan/campfire.webp";
-import CampfireSp from "../../../images/hotel-set-plan/campfire-sp.webp";
+import Campfire from "../../../images/hotel-set-plan/campfire.svg";
 
-// SPだけ改行位置を指定したいものは <br class="hsp-target__br-sp"> を入れる。
-// 3つめの「キャップ好き」はFigmaの表記どおり（誤記の可能性あり・要確認）
+// SPだけ改行位置を指定したいものは <br class="hsp-target__br-sp"> を入れる
 const list = [
   "どうしてもキャンプしたいけど天候が心配",
   '小さなお子様を連れてのキャンプや、<br class="hsp-target__br-sp">テント泊はちょっと不安',
-  "キャップ好きのパパと一緒にアウトドアを楽しみたいママとお子様",
+  "キャンプ好きのパパと一緒にアウトドアを楽しみたいママとお子様",
   "キャンプしながらリモートワークしたい（客室内Wi-Fi完備）",
   "ホテルのお部屋で安心安全に休みたい",
 ];
@@ -29,10 +27,7 @@ const list = [
 
 <section class="hsp-target">
   <!-- 焚き火のイラスト。上のセクションにはみ出す -->
-  <picture class="hsp-target__illust">
-    <source srcset={CampfirePc.src} media="(min-width: 744px)" />
-    <img class="hsp-target__illust-img" src={CampfireSp.src} alt="" />
-  </picture>
+  <img class="hsp-target__illust" src={Campfire.src} alt="" />
 
   <div class="hsp-target__head">
     <h2 class="hsp-target__title">こんな方におすすめ!!</h2>
@@ -98,12 +93,12 @@ const list = [
       gap: ppx(40);
     }
 
-    // 画像には下のセクションと同じ地色が焼き込んであるため、
-    // 上端がセクションの境目にぴったり合う位置に置く
+    // 上のセクション（繋ぎの波）にはみ出す
     &__illust {
       position: absolute;
       z-index: 2;
       display: block;
+      height: auto;
       top: spx(-50.92);
       left: spx(58);
       width: spx(254);
@@ -112,12 +107,6 @@ const list = [
         left: ppx(248);
         width: ppx(445);
       }
-    }
-
-    &__illust-img {
-      display: block;
-      width: 100%;
-      height: auto;
     }
 
     // 線が高さ0で描かれる分、gapから5pxを引く
