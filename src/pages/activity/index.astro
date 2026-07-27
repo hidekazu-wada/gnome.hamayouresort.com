@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
 import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
-import Filter from "../../assets/components/pages/activity/1-filter.astro";
+import FilterBar from "../../assets/components/common/filter/FilterBar.astro";
+import { filterGroups } from "../../data/activities";
 import List from "../../assets/components/pages/activity/2-list.astro";
 ---
 
@@ -15,6 +16,6 @@ import List from "../../assets/components/pages/activity/2-list.astro";
     titleJa="アクティビティ"
     lead={'自然を活かした<br class="page-header__br-pc"><span class="page-header__lead-em">20種類以上</span>の<br class="page-header__br-sp">アクティビティが楽しめます'}
   />
-  <Filter />
+  <FilterBar groups={filterGroups} />
   <List />
 </BaseLayout>

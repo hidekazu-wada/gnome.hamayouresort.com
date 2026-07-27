@@ -3,35 +3,32 @@
 import "../../../../styles/main.scss";
 
 import PaperTexture from "../../../images/common/paper-texture.png";
-import ActivityCard from "../../common/activityCard/ActivityCard.astro";
-import { activities } from "../../../../data/activities";
+import StayCard from "../../common/stayCard/StayCard.astro";
+import { stays } from "../../../../data/stays";
 ---
 
-<section class="activity-list">
+<section class="stay-list">
   <!-- 背景の紙テクスチャ -->
   <div
-    class="activity-list__texture"
+    class="stay-list__texture"
     aria-hidden="true"
     style={`background-image: url(${PaperTexture.src});`}
   >
   </div>
 
-  <ul class="activity-list__items" data-filter-list>
+  <ul class="stay-list__items" data-filter-list>
     {
-      activities.map((activity) => (
-        <li
-          class="activity-list__item"
-          data-filters={JSON.stringify(activity.filters)}
-        >
-          <ActivityCard activity={activity} />
+      stays.map((stay) => (
+        <li class="stay-list__item" data-filters={JSON.stringify(stay.filters)}>
+          <StayCard stay={stay} />
         </li>
       ))
     }
   </ul>
 
   <!-- 絞り込み結果が0件のとき（デザインに指定がないため最小限の表示） -->
-  <p class="activity-list__empty" data-filter-empty hidden>
-    条件に合うアクティビティが見つかりませんでした。
+  <p class="stay-list__empty" data-filter-empty hidden>
+    条件に合う宿泊サイトが見つかりませんでした。
   </p>
 </section>
 
@@ -41,14 +38,14 @@ import { activities } from "../../../../data/activities";
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
-  .activity-list {
+  .stay-list {
     position: relative;
     background-color: #bee0e1;
     padding-top: spx(80);
     padding-bottom: spx(90);
     @include tablet-up {
-      padding-top: ppx(110);
-      padding-bottom: ppx(100);
+      padding-top: ppx(100);
+      padding-bottom: ppx(150);
     }
 
     &__texture {
@@ -77,7 +74,7 @@ import { activities } from "../../../../data/activities";
       @include tablet-up {
         flex-direction: row;
         align-items: flex-start;
-        gap: ppx(135) ppx(10);
+        gap: ppx(130) ppx(25);
       }
     }
 

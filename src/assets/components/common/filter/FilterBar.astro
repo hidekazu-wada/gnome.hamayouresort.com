@@ -4,40 +4,38 @@ import "../../../../styles/main.scss";
 
 import PaperTexture from "../../../images/common/paper-texture.png";
 import IconChevron from "../../../images/common/icon-chevron.svg";
-import { filterGroups } from "../../../../data/activities";
+
+interface Props {
+  /** 絞り込みの項目と選択肢 */
+  groups: readonly { key: string; label: string; options: readonly string[] }[];
+}
+
+const { groups } = Astro.props;
 ---
 
-<section class="activity-filter">
+<section class="filter-bar">
   <!-- 背景の紙テクスチャ -->
   <div
-    class="activity-filter__texture"
+    class="filter-bar__texture"
     aria-hidden="true"
     style={`background-image: url(${PaperTexture.src});`}
   >
   </div>
 
-  <p class="activity-filter__heading">絞り込み検索</p>
+  <p class="filter-bar__heading">絞り込み検索</p>
 
-  <div class="activity-filter__pills">
+  <div class="filter-bar__pills">
     {
-      filterGroups.map((group) => (
-        <div class="activity-filter__group" data-key={group.key}>
-          <button
-            class="activity-filter__pill"
-            type="button"
-            aria-expanded="false"
-          >
-            <span class="activity-filter__pill-label">{group.label}</span>
-            <img class="activity-filter__pill-icon" src={IconChevron.src} alt="" />
+      groups.map((group) => (
+        <div class="filter-bar__group" data-key={group.key}>
+          <button class="filter-bar__pill" type="button" aria-expanded="false">
+            <span class="filter-bar__pill-label">{group.label}</span>
+            <img class="filter-bar__pill-icon" src={IconChevron.src} alt="" />
           </button>
-          <ul class="activity-filter__options">
+          <ul class="filter-bar__options">
             {group.options.map((option) => (
               <li>
-                <button
-                  class="activity-filter__option"
-                  type="button"
-                  data-value={option}
-                >
+                <button class="filter-bar__option" type="button" data-value={option}>
                   {option}
                 </button>
               </li>
@@ -48,28 +46,22 @@ import { filterGroups } from "../../../../data/activities";
     }
 
     <!-- リセットだけはデザイン上アイコンなし -->
-    <button
-      class="activity-filter__pill activity-filter__pill--reset"
-      type="button"
-      data-reset
-    >
-      <span class="activity-filter__pill-label">リセット</span>
+    <button class="filter-bar__pill filter-bar__pill--reset" type="button" data-reset>
+      <span class="filter-bar__pill-label">リセット</span>
     </button>
   </div>
 </section>
 
 <script>
-  const filter = document.querySelector<HTMLElement>(".activity-filter");
-  const list = document.querySelector<HTMLElement>(".activity-list");
+  const filter = document.querySelector<HTMLElement>(".filter-bar");
+  const list = document.querySelector<HTMLElement>("[data-filter-list]");
 
   if (filter && list) {
     const groups = Array.from(
-      filter.querySelectorAll<HTMLElement>(".activity-filter__group")
+      filter.querySelectorAll<HTMLElement>(".filter-bar__group")
     );
-    const items = Array.from(
-      list.querySelectorAll<HTMLElement>(".activity-list__item")
-    );
-    const empty = list.querySelector<HTMLElement>(".activity-list__empty");
+    const items = Array.from(list.querySelectorAll<HTMLElement>("[data-filters]"));
+    const empty = document.querySelector<HTMLElement>("[data-filter-empty]");
     const selected: Record<string, string> = {};
     // 未選択時に戻すためのラベル
     const defaultLabels = new Map<HTMLElement, string>();
@@ -79,7 +71,7 @@ import { filterGroups } from "../../../../data/activities";
         if (group === except) return;
         group.classList.remove("is-open");
         group
-          .querySelector(".activity-filter__pill")
+          .querySelector(".filter-bar__pill")
           ?.setAttribute("aria-expanded", "false");
       });
     };
@@ -99,14 +91,9 @@ import { filterGroups } from "../../../../data/activities";
 
     groups.forEach((group) => {
       const key = group.dataset.key || "";
-      const pill = group.querySelector<HTMLButtonElement>(
-        ".activity-filter__pill"
-      );
-      const label = group.querySelector<HTMLElement>(
-        ".activity-filter__pill-label"
-      );
-      const defaultLabel = label?.textContent || "";
-      defaultLabels.set(group, defaultLabel);
+      const pill = group.querySelector<HTMLButtonElement>(".filter-bar__pill");
+      const label = group.querySelector<HTMLElement>(".filter-bar__pill-label");
+      defaultLabels.set(group, label?.textContent || "");
 
       pill?.addEventListener("click", () => {
         const willOpen = !group.classList.contains("is-open");
@@ -116,14 +103,14 @@ import { filterGroups } from "../../../../data/activities";
       });
 
       group
-        .querySelectorAll<HTMLButtonElement>(".activity-filter__option")
+        .querySelectorAll<HTMLButtonElement>(".filter-bar__option")
         .forEach((option) => {
           option.addEventListener("click", () => {
             const value = option.dataset.value || "";
             // 同じ項目を選び直したら解除
             if (selected[key] === value) {
               delete selected[key];
-              if (label) label.textContent = defaultLabel;
+              if (label) label.textContent = defaultLabels.get(group) || "";
               group.classList.remove("is-selected");
             } else {
               selected[key] = value;
@@ -142,9 +129,7 @@ import { filterGroups } from "../../../../data/activities";
       ?.addEventListener("click", () => {
         Object.keys(selected).forEach((key) => delete selected[key]);
         groups.forEach((group) => {
-          const label = group.querySelector<HTMLElement>(
-            ".activity-filter__pill-label"
-          );
+          const label = group.querySelector<HTMLElement>(".filter-bar__pill-label");
           if (label) label.textContent = defaultLabels.get(group) || "";
           group.classList.remove("is-selected", "is-open");
         });
@@ -164,7 +149,7 @@ import { filterGroups } from "../../../../data/activities";
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
-  .activity-filter {
+  .filter-bar {
     position: relative;
     display: flex;
     flex-direction: column;

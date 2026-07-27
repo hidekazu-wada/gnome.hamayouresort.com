@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
+import FilterBar from "../../assets/components/common/filter/FilterBar.astro";
+import List from "../../assets/components/pages/stay/1-list.astro";
+import { stayFilterGroups } from "../../data/stays";
+---
+
+<BaseLayout
+  title="泊まる | Gnome 湖のほとりのキャンプ場"
+  flush
+  breadcrumb={[{ label: "TOP", href: "/" }, { label: "泊まる" }]}
+>
+  <PageHeader
+    titleEn="STAY"
+    titleJa="泊まる"
+    lead="豊富な宿泊スタイルから選べます"
+  />
+  <FilterBar groups={stayFilterGroups} />
+  <List />
+</BaseLayout>

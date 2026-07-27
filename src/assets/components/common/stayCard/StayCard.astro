@@ -1,0 +1,351 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import Badge from "../../../images/stay/badge.svg";
+import BadgeCheck from "../../../images/stay/badge-check.svg";
+import IconArrow from "../../../images/common/icon-arrow-gray.svg";
+import type { Stay } from "../../../../data/stays";
+
+interface Props {
+  stay: Stay;
+}
+
+const { stay } = Astro.props;
+---
+
+<a class="stay-card" href={`/stay/${stay.slug}/`}>
+  <div class="stay-card__photo">
+    <img
+      class="stay-card__photo-img"
+      src={stay.photo.src}
+      width={stay.photo.width}
+      height={stay.photo.height}
+      alt=""
+      loading="lazy"
+    />
+  </div>
+
+  <!-- 左上のバッジ -->
+  <div class="stay-card__badge">
+    <img class="stay-card__badge-bg" src={Badge.src} alt="" />
+    <img class="stay-card__badge-check" src={BadgeCheck.src} alt="" />
+    <span class="stay-card__badge-text">
+      {
+        stay.badgeLines.map((line, i) => (
+          <span
+            class:list={[
+              "stay-card__badge-line",
+              { "is-main": i === stay.badgeLines.length - 1 },
+            ]}
+          >
+            {line}
+          </span>
+        ))
+      }
+    </span>
+  </div>
+
+  <!-- 写真右下の区画コード -->
+  <span class="stay-card__code">{stay.code}</span>
+
+  <div class="stay-card__body">
+    <div class="stay-card__head">
+      <p class="stay-card__title">
+        {stay.titleLines.map((line) => <span class="stay-card__title-line">{line}</span>)}
+      </p>
+      <ul class="stay-card__tags">
+        {stay.tags.map((tag) => <li class="stay-card__tag">{tag}</li>)}
+      </ul>
+    </div>
+
+    <div class="stay-card__price-row">
+      <p class="stay-card__price">
+        <span class="stay-card__price-main">{stay.price}</span>
+        <span class="stay-card__price-unit">／1泊</span>
+      </p>
+      <img class="stay-card__arrow" src={IconArrow.src} alt="" />
+    </div>
+  </div>
+</a>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // カードは SP / PC で同じ設計値（基準ビューポートだけ異なる）
+  .stay-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: spx(530);
+    @include tablet-up {
+      width: ppx(530);
+    }
+
+    // 写真（上だけ角丸）
+    &__photo {
+      overflow: clip;
+      width: 100%;
+      height: spx(480);
+      border-radius: spx(30) spx(30) 0 0;
+      @include tablet-up {
+        height: ppx(480);
+        border-radius: ppx(30) ppx(30) 0 0;
+      }
+    }
+
+    &__photo-img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    @include hover {
+      &:hover .stay-card__photo-img {
+        transform: scale(1.08);
+      }
+    }
+
+    // 左上のバッジ
+    &__badge {
+      position: absolute;
+      top: spx(22.5);
+      left: spx(24);
+      width: spx(164);
+      height: spx(164);
+      @include tablet-up {
+        top: ppx(22.5);
+        left: ppx(24);
+        width: ppx(164);
+        height: ppx(164);
+      }
+    }
+
+    &__badge-bg {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    &__badge-check {
+      position: absolute;
+      display: block;
+      top: spx(33);
+      left: spx(56);
+      width: spx(51.2);
+      height: spx(15.2);
+      @include tablet-up {
+        top: ppx(33);
+        left: ppx(56);
+        width: ppx(51.2);
+        height: ppx(15.2);
+      }
+    }
+
+    &__badge-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -46%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #507425;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.01;
+    }
+
+    &__badge-line {
+      display: block;
+      font-size: spx(22);
+      letter-spacing: spx(1.1);
+      @include tablet-up {
+        font-size: ppx(22);
+        letter-spacing: ppx(1.1);
+      }
+    }
+
+    &__badge-line.is-main {
+      letter-spacing: 0;
+      font-size: spx(38);
+      @include tablet-up {
+        font-size: ppx(38);
+      }
+    }
+
+    // 写真右下の区画コード
+    &__code {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #8aad61;
+      border-radius: 50%;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1.11;
+      top: spx(390.5);
+      left: spx(205);
+      width: spx(120);
+      height: spx(120);
+      font-size: spx(40);
+      @include tablet-up {
+        top: ppx(390.5);
+        left: ppx(205);
+        width: ppx(120);
+        height: ppx(120);
+        font-size: ppx(40);
+      }
+    }
+
+    // 白い本文ブロック
+    &__body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      background-color: #fff;
+      padding: spx(50) 0;
+      border-radius: 0 0 spx(30) spx(30);
+      gap: spx(31);
+      @include tablet-up {
+        padding: ppx(50) 0;
+        border-radius: 0 0 ppx(30) ppx(30);
+        gap: ppx(31);
+      }
+    }
+
+    &__head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      width: 100%;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.4;
+      font-size: spx(38);
+      letter-spacing: spx(3.8);
+      margin-right: spx(-3.8);
+      @include tablet-up {
+        font-size: ppx(38);
+        letter-spacing: ppx(3.8);
+        margin-right: ppx(-3.8);
+      }
+    }
+
+    &__title-line {
+      display: block;
+    }
+
+    &__tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      width: spx(480);
+      gap: spx(6);
+      @include tablet-up {
+        width: ppx(480);
+        gap: ppx(6);
+      }
+    }
+
+    &__tag {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #dde9cd;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #507425;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.2;
+      min-width: spx(156);
+      padding: spx(8) spx(10) spx(10);
+      border-radius: spx(10);
+      font-size: spx(22);
+      @include tablet-up {
+        min-width: ppx(156);
+        padding: ppx(8) ppx(10) ppx(10);
+        border-radius: ppx(10);
+        font-size: ppx(22);
+      }
+    }
+
+    &__price-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 100%;
+      padding-right: spx(30);
+      gap: spx(40);
+      @include tablet-up {
+        padding-right: ppx(30);
+        gap: ppx(40);
+      }
+    }
+
+    &__price {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #507425;
+      white-space: nowrap;
+      line-height: 1.2;
+      letter-spacing: spx(1.5);
+      @include tablet-up {
+        letter-spacing: ppx(1.5);
+      }
+    }
+
+    &__price-main {
+      font-size: spx(41);
+      @include tablet-up {
+        font-size: ppx(41);
+      }
+    }
+
+    &__price-unit {
+      font-size: spx(26);
+      @include tablet-up {
+        font-size: ppx(26);
+      }
+    }
+
+    // 50pxの枠に対し画像は上下左右5%はみ出す
+    &__arrow {
+      display: block;
+      width: spx(55);
+      height: spx(55);
+      margin: spx(-2.5);
+      @include tablet-up {
+        width: ppx(55);
+        height: ppx(55);
+        margin: ppx(-2.5);
+      }
+    }
+  }
+</style>
