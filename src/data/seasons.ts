@@ -94,7 +94,7 @@ export const seasons: Season[] = [
     catch: "紅葉に染まる湖畔の絶景",
     bg: "#e2dbc1",
     accent: "#d6b156",
-    badgeBg: "#f5edd8",
+    badgeBg: "#fff6df",
     mainPhoto: autumnMain,
     subPhoto: autumnSub,
     illust: illustAutumn.src,

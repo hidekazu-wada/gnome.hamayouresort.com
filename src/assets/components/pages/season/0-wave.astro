@@ -1,0 +1,55 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import toSpring from "../../../images/season/wave-to-spring.webp";
+import toSummer from "../../../images/season/wave-to-summer.webp";
+import toAutumn from "../../../images/season/wave-to-autumn.webp";
+import toWinter from "../../../images/season/wave-to-winter.webp";
+import toFooter from "../../../images/season/wave-to-footer.webp";
+
+interface Props {
+  /** どのセクションへの繋ぎか */
+  to: "spring" | "summer" | "autumn" | "winter" | "footer";
+}
+
+const { to } = Astro.props;
+
+const waves = {
+  spring: toSpring,
+  summer: toSummer,
+  autumn: toAutumn,
+  winter: toWinter,
+  footer: toFooter,
+};
+---
+
+<div class="season-wave">
+  <img class="season-wave__img" src={waves[to].src} alt="" />
+</div>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 画像は枠より上と左右に少しはみ出す。SPは同じ画像を高さに合わせて縮める
+  .season-wave {
+    position: relative;
+    height: spx(66);
+    @include tablet-up {
+      height: ppx(207.816);
+    }
+
+    &__img {
+      position: absolute;
+      top: -5.55%;
+      left: -0.44%;
+      display: block;
+      width: 100.885%;
+      height: 105.55%;
+      object-fit: fill;
+    }
+  }
+</style>

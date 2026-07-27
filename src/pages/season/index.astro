@@ -2,8 +2,14 @@
 import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
 import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
 import SeasonNav from "../../assets/components/pages/season/1-nav.astro";
+import SeasonWave from "../../assets/components/pages/season/0-wave.astro";
 import SeasonMain from "../../assets/components/pages/season/2-main.astro";
+import SeasonPoint from "../../assets/components/pages/season/3-point.astro";
+import SeasonActivity from "../../assets/components/pages/season/4-activity.astro";
 import { seasons } from "../../data/seasons";
+
+// 季節の頭に置く繋ぎと、最後にフッターへの繋ぎ
+const waveTo = ["spring", "summer", "autumn", "winter"] as const;
 ---
 
 <BaseLayout
@@ -18,5 +24,15 @@ import { seasons } from "../../data/seasons";
     lead="春夏秋冬の大自然を楽しむ"
   />
   <SeasonNav />
-  {seasons.map((season) => <SeasonMain season={season} />)}
+  {
+    seasons.map((season, i) => (
+      <>
+        <SeasonWave to={waveTo[i]} />
+        <SeasonMain season={season} />
+        <SeasonPoint season={season} />
+        <SeasonActivity season={season} />
+      </>
+    ))
+  }
+  <SeasonWave to="footer" />
 </BaseLayout>

@@ -1,0 +1,330 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import type { Season } from "../../../../data/seasons";
+
+interface Props {
+  season: Season;
+}
+
+const { season } = Astro.props;
+---
+
+<section
+  class="season-point"
+  style={`--accent: ${season.accent}; --badge-bg: ${season.badgeBg};`}
+  data-season={season.key}
+>
+  <div class="season-point__head">
+    <h2 class="season-point__title">
+      <span class="season-point__title-em">{season.ja}</span>のおすすめポイント
+    </h2>
+    <div class="season-point__title-line" aria-hidden="true"></div>
+  </div>
+
+  <div class="season-point__body">
+    <div class="season-point__visual">
+      <div class="season-point__slider swiper">
+        <ul class="swiper-wrapper">
+          {
+            season.point.photos.map((photo, i) => (
+              <li class="season-point__slide swiper-slide">
+                <img
+                  class="season-point__photo"
+                  src={photo.src}
+                  width={photo.width}
+                  height={photo.height}
+                  alt=""
+                  loading={i === 0 ? "eager" : "lazy"}
+                />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="season-point__pagination"></div>
+    </div>
+
+    <div class="season-point__text">
+      <span class="season-point__badge">
+        <span class="season-point__badge-label">おすすめ</span>
+        <span class="season-point__badge-no">01</span>
+      </span>
+      <p class="season-point__lead">
+        {season.point.titleLines.map((line) => <span>{line}</span>)}
+      </p>
+      <p class="season-point__desc">{season.point.body}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import Swiper from "swiper";
+  import { Autoplay, Pagination } from "swiper/modules";
+  import "swiper/css";
+  import "swiper/css/pagination";
+
+  document.querySelectorAll<HTMLElement>(".season-point").forEach((section) => {
+    const el = section.querySelector<HTMLElement>(".season-point__slider");
+    const pagination = section.querySelector<HTMLElement>(".season-point__pagination");
+    if (!el || !pagination) return;
+
+    const swiper = new Swiper(el, {
+      modules: [Autoplay, Pagination],
+      loop: true,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      slidesPerView: 1,
+      pagination: { el: pagination, clickable: true },
+    });
+    // フォント・画像読み込み後に幅を再計測（vw幅の初期計測ずれ対策）
+    window.addEventListener("load", () => swiper.update());
+  });
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 前後の季節色のセクションに挟まれた白い帯
+  .season-point {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    padding-top: spx(80);
+    padding-bottom: spx(70);
+    gap: spx(40);
+    @include tablet-up {
+      padding-top: ppx(120);
+      padding-bottom: ppx(79);
+      gap: ppx(40);
+    }
+
+    // 線が高さ0で描かれる分、gapから5pxを引く
+    &__head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    &__title-em {
+      color: var(--accent);
+    }
+
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #000 0,
+        #000 #{spx(6)},
+        transparent #{spx(6)},
+        transparent #{spx(21)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #000 0,
+          #000 #{ppx(6)},
+          transparent #{ppx(6)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    // SPは縦積み、PCは写真とテキストを横並び
+    &__body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: spx(10) 0;
+      gap: spx(50);
+      @include tablet-up {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: center;
+        padding: ppx(50) 0;
+        gap: ppx(110);
+      }
+    }
+
+    &__visual {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(50);
+      @include tablet-up {
+        gap: ppx(50);
+      }
+    }
+
+    &__slider {
+      overflow: clip;
+      width: spx(630);
+      border-radius: spx(30);
+      @include tablet-up {
+        width: ppx(976);
+        border-radius: ppx(50);
+      }
+    }
+
+    &__slide {
+      line-height: 0;
+    }
+
+    &__photo {
+      display: block;
+      width: 100%;
+      object-fit: cover;
+      height: spx(473);
+      @include tablet-up {
+        height: ppx(732);
+      }
+    }
+
+    &__pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(20);
+      }
+
+      :global(.swiper-pagination-bullet) {
+        opacity: 1;
+        background-color: #cfcfcf;
+        margin: 0 !important;
+        width: spx(25);
+        height: spx(25);
+        @include tablet-up {
+          width: ppx(30);
+          height: ppx(30);
+        }
+      }
+
+      :global(.swiper-pagination-bullet-active) {
+        background-color: #7f7f7f;
+      }
+    }
+
+    &__text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(30);
+      @include tablet-up {
+        align-items: flex-start;
+        height: ppx(558);
+        gap: ppx(30);
+      }
+    }
+
+    // 130角のテキストを持つ円形バッジ
+    &__badge {
+      box-sizing: content-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--badge-bg);
+      border-radius: 50%;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: var(--accent);
+      text-align: center;
+      line-height: 0.95;
+      width: spx(130);
+      height: spx(130);
+      padding: 0 spx(10) spx(20);
+      letter-spacing: spx(6.5);
+      margin-right: spx(-6.5);
+      @include tablet-up {
+        width: ppx(130);
+        height: ppx(130);
+        padding: 0 ppx(10) ppx(20);
+        letter-spacing: ppx(6.5);
+        margin-right: ppx(-6.5);
+      }
+    }
+
+    &__badge-label {
+      font-size: spx(24);
+      @include tablet-up {
+        font-size: ppx(24);
+      }
+    }
+
+    &__badge-no {
+      font-weight: 700;
+      font-size: spx(65);
+      @include tablet-up {
+        font-size: ppx(65);
+      }
+    }
+
+    &__lead {
+      display: flex;
+      flex-direction: column;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: var(--accent);
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(61);
+      letter-spacing: spx(6.1);
+      margin-right: spx(-6.1);
+      @include tablet-up {
+        text-align: left;
+        line-height: 1.6;
+        font-size: ppx(65);
+        letter-spacing: ppx(6.5);
+        margin-right: ppx(-6.5);
+      }
+    }
+
+    &__desc {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.7;
+      width: spx(630);
+      font-size: spx(27);
+      @include tablet-up {
+        line-height: 1.8;
+        width: ppx(715);
+        font-size: ppx(30);
+      }
+    }
+  }
+</style>

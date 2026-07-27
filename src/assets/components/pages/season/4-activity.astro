@@ -1,0 +1,196 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
+import ActivityCard from "../../common/activityCard/ActivityCard.astro";
+import { activities } from "../../../../data/activities";
+import type { Season } from "../../../../data/seasons";
+
+interface Props {
+  season: Season;
+}
+
+const { season } = Astro.props;
+
+// 冬だけ色を敷かずテクスチャそのものを背景にする
+const texture = season.bg ? PaperTexture : PaperTexturePlain;
+---
+
+<section
+  class:list={["season-activity", { "is-plain": !season.bg }]}
+  style={`${season.bg ? `--bg: ${season.bg};` : ""} --accent: ${season.accent};`}
+  data-season={season.key}
+>
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="season-activity__texture"
+    aria-hidden="true"
+    style={`background-image: url(${texture.src});`}
+  >
+  </div>
+
+  <h2 class="season-activity__title">
+    <span class="season-activity__title-em">{season.ja}</span
+    >におすすめのアクティビティ
+  </h2>
+
+  <div class="season-activity__slider swiper">
+    <ul class="swiper-wrapper">
+      {
+        activities.map((item) => (
+          <li class="season-activity__slide swiper-slide">
+            <ActivityCard activity={item} accent={season.accent} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="season-activity__pagination"></div>
+</section>
+
+<script>
+  import Swiper from "swiper";
+  import { Autoplay, Pagination } from "swiper/modules";
+  import "swiper/css";
+  import "swiper/css/pagination";
+
+  document.querySelectorAll<HTMLElement>(".season-activity").forEach((section) => {
+    const el = section.querySelector<HTMLElement>(".season-activity__slider");
+    const pagination = section.querySelector<HTMLElement>(".season-activity__pagination");
+    if (!el || !pagination) return;
+
+    const swiper = new Swiper(el, {
+      modules: [Autoplay, Pagination],
+      loop: true,
+      autoplay: { delay: 4000, disableOnInteraction: false },
+      slidesPerView: 1.15,
+      spaceBetween: 12,
+      centeredSlides: true,
+      pagination: { el: pagination, clickable: true },
+      breakpoints: {
+        744: { slidesPerView: "auto", spaceBetween: 0, centeredSlides: false },
+      },
+    });
+    // フォント・画像読み込み後に幅を再計測（vw幅の初期計測ずれ対策）
+    window.addEventListener("load", () => swiper.update());
+  });
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .season-activity {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--bg);
+    padding-bottom: spx(80);
+    @include tablet-up {
+      padding-bottom: ppx(100);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 色を敷かない節は合成モードを掛けない
+    &.is-plain &__texture {
+      mix-blend-mode: normal;
+    }
+
+    &__title {
+      position: relative;
+      z-index: 1;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.5;
+      padding-top: spx(80);
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        padding-top: ppx(100);
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    &__title-em {
+      color: var(--accent);
+    }
+
+    // PCは設計どおり4枚（530×4＋間隔10×3）が収まる幅に絞って中央寄せ
+    &__slider {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding-top: spx(40);
+      @include tablet-up {
+        width: ppx(2150);
+        margin: 0 auto;
+        padding-top: ppx(60);
+      }
+    }
+
+    &__slide {
+      display: flex;
+      justify-content: center;
+      height: auto;
+      @include tablet-up {
+        width: ppx(530);
+        margin-right: ppx(10);
+      }
+    }
+
+    &__pagination {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: spx(40);
+      gap: spx(20);
+      @include tablet-up {
+        padding-top: ppx(110);
+        gap: ppx(20);
+      }
+
+      :global(.swiper-pagination-bullet) {
+        opacity: 1;
+        background-color: #cfcfcf;
+        margin: 0 !important;
+        width: spx(25);
+        height: spx(25);
+        @include tablet-up {
+          width: ppx(30);
+          height: ppx(30);
+        }
+      }
+
+      :global(.swiper-pagination-bullet-active) {
+        background-color: #7f7f7f;
+      }
+    }
+  }
+</style>

@@ -10,9 +10,11 @@ interface Props {
   activity: Activity;
   /** 配色。一覧は青緑、詳細の「人気のアクティビティ」は緑 */
   variant?: "teal" | "green";
+  /** variantにない色を使いたいとき（四季ページの季節色など） */
+  accent?: string;
 }
 
-const { activity, variant = "teal" } = Astro.props;
+const { activity, variant = "teal", accent } = Astro.props;
 
 // 4文字以上のタグは2行に割って表示する（例: 事前予約 → 事前 / 予約）
 const tagLines = (tag: string) =>
@@ -24,6 +26,7 @@ const tagLines = (tag: string) =>
 <a
   class:list={["activity-card", `activity-card--${variant}`]}
   href={`/activity/${activity.slug}/`}
+  style={accent ? `--accent: ${accent};` : undefined}
 >
   <p class="activity-card__title">{activity.title}</p>
 
