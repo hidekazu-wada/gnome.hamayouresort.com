@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
+import Article from "../../assets/components/pages/news-detail/1-article.astro";
+import { newsItems } from "../../data/news";
+
+export function getStaticPaths() {
+  return newsItems.map((item, i) => ({
+    params: { slug: item.slug },
+    props: {
+      item,
+      // データの並び順で前後の記事へつなぐ
+      prevHref: i > 0 ? `/news/${newsItems[i - 1].slug}/` : undefined,
+      nextHref:
+        i < newsItems.length - 1
+          ? `/news/${newsItems[i + 1].slug}/`
+          : undefined,
+    },
+  }));
+}
+
+const { item, prevHref, nextHref } = Astro.props;
+---
+
+<BaseLayout
+  title={`${item.title} | Gnome 湖のほとりのキャンプ場`}
+  description={item.title}
+  flush
+  breadcrumb={[
+    { label: "TOP", href: "/" },
+    { label: "お知らせ", href: "/news/" },
+    { label: item.title },
+  ]}
+>
+  <PageHeader
+    titleEn="NEWS"
+    titleJa="お知らせ"
+    lead={item.date}
+    leadVariant="date"
+  />
+  <Article item={item} prevHref={prevHref} nextHref={nextHref} />
+</BaseLayout>

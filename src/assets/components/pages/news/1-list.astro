@@ -1,0 +1,465 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import IconChevron from "../../../images/common/icon-chevron.svg";
+import IconArrow from "../../../images/news/icon-circle-arrow.svg";
+import IconArrowWhite from "../../../images/news/icon-circle-arrow-white.svg";
+import { newsCategories, newsItems } from "../../../../data/news";
+
+// 「すべて」を先頭に置いたピルの並び
+const filters = ["すべて", ...newsCategories];
+
+// 初期表示件数。もっと見るで同じ件数ずつ増える
+const PAGE_SIZE = 12;
+---
+
+<section class="news-list">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="news-list__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <ul class="news-list__filters">
+    {
+      filters.map((filter, i) => (
+        <li>
+          <button
+            class:list={["news-list__pill", { "is-active": i === 0 }]}
+            type="button"
+            data-filter={filter}
+            aria-pressed={i === 0 ? "true" : "false"}
+          >
+            <span class="news-list__pill-label">{filter}</span>
+            <img
+              class="news-list__pill-icon news-list__pill-icon--idle"
+              src={IconArrow.src}
+              alt=""
+            />
+            <img
+              class="news-list__pill-icon news-list__pill-icon--active"
+              src={IconArrowWhite.src}
+              alt=""
+            />
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+
+  <ul class="news-list__items" data-news-list>
+    {
+      newsItems.map((item, i) => (
+        <li
+          class="news-list__item"
+          data-category={item.category}
+          data-index={i}
+          hidden={i >= PAGE_SIZE}
+        >
+          <a class="news-list__link" href={`/news/${item.slug}/`}>
+            <span class="news-list__head">
+              <span class="news-list__date">{item.date}</span>
+              <span class="news-list__badge">{item.category}</span>
+            </span>
+            <span class="news-list__title">{item.title}</span>
+          </a>
+          <span class="news-list__line" aria-hidden="true" />
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="news-list__more-wrap">
+    <button class="news-list__more" type="button" data-news-more>
+      <span class="news-list__more-label">もっと見る</span>
+      <img class="news-list__more-icon" src={IconChevron.src} alt="" />
+    </button>
+  </div>
+</section>
+
+<script>
+  // ClientRouter未使用のため直接初期化する
+  const PAGE_SIZE = 12;
+  const section = document.querySelector<HTMLElement>(".news-list");
+
+  if (section) {
+    const pills = Array.from(
+      section.querySelectorAll<HTMLButtonElement>(".news-list__pill"),
+    );
+    const items = Array.from(
+      section.querySelectorAll<HTMLElement>(".news-list__item"),
+    );
+    const moreWrap = section.querySelector<HTMLElement>(".news-list__more-wrap");
+    const more = section.querySelector<HTMLButtonElement>("[data-news-more]");
+
+    let current = "すべて";
+    let shown = PAGE_SIZE;
+
+    const render = () => {
+      let count = 0;
+      items.forEach((item) => {
+        const matched =
+          current === "すべて" || item.dataset.category === current;
+        const visible = matched && count < shown;
+        if (matched) count += 1;
+        item.hidden = !visible;
+      });
+      // 全部出しきったらボタンを隠す
+      if (moreWrap) moreWrap.hidden = count <= shown;
+    };
+
+    pills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        current = pill.dataset.filter ?? "すべて";
+        shown = PAGE_SIZE;
+        pills.forEach((p) => {
+          const active = p === pill;
+          p.classList.toggle("is-active", active);
+          p.setAttribute("aria-pressed", String(active));
+        });
+        render();
+      });
+    });
+
+    more?.addEventListener("click", () => {
+      shown += PAGE_SIZE;
+      render();
+    });
+
+    render();
+  }
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .news-list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(80);
+    padding-bottom: spx(80);
+    gap: spx(50);
+    @include tablet-up {
+      padding-top: ppx(150);
+      padding-bottom: 0;
+      gap: ppx(100);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // SPは2列（325×2＋間隔10＝660）、PCは横1列（413×4＋間隔20×3＝1712）
+    &__filters {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: spx(660);
+      gap: spx(10);
+      @include tablet-up {
+        flex-wrap: nowrap;
+        width: ppx(1712);
+        gap: ppx(20);
+      }
+    }
+
+    // Figmaのストロークは内側なので、線幅の分だけpaddingを引いて高さを合わせる
+    &__pill {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fffdf7;
+      border-style: solid;
+      border-color: #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      white-space: nowrap;
+      cursor: pointer;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      width: spx(325);
+      padding: spx(30.4) 0;
+      border-width: spx(1.6);
+      gap: spx(8);
+      font-size: spx(24);
+      line-height: spx(23);
+      @include tablet-up {
+        width: ppx(413);
+        padding: ppx(33) 0;
+        border-width: ppx(2);
+        gap: ppx(10);
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+
+      &.is-active {
+        background-color: #1a1a1a;
+        color: #fff;
+      }
+    }
+
+    &__pill-label {
+      @include tablet-up {
+        margin-right: ppx(-1.3);
+      }
+    }
+
+    // アイコンは色違いを2枚重ねず、選択状態で出し分ける
+    &__pill-icon {
+      display: block;
+      width: spx(23);
+      height: spx(23);
+      @include tablet-up {
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+
+    &__pill-icon--active {
+      display: none;
+    }
+
+    &__pill.is-active &__pill-icon--idle {
+      display: none;
+    }
+
+    &__pill.is-active &__pill-icon--active {
+      display: block;
+    }
+
+    &__items {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      width: spx(600);
+      padding-top: spx(30);
+      gap: spx(30);
+      @include tablet-up {
+        width: ppx(1740);
+        padding-top: 0;
+        gap: ppx(60);
+      }
+    }
+
+    &__item[hidden] {
+      display: none;
+    }
+
+    // SPは日付・バッジの下にタイトル、PCは横一列
+    &__link {
+      display: flex;
+      flex-direction: column;
+      gap: spx(5);
+      @include tablet-up {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: ppx(30);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+
+    &__head {
+      display: flex;
+      align-items: center;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(30);
+      }
+    }
+
+    &__date {
+      flex-shrink: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      line-height: 1.8;
+      font-size: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        font-size: ppx(30);
+        letter-spacing: ppx(1.5);
+      }
+    }
+
+    &__badge {
+      box-sizing: border-box;
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      background-color: #fffdf7;
+      border-style: solid;
+      border-color: #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      white-space: nowrap;
+      width: spx(280);
+      padding: spx(17.5) 0;
+      border-width: spx(1);
+      font-size: spx(22);
+      line-height: spx(22);
+      @include tablet-up {
+        width: ppx(304);
+        padding: ppx(19) 0;
+        border-width: ppx(1);
+        font-size: ppx(23);
+        line-height: ppx(23);
+        letter-spacing: ppx(1.15);
+        margin-right: 0;
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      width: spx(600);
+      font-size: spx(26);
+      line-height: 1.7;
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        width: ppx(1150);
+        font-size: ppx(30);
+        line-height: 1.8;
+        letter-spacing: ppx(1.5);
+      }
+    }
+
+    // Figmaでは線が高さ0で描かれるので、負のmarginで流れに影響させない
+    &__line {
+      display: block;
+      background-repeat: repeat-x;
+      width: 100%;
+      height: spx(5);
+      margin: spx(22.5) 0 spx(-2.5);
+      background-image: repeating-linear-gradient(
+        to right,
+        #000 0,
+        #000 #{spx(5)},
+        transparent #{spx(5)},
+        transparent #{spx(14)}
+      );
+      @include tablet-up {
+        height: ppx(5);
+        margin: ppx(27.5) 0 ppx(-2.5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #000 0,
+          #000 #{ppx(5)},
+          transparent #{ppx(5)},
+          transparent #{ppx(14)}
+        );
+      }
+    }
+
+    &__more-wrap {
+      position: relative;
+      z-index: 1;
+      padding-top: spx(30);
+      @include tablet-up {
+        padding-top: 0;
+      }
+    }
+
+    &__more-wrap[hidden] {
+      display: none;
+    }
+
+    &__more {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-style: solid;
+      border-color: #000;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      white-space: nowrap;
+      cursor: pointer;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      width: spx(390);
+      padding: spx(23) 0;
+      border-width: spx(4);
+      gap: spx(10);
+      font-size: spx(26);
+      line-height: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        width: ppx(390);
+        padding: ppx(23) 0;
+        border-width: ppx(4);
+        gap: ppx(10);
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+
+      @include hover {
+        &:hover {
+          background-color: #000;
+          color: #fff;
+        }
+      }
+    }
+
+    &__more-label {
+      margin-right: spx(-1.3);
+      @include tablet-up {
+        margin-right: ppx(-1.3);
+      }
+    }
+
+    &__more-icon {
+      display: block;
+      transform: rotate(90deg);
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+  }
+</style>

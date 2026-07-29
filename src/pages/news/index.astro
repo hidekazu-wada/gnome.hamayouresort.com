@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
+import List from "../../assets/components/pages/news/1-list.astro";
+---
+
+<BaseLayout
+  title="お知らせ | Gnome 湖のほとりのキャンプ場"
+  description="Gnomeからのお知らせ・イベント・キャンペーン・スタッフブログの一覧です。"
+  flush
+  breadcrumb={[{ label: "TOP", href: "/" }, { label: "お知らせ" }]}
+>
+  <PageHeader titleEn="NEWS" titleJa="お知らせ" />
+  <List />
+</BaseLayout>

@@ -1,0 +1,322 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import IconArrow from "../../../images/news/icon-circle-arrow.svg";
+import type { NewsItem } from "../../../../data/news";
+
+interface Props {
+  item: NewsItem;
+  prevHref?: string;
+  nextHref?: string;
+}
+
+const { item, prevHref, nextHref } = Astro.props;
+---
+
+<section class="news-article">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="news-article__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <article class="news-article__body">
+    {/* PCでは改行が消えるので、間に空白が入らないよう1行で書く */}
+    <h1 class="news-article__title">{item.titleSp ? (<Fragment>{item.titleSp[0]}<br class="news-article__br-sp" />{item.titleSp[1]}</Fragment>) : item.title}</h1>
+
+    <div class="news-article__line" aria-hidden="true"></div>
+
+    {
+      item.body.map((block) =>
+        block.type === "text" ? (
+          <div class="news-article__text">
+            {/* SPで余計な空白が入らないよう改行を挟まずに書く */}
+            {block.text.split("\n\n").map((paragraph) => (
+              <p class="news-article__paragraph">{paragraph.split("\n").map((line, i) => (<Fragment>{i > 0 && <br class="news-article__br-pc" />}{line}</Fragment>))}</p>
+            ))}
+          </div>
+        ) : (
+          <img
+            class="news-article__image"
+            src={block.image.src}
+            width={block.image.width}
+            height={block.image.height}
+            alt=""
+            loading="lazy"
+          />
+        ),
+      )
+    }
+
+    <div class="news-article__line-wrap">
+      <div class="news-article__line" aria-hidden="true"></div>
+    </div>
+
+    <nav class="news-article__nav" aria-label="記事の移動">
+      <a
+        class:list={["news-article__nav-button", { "is-disabled": !prevHref }]}
+        href={prevHref ?? "#"}
+        aria-disabled={prevHref ? undefined : "true"}
+      >
+        <img
+          class="news-article__nav-icon news-article__nav-icon--prev"
+          src={IconArrow.src}
+          alt=""
+        />
+        <span class="news-article__nav-label">前の記事</span>
+      </a>
+
+      {/* 一覧ボタンだけFigmaでもアイコンは非表示 */}
+      <a class="news-article__nav-button" href="/news/">
+        <span class="news-article__nav-label">お知らせ一覧</span>
+      </a>
+
+      <a
+        class:list={["news-article__nav-button", { "is-disabled": !nextHref }]}
+        href={nextHref ?? "#"}
+        aria-disabled={nextHref ? undefined : "true"}
+      >
+        <span class="news-article__nav-label">次の記事</span>
+        <img class="news-article__nav-icon" src={IconArrow.src} alt="" />
+      </a>
+    </nav>
+  </article>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .news-article {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(60);
+    padding-bottom: spx(80);
+    @include tablet-up {
+      padding-top: ppx(150);
+      padding-bottom: ppx(30);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__body {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: spx(635);
+      gap: spx(25);
+      @include tablet-up {
+        width: ppx(1740);
+        gap: ppx(60);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      width: spx(630);
+      font-size: spx(37);
+      line-height: 1.6;
+      letter-spacing: spx(1.85);
+      margin-right: spx(-1.85);
+      @include tablet-up {
+        width: ppx(1740);
+        font-size: ppx(43);
+        line-height: 1.8;
+        letter-spacing: ppx(2.15);
+        margin-right: ppx(-2.15);
+      }
+    }
+
+    &__br-sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+
+    &__br-pc {
+      display: none;
+      @include tablet-up {
+        display: inline;
+      }
+    }
+
+    // Figmaでは線が高さ0で描かれるので、負のmarginで流れに影響させない
+    &__line {
+      width: spx(630);
+      height: spx(5);
+      margin: spx(-2.5) 0;
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #000 0,
+        #000 #{spx(5)},
+        transparent #{spx(5)},
+        transparent #{spx(14)}
+      );
+      @include tablet-up {
+        width: ppx(1740);
+        height: ppx(5);
+        margin: ppx(-2.5) 0;
+        background-image: repeating-linear-gradient(
+          to right,
+          #000 0,
+          #000 #{ppx(5)},
+          transparent #{ppx(5)},
+          transparent #{ppx(14)}
+        );
+      }
+    }
+
+    // 2本目の線だけSPで前後の余白が違う
+    &__line-wrap {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: spx(30) 0 spx(15);
+      @include tablet-up {
+        padding: 0;
+      }
+    }
+
+    &__text {
+      display: flex;
+      flex-direction: column;
+      width: spx(600);
+      @include tablet-up {
+        width: ppx(1680);
+      }
+    }
+
+    // 段落の間はFigmaでは空行1つぶん
+    &__paragraph {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      font-size: spx(27);
+      line-height: 1.7;
+      @include tablet-up {
+        font-size: ppx(30);
+        line-height: 2.1;
+        letter-spacing: ppx(1.5);
+      }
+
+      & + & {
+        margin-top: spx(45.9);
+        @include tablet-up {
+          margin-top: ppx(63);
+        }
+      }
+    }
+
+    &__image {
+      display: block;
+      object-fit: cover;
+      width: spx(630);
+      height: spx(473);
+      @include tablet-up {
+        width: ppx(1680);
+        height: ppx(1260);
+      }
+    }
+
+    &__nav {
+      display: flex;
+      justify-content: center;
+      gap: spx(10);
+      @include tablet-up {
+        gap: ppx(30);
+      }
+    }
+
+    // Figmaのストロークは内側なので、線幅の分だけpaddingを引いて高さを合わせる
+    &__nav-button {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fffdf7;
+      border-style: solid;
+      border-color: #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+      width: spx(205);
+      padding: spx(23) 0;
+      border-width: spx(2);
+      gap: spx(10);
+      font-size: spx(26);
+      line-height: spx(26);
+      @include tablet-up {
+        width: ppx(413);
+        padding: ppx(33) 0;
+        border-width: ppx(2);
+        gap: ppx(10);
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+
+      &.is-disabled {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+    }
+
+    &__nav-label {
+      @include tablet-up {
+        margin-right: ppx(-1.3);
+      }
+    }
+
+    &__nav-icon {
+      display: block;
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+
+    // 「前の記事」だけ矢印を左向きにする
+    &__nav-icon--prev {
+      transform: scaleX(-1);
+    }
+  }
+</style>
