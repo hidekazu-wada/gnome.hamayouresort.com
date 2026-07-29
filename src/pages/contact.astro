@@ -1,0 +1,23 @@
+---
+import BaseLayout from "../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../assets/components/common/pageHeader/PageHeader.astro";
+import Form from "../assets/components/pages/contact/1-form.astro";
+
+const lead =
+  '下記のフォームにご記入いただき、<br class="page-header__br-sp">「送信」ボタンを押してください。';
+---
+
+<BaseLayout
+  title="お問合せ | Gnome 湖のほとりのキャンプ場"
+  description="Gnome（湖のほとりのキャンプ場）へのお問い合わせフォームです。"
+  flush
+  breadcrumb={[{ label: "TOP", href: "/" }, { label: "お問合せ" }]}
+>
+  <PageHeader
+    titleEn="CONTACT"
+    titleJa="お問合せ"
+    lead={lead}
+    leadVariant="info"
+  />
+  <Form />
+</BaseLayout>

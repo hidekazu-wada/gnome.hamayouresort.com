@@ -1,0 +1,705 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import IconArrowWhite from "../../../images/news/icon-circle-arrow-white.svg";
+
+// 送信先は未定。決まったらここを埋める
+const FORM_ACTION = "";
+
+const fields: {
+  name: string;
+  label: string;
+  type: "text" | "email" | "tel";
+  placeholder: string;
+  required: boolean;
+  autocomplete?: string;
+}[] = [
+  {
+    name: "name",
+    label: "お名前",
+    type: "text",
+    placeholder: "山田太郎",
+    required: true,
+    autocomplete: "name",
+  },
+  {
+    name: "kana",
+    label: "ふりがな",
+    type: "text",
+    placeholder: "やまだたろう",
+    required: true,
+  },
+  {
+    name: "email",
+    label: "メールアドレス",
+    type: "email",
+    placeholder: "example@email.com",
+    required: true,
+    autocomplete: "email",
+  },
+  {
+    name: "tel",
+    label: "電話番号",
+    type: "tel",
+    placeholder: "090-0000-0000",
+    required: false,
+    autocomplete: "tel",
+  },
+];
+
+// 個人情報の取り扱い。見出しはteal、本文はグレー
+const policy = [
+  {
+    heading: "個人情報の取り扱い",
+    lead: true,
+    body: "キャンプビレッジGnome（以下「当社」といいます）は、以下のとおり個人情報保護方針を定め、個人情報保護の仕組みを構築し、全従業員に個人情報保護の重要性の認識と取組みを徹底させることにより、個人情報の保護を推進いたします。",
+  },
+  {
+    heading: "個人情報の管理",
+    body: "当社は、お客様の個人情報を正確かつ最新の状態に保ち、個人情報への不正アクセス・紛失・破損・改ざん・漏洩などを防止するため、セキュリティシステムの維持・管理体制の整備等の必要な措置を講じ、安全対策を実施し個人情報の厳重な管理を行ないます。",
+  },
+  {
+    heading: "個人情報の利用目的",
+    body: "本ウェブサイトでは、お客様からの「お問い合わせ」時に、お名前、メールアドレス、電話番号、住所等の個人情報をご登録いただく場合がございますが、これらの個人情報はご提供いただく際の目的以外では利用いたしません。お客様からお預かりした個人情報は、当社からのご連絡や業務のご案内やご質問に対する回答として、電子メールや資料のご送付に利用いたします。",
+  },
+  {
+    heading: "個人情報の第三者への開示・提供の禁止",
+    body: [
+      "当社は、お客様よりお預かりした個人情報を適切に管理し、次のいずれかに該当する場合を除き個人情報を第三者に開示いたしません。",
+      "・お客様の同意がある場合",
+      "・お客様が希望されるサービスを行なうために当社が業務を委託する業者に対して開示する場合",
+      "・法令に基づき開示することが必要である場合",
+    ].join("\n"),
+  },
+  {
+    heading: "個人情報の安全対策",
+    body: "当社は、個人情報の正確性及び安全性確保のために、セキュリティに万全の対策を講じています。",
+  },
+  {
+    heading: "ご本人の照会",
+    body: "お客様がご本人の個人情報の照会・修正・削除などをご希望される場合には、ご本人であることを確認の上、対応させていただきます。",
+  },
+  {
+    heading: "法令、規範の遵守と見直し",
+    body: "当社は、保有する個人情報に関して適用される日本の法令、その他規範を遵守するとともに、本ポリシーの内容を適宜見直し、その改善に努めます。",
+  },
+  {
+    heading: "お問合せ窓口",
+    body: [
+      "本ポリシーに関するお問合せは、下記の窓口までお願いいたします。",
+      "住所：山梨県南都留郡富士河口湖町西湖１０３０",
+      "社名：キャンプビレッジGnome",
+      "TEL ：0555-82-2650",
+    ].join("\n"),
+  },
+];
+---
+
+<section class="contact">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="contact__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <form class="contact__form" action={FORM_ACTION} method="post" novalidate>
+    <div class="contact__fields">
+      {
+        fields.map((field) => (
+          <div class="contact__row">
+            <div class="contact__label">
+              <span class="contact__label-text">{field.label}</span>
+              {field.required && <span class="contact__badge">必須</span>}
+            </div>
+            <div class="contact__control">
+              <input
+                class="contact__input"
+                type={field.type}
+                name={field.name}
+                placeholder={field.placeholder}
+                autocomplete={field.autocomplete}
+                required={field.required}
+              />
+            </div>
+          </div>
+        ))
+      }
+
+      <div class="contact__row contact__row--radio">
+        <div class="contact__label">
+          <span class="contact__label-text">ご連絡希望方法</span>
+        </div>
+        <div class="contact__radios">
+          <label class="contact__radio">
+            <input
+              class="contact__radio-input"
+              type="radio"
+              name="contactMethod"
+              value="メール"
+              checked
+            />
+            <span class="contact__radio-label">メール</span>
+          </label>
+          <label class="contact__radio">
+            <input
+              class="contact__radio-input"
+              type="radio"
+              name="contactMethod"
+              value="電話"
+            />
+            <span class="contact__radio-label">電話</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="contact__row contact__row--textarea">
+        <div class="contact__label">
+          <span class="contact__label-text">お問い合わせ内容</span>
+          <span class="contact__badge">必須</span>
+        </div>
+        <div class="contact__control contact__control--textarea">
+          <textarea
+            class="contact__input contact__input--textarea"
+            name="message"
+            placeholder="お問い合わせ内容を入力してください"
+            required></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact__policy">
+      <div class="contact__policy-inner">
+        {
+          policy.map((block) => (
+            <div class="contact__policy-block">
+              <p
+                class:list={[
+                  "contact__policy-heading",
+                  { "contact__policy-heading--lead": block.lead },
+                ]}
+              >
+                {block.heading}
+              </p>
+              <p class="contact__policy-text">{block.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <label class="contact__agree">
+      <span class="contact__agree-text">個人情報の取り扱いに同意する</span>
+      <input class="contact__agree-input" type="checkbox" name="agree" />
+    </label>
+
+    <button class="contact__submit" type="submit" disabled>
+      <span class="contact__submit-label">送　信</span>
+      <img class="contact__submit-icon" src={IconArrowWhite.src} alt="" />
+    </button>
+
+    <p class="contact__recaptcha">
+      This site is protected by reCAPTCHA and the Google Privacy Policy and
+      Terms of Service apply.
+    </p>
+  </form>
+</section>
+
+<script>
+  // ClientRouter未使用のため直接初期化する
+  const form = document.querySelector<HTMLFormElement>(".contact__form");
+
+  if (form) {
+    const agree = form.querySelector<HTMLInputElement>(".contact__agree-input");
+    const submit = form.querySelector<HTMLButtonElement>(".contact__submit");
+    const required = Array.from(
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+        "[required]",
+      ),
+    );
+
+    const update = () => {
+      const filled = required.every((field) => field.value.trim() !== "");
+      if (submit) submit.disabled = !(filled && agree?.checked);
+    };
+
+    required.forEach((field) => {
+      field.addEventListener("input", update);
+      field.addEventListener("blur", update);
+    });
+    agree?.addEventListener("change", update);
+    update();
+  }
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .contact {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(40);
+    padding-bottom: spx(70);
+    @include tablet-up {
+      padding-top: ppx(90);
+      padding-bottom: ppx(180);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__form {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(30);
+      @include tablet-up {
+        gap: ppx(70);
+      }
+    }
+
+    &__fields {
+      display: flex;
+      flex-direction: column;
+      width: spx(600);
+      gap: spx(20);
+      @include tablet-up {
+        width: ppx(1448);
+        gap: ppx(40);
+      }
+    }
+
+    // 行の下の破線。丸キャップなので dash1+線幅4=5 / 周期11
+    &__row {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      background-repeat: repeat-x;
+      background-position: bottom left;
+      gap: spx(15);
+      padding-bottom: spx(30);
+      background-size: auto spx(4);
+      background-image: repeating-linear-gradient(
+        to right,
+        #138185 0,
+        #138185 #{spx(5)},
+        transparent #{spx(5)},
+        transparent #{spx(11)}
+      );
+      @include tablet-up {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: ppx(50);
+        padding-bottom: ppx(40);
+        padding-left: ppx(40);
+        background-size: auto ppx(4);
+        background-image: repeating-linear-gradient(
+          to right,
+          #138185 0,
+          #138185 #{ppx(5)},
+          transparent #{ppx(5)},
+          transparent #{ppx(11)}
+        );
+      }
+    }
+
+    &__label {
+      display: flex;
+      flex-shrink: 0;
+      align-items: flex-start;
+      padding-left: spx(20);
+      gap: spx(20);
+      @include tablet-up {
+        width: ppx(368);
+        padding-left: 0;
+        gap: ppx(20);
+      }
+    }
+
+    // お問い合わせ内容だけPCでラベルが上下中央寄りになる
+    &__row--textarea &__label {
+      @include tablet-up {
+        padding-top: ppx(22);
+        padding-bottom: ppx(22);
+      }
+    }
+
+    &__label-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      white-space: nowrap;
+      line-height: 1.8;
+      font-size: spx(30);
+      letter-spacing: spx(1.5);
+      // PCはラベル幅が固定なので、必須バッジの位置が全行で揃う
+      @include tablet-up {
+        width: ppx(280);
+        font-size: ppx(30);
+        letter-spacing: ppx(1.5);
+      }
+    }
+
+    &__badge {
+      box-sizing: border-box;
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      background-color: #138185;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      line-height: 1.8;
+      width: spx(68);
+      margin-top: spx(2);
+      border-radius: spx(14);
+      font-size: spx(24);
+      @include tablet-up {
+        width: ppx(68);
+        margin-top: ppx(2);
+        border-radius: ppx(14);
+        font-size: ppx(24);
+      }
+    }
+
+    &__control {
+      box-sizing: border-box;
+      background-color: #fff;
+      width: spx(600);
+      padding: spx(20) spx(30);
+      border-radius: spx(20);
+      @include tablet-up {
+        width: ppx(950);
+        padding: ppx(20) ppx(30);
+        border-radius: ppx(20);
+      }
+    }
+
+    &__input {
+      display: block;
+      background-color: transparent;
+      border: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      width: 100%;
+      line-height: 1.8;
+      font-size: spx(27);
+      @include tablet-up {
+        font-size: ppx(30);
+      }
+
+      &::placeholder {
+        color: #cfcfcf;
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    &__input--textarea {
+      resize: none;
+      height: spx(220);
+      @include tablet-up {
+        height: ppx(250);
+      }
+    }
+
+    &__radios {
+      display: flex;
+      padding-left: spx(16);
+      gap: spx(50);
+      @include tablet-up {
+        padding-left: 0;
+        gap: ppx(50);
+      }
+    }
+
+    &__radio {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      gap: spx(10);
+      @include tablet-up {
+        gap: ppx(10);
+      }
+    }
+
+    &__radio-input {
+      appearance: none;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      background-color: transparent;
+      border-style: solid;
+      border-color: #138185;
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-content: center;
+      width: spx(40);
+      height: spx(40);
+      border-width: spx(3);
+      @include tablet-up {
+        width: ppx(40);
+        height: ppx(40);
+        border-width: ppx(3);
+      }
+
+      &::before {
+        content: "";
+        border-radius: 50%;
+        background-color: #138185;
+        opacity: 0;
+        width: spx(12);
+        height: spx(12);
+        @include tablet-up {
+          width: ppx(12);
+          height: ppx(12);
+        }
+      }
+
+      &:checked::before {
+        opacity: 1;
+      }
+    }
+
+    &__radio-label {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      white-space: nowrap;
+      line-height: 1.8;
+      font-size: spx(30);
+      letter-spacing: spx(1.5);
+      @include tablet-up {
+        font-size: ppx(30);
+        letter-spacing: ppx(1.5);
+      }
+    }
+
+    // 本文が枠より長いのでスクロールさせる
+    &__policy {
+      box-sizing: border-box;
+      overflow-y: auto;
+      background-color: #fff;
+      width: spx(600);
+      height: spx(460);
+      padding: spx(40) spx(50);
+      border-radius: spx(20);
+      @include tablet-up {
+        width: ppx(1368);
+        height: ppx(365);
+        padding: ppx(70) ppx(50);
+        border-radius: ppx(20);
+      }
+    }
+
+    &__policy-inner {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &__policy-heading {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      line-height: 1.6;
+      font-size: spx(27);
+      @include tablet-up {
+        line-height: 1.7;
+        font-size: ppx(28);
+      }
+    }
+
+    // 先頭の見出しの下だけFigmaに空行が1行入っている
+    &__policy-heading--lead {
+      font-size: spx(32);
+      margin-bottom: spx(43.2);
+      @include tablet-up {
+        font-size: ppx(33);
+        margin-bottom: ppx(56.1);
+      }
+    }
+
+    &__policy-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #565656;
+      white-space: pre-line;
+      line-height: 1.6;
+      font-size: spx(27);
+      @include tablet-up {
+        line-height: 1.7;
+        font-size: ppx(28);
+      }
+    }
+
+    &__agree {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(20);
+      }
+    }
+
+    &__agree-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      line-height: 1.8;
+      font-size: spx(27);
+      @include tablet-up {
+        font-size: ppx(30);
+      }
+    }
+
+    // チェック状態はデザインに無いので、tealで塗って白いチェックを出す
+    &__agree-input {
+      appearance: none;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      position: relative;
+      background-color: #fff;
+      border: 0;
+      cursor: pointer;
+      width: spx(42);
+      height: spx(42);
+      border-radius: spx(10);
+      @include tablet-up {
+        width: ppx(49);
+        height: ppx(49);
+        border-radius: ppx(10);
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 44%;
+        left: 50%;
+        display: block;
+        border-style: solid;
+        border-color: #138185;
+        border-width: 0 spx(5) spx(5) 0;
+        width: spx(12);
+        height: spx(22);
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(45deg);
+        @include tablet-up {
+          border-width: 0 ppx(5) ppx(5) 0;
+          width: ppx(14);
+          height: ppx(26);
+        }
+      }
+
+      &:checked::before {
+        opacity: 1;
+      }
+    }
+
+    &__submit {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #138185;
+      border-style: solid;
+      border-color: #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+      width: spx(413);
+      padding: spx(33) 0;
+      border-width: spx(2);
+      gap: spx(30);
+      font-size: spx(29);
+      line-height: spx(30);
+      letter-spacing: spx(1.45);
+      @include tablet-up {
+        width: ppx(413);
+        padding: ppx(33) 0;
+        border-width: ppx(2);
+        gap: ppx(30);
+        font-size: ppx(29);
+        line-height: ppx(30);
+        letter-spacing: ppx(1.45);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+    }
+
+    &__submit-label {
+      margin-right: spx(-1.45);
+      @include tablet-up {
+        margin-right: ppx(-1.45);
+      }
+    }
+
+    // Figmaでは枠にpadding-topが5px入っている
+    &__submit-icon {
+      display: block;
+      margin-top: spx(5);
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        margin-top: ppx(5);
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+
+    &__recaptcha {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #138185;
+      text-align: center;
+      line-height: 1.8;
+      width: spx(630);
+      font-size: spx(22);
+      @include tablet-up {
+        width: ppx(1107);
+        font-size: ppx(24);
+        letter-spacing: ppx(0.72);
+      }
+    }
+  }
+</style>
