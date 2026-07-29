@@ -1,0 +1,23 @@
+---
+import BaseLayout from "../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../assets/components/common/pageHeader/PageHeader.astro";
+import Map from "../assets/components/pages/area/1-map.astro";
+
+const lead =
+  'MAP内のマーカーをクリックすると<br class="page-header__br-sp">詳細情報が表示されます。';
+---
+
+<BaseLayout
+  title="周辺情報 | Gnome 湖のほとりのキャンプ場"
+  description="Gnome周辺の病院・コンビニ・スーパー・飲食店・観光スポットをマップでご紹介します。"
+  flush
+  breadcrumb={[{ label: "TOP", href: "/" }, { label: "周辺情報" }]}
+>
+  <PageHeader
+    titleEn="INFORMATION"
+    titleJa="周辺情報"
+    lead={lead}
+    leadVariant="info"
+  />
+  <Map />
+</BaseLayout>

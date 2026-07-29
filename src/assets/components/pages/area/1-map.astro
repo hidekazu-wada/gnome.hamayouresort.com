@@ -1,0 +1,182 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import PinHospital from "../../../images/area/pin-hospital.svg";
+import PinConvenience from "../../../images/area/pin-convenience.svg";
+import PinSupermarket from "../../../images/area/pin-supermarket.svg";
+import PinRestaurant from "../../../images/area/pin-restaurant.svg";
+import PinLaundry from "../../../images/area/pin-laundry.svg";
+import PinCampShop from "../../../images/area/pin-camp-shop.svg";
+import PinSightseeing from "../../../images/area/pin-sightseeing.svg";
+
+// 先方支給のGoogleマイマップの埋め込みURL待ち。暫定でキャンプ場周辺を表示している
+const MAP_EMBED_URL =
+  "https://maps.google.com/maps?q=%E5%B1%B1%E6%A2%A8%E7%9C%8C%E5%8D%97%E9%83%BD%E7%95%99%E9%83%A1%E5%AF%8C%E5%A3%AB%E6%B2%B3%E5%8F%A3%E6%B9%96%E7%94%BA%E8%A5%BF%E6%B9%961030&z=13&output=embed";
+
+const legend: { label: string; label2?: string; icon: ImageMetadata }[] = [
+  { label: "病院", icon: PinHospital },
+  { label: "コンビニ", icon: PinConvenience },
+  { label: "スーパー", icon: PinSupermarket },
+  { label: "飲食店", icon: PinRestaurant },
+  { label: "ランドリー", icon: PinLaundry },
+  // SPだけ2行に折る
+  { label: "キャンプ", label2: "用品店", icon: PinCampShop },
+  { label: "観光", icon: PinSightseeing },
+];
+---
+
+<section class="area-map">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="area-map__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <ul class="area-map__legend">
+    {
+      legend.map((item) => (
+        <li class="area-map__legend-item">
+          <img class="area-map__pin" src={item.icon.src} alt="" />
+          {/* 改行やスペースが入らないよう1行で書く */}
+          <p class="area-map__legend-label">{item.label}{item.label2 && <br class="area-map__br-sp" />}{item.label2}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="area-map__frame">
+    <iframe
+      class="area-map__iframe"
+      src={MAP_EMBED_URL}
+      title="Gnome 周辺のマップ"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .area-map {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(70);
+    padding-bottom: spx(50);
+    gap: spx(10);
+    @include tablet-up {
+      padding-top: ppx(140);
+      padding-bottom: 0;
+      gap: ppx(10);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // SPは2段（115×4＋間隔30×3＝550）、PCは7つ横並び（250×7＝1750）
+    &__legend {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      width: spx(550);
+      padding-bottom: spx(30);
+      gap: spx(15) spx(30);
+      @include tablet-up {
+        flex-wrap: nowrap;
+        width: ppx(1750);
+        padding-bottom: ppx(30);
+        gap: 0;
+      }
+    }
+
+    &__legend-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: spx(115);
+      gap: spx(9);
+      @include tablet-up {
+        width: ppx(250);
+        gap: ppx(10);
+      }
+    }
+
+    // 書き出しSVGは黒線のはみ出しぶん59×71ある。負のmarginで枠を54×66に戻す
+    &__pin {
+      display: block;
+      width: spx(59);
+      height: spx(71);
+      margin: spx(-2.5);
+      @include tablet-up {
+        width: ppx(59);
+        height: ppx(71);
+        margin: ppx(-2.5);
+      }
+    }
+
+    &__legend-label {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      text-align: center;
+      line-height: 1.4;
+      font-size: spx(23);
+      @include tablet-up {
+        line-height: 1.6;
+        font-size: ppx(28);
+        letter-spacing: ppx(1.4);
+        margin-right: ppx(-1.4);
+      }
+    }
+
+    &__br-sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+
+    &__frame {
+      position: relative;
+      z-index: 1;
+      overflow: clip;
+      width: spx(660);
+      height: spx(709);
+      border-radius: spx(40);
+      @include tablet-up {
+        width: ppx(2120);
+        height: ppx(800);
+        border-radius: ppx(40);
+      }
+    }
+
+    &__iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  }
+</style>
