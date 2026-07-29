@@ -25,9 +25,9 @@ interface Props {
   /**
    * リード文の見た目。
    * default: 40px（既定） / info: 周辺情報ページ用の小さめ・teal
-   * date: お知らせ詳細の日付用
+   * date: お知らせ詳細の日付用 / large: 貸切エリアのキャッチコピー用
    */
-  leadVariant?: "default" | "info" | "date";
+  leadVariant?: "default" | "info" | "date" | "large";
 }
 
 const { titleEn, titleJa, lead, leadVariant = "default" } = Astro.props;
@@ -74,6 +74,7 @@ const { titleEn, titleJa, lead, leadVariant = "default" } = Astro.props;
               "page-header__lead",
               { "page-header__lead--info": leadVariant === "info" },
               { "page-header__lead--date": leadVariant === "date" },
+              { "page-header__lead--large": leadVariant === "large" },
             ]}
             set:html={lead}
           />
@@ -288,6 +289,15 @@ const { titleEn, titleJa, lead, leadVariant = "default" } = Astro.props;
           font-size: ppx(36);
           letter-spacing: ppx(1.8);
           margin-right: ppx(-1.8);
+        }
+      }
+
+      // 貸切エリアのキャッチコピー。SPは既定と同じ40px
+      &--large {
+        @include tablet-up {
+          font-size: ppx(55);
+          letter-spacing: ppx(2.75);
+          margin-right: ppx(-2.75);
         }
       }
 

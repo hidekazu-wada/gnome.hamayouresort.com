@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../assets/components/common/layout/BaseLayout.astro";
+import PageHeader from "../assets/components/common/pageHeader/PageHeader.astro";
+import Areas from "../assets/components/pages/private-area/1-areas.astro";
+import Scene from "../assets/components/pages/private-area/2-scene.astro";
+
+const lead =
+  '貸切の空間だからできる、<br class="page-header__br-sp">特別な体験';
+---
+
+<BaseLayout
+  title="企業研修・団体利用・ロケ撮影 | Gnome 湖のほとりのキャンプ場"
+  description="Gnomeのプライベート貸切エリア。企業研修・団体利用・ロケ撮影など、貸切の空間だからできる特別な体験をご提案します。"
+  flush
+  breadcrumb={[
+    { label: "TOP", href: "/" },
+    { label: "企業研修、団体利用、ロケ撮影" },
+  ]}
+>
+  <PageHeader
+    titleEn="PRIVATE AREA"
+    titleJa="プライベート貸切エリア"
+    lead={lead}
+    leadVariant="large"
+  />
+  <Areas />
+  <Scene />
+</BaseLayout>

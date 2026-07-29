@@ -1,0 +1,208 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import { privateAreas } from "../../../../data/private-area";
+---
+
+<section class="area-cards">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="area-cards__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <ul class="area-cards__list">
+    {
+      privateAreas.map((area) => (
+        <li class:list={["area-cards__card", `area-cards__card--${area.slug}`]}>
+          <div class="area-cards__head">
+            <p class="area-cards__eyebrow">{area.eyebrow}</p>
+            <p class="area-cards__name">
+              {area.nameSub && (
+                <span class="area-cards__name-sub">{area.nameSub}</span>
+              )}
+              {area.name}
+            </p>
+          </div>
+          <img
+            class="area-cards__illust"
+            src={area.illustration.src}
+            alt=""
+            loading="lazy"
+          />
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .area-cards {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(60);
+    padding-bottom: spx(30);
+    @include tablet-up {
+      padding-top: ppx(130);
+      padding-bottom: ppx(30);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__list {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(30);
+      @include tablet-up {
+        flex-direction: row;
+        justify-content: center;
+        gap: ppx(30);
+      }
+    }
+
+    // 中身はFigmaの座標どおりに絶対配置する
+    &__card {
+      position: relative;
+      background-color: #fff;
+      width: spx(550);
+      height: spx(500);
+      border-radius: spx(100);
+      @include tablet-up {
+        width: ppx(660);
+        height: ppx(600);
+        border-radius: ppx(130);
+      }
+    }
+
+    &__head {
+      position: absolute;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: spx(550);
+      top: spx(88);
+      gap: spx(15);
+      @include tablet-up {
+        // 見出しはカードより左右5pxずつ広い
+        left: ppx(-5);
+        width: ppx(670);
+        top: ppx(106);
+        gap: ppx(18);
+      }
+    }
+
+    &__eyebrow {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #8aad61;
+      text-align: center;
+      line-height: 1;
+      font-size: spx(24);
+      letter-spacing: spx(2.4);
+      margin-right: spx(-2.4);
+      @include tablet-up {
+        font-size: ppx(28);
+        letter-spacing: ppx(2.8);
+        margin-right: ppx(-2.8);
+      }
+    }
+
+    &__name {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.2;
+      font-size: spx(46);
+      letter-spacing: spx(4.6);
+      margin-right: spx(-4.6);
+      @include tablet-up {
+        font-size: ppx(55);
+        letter-spacing: ppx(5.5);
+        margin-right: ppx(-5.5);
+      }
+    }
+
+    &__name-sub {
+      display: block;
+      font-size: spx(25);
+      letter-spacing: spx(2.5);
+      @include tablet-up {
+        font-size: ppx(30);
+        letter-spacing: ppx(3);
+      }
+    }
+
+    &__illust {
+      position: absolute;
+      display: block;
+    }
+
+    &__card--hodohodo &__illust {
+      left: spx(33);
+      top: spx(222);
+      width: spx(483);
+      height: spx(197);
+      @include tablet-up {
+        left: ppx(40);
+        top: ppx(267);
+        width: ppx(580);
+        height: ppx(236);
+      }
+    }
+
+    &__card--playpark &__illust {
+      left: spx(67);
+      top: spx(201);
+      width: spx(418);
+      height: spx(249);
+      @include tablet-up {
+        left: ppx(80);
+        top: ppx(241);
+        width: ppx(501);
+        height: ppx(299);
+      }
+    }
+
+    &__card--kokko &__illust {
+      left: spx(74);
+      top: spx(235);
+      width: spx(402);
+      height: spx(240);
+      @include tablet-up {
+        left: ppx(89);
+        top: ppx(282);
+        width: ppx(482);
+        height: ppx(288);
+      }
+    }
+  }
+</style>

@@ -1,0 +1,169 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
+import { usageScenes } from "../../../../data/private-area";
+---
+
+<section class="usage-scene">
+  <!-- このセクションだけ色を敷かずテクスチャそのものが背景 -->
+  <div
+    class="usage-scene__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexturePlain.src});`}
+  >
+  </div>
+
+  <div class="usage-scene__head">
+    <h2 class="usage-scene__title">ご利用シーン</h2>
+    <div class="usage-scene__title-line" aria-hidden="true"></div>
+  </div>
+
+  <ul class="usage-scene__tags">
+    {
+      usageScenes.map((lines) => (
+        <li class="usage-scene__tag">
+          {lines.map((line, i) => (
+            <Fragment>
+              {i > 0 && <br />}
+              {line}
+            </Fragment>
+          ))}
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .usage-scene {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: spx(50);
+    padding-bottom: spx(70);
+    gap: spx(40);
+    @include tablet-up {
+      padding-top: ppx(120);
+      padding-bottom: ppx(15);
+      gap: ppx(60);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // Figmaでは線が高さ0で描かれるため、gapから線の太さ(5px)を引いて合わせる
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    // 丸キャップなので dash+線幅5 で SP 9/16・PC 11/21
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #7c6351 0,
+        #7c6351 #{spx(9)},
+        transparent #{spx(9)},
+        transparent #{spx(16)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #7c6351 0,
+          #7c6351 #{ppx(11)},
+          transparent #{ppx(11)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    // SPは2列（300×2＋間隔10＝610）、PCは5列（344×5＋間隔20×4＝1800）
+    &__tags {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: spx(630);
+      gap: spx(10);
+      @include tablet-up {
+        width: ppx(1800);
+        gap: ppx(20);
+      }
+    }
+
+    &__tag {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #d6b156;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      width: spx(300);
+      height: spx(110);
+      border-radius: spx(30);
+      font-size: spx(26);
+      line-height: 1.4;
+      @include tablet-up {
+        width: ppx(344);
+        height: ppx(170);
+        border-radius: ppx(30);
+        font-size: ppx(33);
+        line-height: 1.6;
+        letter-spacing: ppx(1.65);
+        // 末尾のletter-spacing分だけ詰めて中央寄せのズレを打ち消す
+        text-indent: ppx(1.65);
+      }
+    }
+  }
+</style>
