@@ -18,6 +18,14 @@
     }
 }
 
+// スマホのみ（タブレット未満）。バリアントの上書きが
+// tablet-up のベーススタイルを侵食しないようにする用
+@mixin sp-only {
+    @media (max-width: #{$breakpoint-tablet-up - 1px}) {
+        @content;
+    }
+}
+
 @mixin hover {
     @media (hover: hover) {
         @content;

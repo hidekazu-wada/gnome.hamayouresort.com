@@ -20,7 +20,7 @@ import { stays } from "../../../../data/stays";
     {
       stays.map((stay) => (
         <li class="stay-list__item" data-filters={JSON.stringify(stay.filters)}>
-          <StayCard stay={stay} />
+          <StayCard stay={stay} compact />
         </li>
       ))
     }
@@ -41,7 +41,7 @@ import { stays } from "../../../../data/stays";
   .stay-list {
     position: relative;
     background-color: #bee0e1;
-    padding-top: spx(80);
+    padding-top: spx(68);
     padding-bottom: spx(90);
     @include tablet-up {
       padding-top: ppx(100);
@@ -62,18 +62,17 @@ import { stays } from "../../../../data/stays";
       }
     }
 
+    // SPはコンパクトカードの2カラム（列間8・行間50）
     &__items {
       position: relative;
       z-index: 1;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       flex-wrap: wrap;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      gap: spx(60);
+      gap: spx(50) spx(8);
       @include tablet-up {
-        flex-direction: row;
-        align-items: flex-start;
         gap: ppx(130) ppx(25);
       }
     }

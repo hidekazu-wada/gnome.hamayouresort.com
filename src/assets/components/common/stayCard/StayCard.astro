@@ -9,12 +9,17 @@ import type { Stay } from "../../../../data/stays";
 
 interface Props {
   stay: Stay;
+  /** SPで2カラム用のコンパクト表示にする（泊まる一覧ページ用。タブレット以上は通常と同じ） */
+  compact?: boolean;
 }
 
-const { stay } = Astro.props;
+const { stay, compact = false } = Astro.props;
 ---
 
-<a class="stay-card" href={`/stay/${stay.slug}/`}>
+<a
+  class:list={["stay-card", { "stay-card--compact": compact }]}
+  href={`/stay/${stay.slug}/`}
+>
   <div class="stay-card__photo">
     <img
       class="stay-card__photo-img"
@@ -36,7 +41,9 @@ const { stay } = Astro.props;
           <span
             class:list={[
               "stay-card__badge-line",
-              { "is-main": i === stay.badgeLines.length - 1 },
+              // 2行のときだけ最終行を大きく。1行バッジは中間サイズ（is-single）
+              { "is-main": stay.badgeLines.length >= 2 && i === stay.badgeLines.length - 1 },
+              { "is-single": stay.badgeLines.length === 1 },
             ]}
           >
             {line}
@@ -181,6 +188,14 @@ const { stay } = Astro.props;
       font-size: spx(38);
       @include tablet-up {
         font-size: ppx(38);
+      }
+    }
+
+    // 1行バッジ（湖畔沿い・最安など）は中間サイズ
+    &__badge-line.is-single {
+      font-size: spx(27);
+      @include tablet-up {
+        font-size: ppx(27);
       }
     }
 
@@ -345,6 +360,108 @@ const { stay } = Astro.props;
         width: ppx(55);
         height: ppx(55);
         margin: ppx(-2.5);
+      }
+    }
+
+    // 泊まる一覧のSPだけ2カラム用のコンパクト表示（334×675）。
+    // タブレット以上は通常カードと同じなので sp-only で閉じる
+    &--compact {
+      @include sp-only {
+        width: spx(334);
+
+        .stay-card__photo {
+          height: spx(303);
+          border-radius: spx(20) spx(20) 0 0;
+        }
+
+        .stay-card__badge {
+          top: spx(8);
+          left: spx(10);
+          width: spx(131);
+          height: spx(127);
+        }
+
+        .stay-card__badge-check {
+          top: spx(25);
+          left: spx(46);
+          width: spx(39);
+          height: spx(12);
+        }
+
+        .stay-card__badge-line {
+          font-size: spx(17);
+          letter-spacing: spx(0.85);
+        }
+
+        .stay-card__badge-line.is-main {
+          font-size: spx(30);
+        }
+
+        .stay-card__badge-line.is-single {
+          font-size: spx(21);
+        }
+
+        .stay-card__code {
+          top: spx(246);
+          left: 50%;
+          transform: translateX(-50%);
+          width: spx(76);
+          height: spx(76);
+          font-size: spx(26);
+        }
+
+        .stay-card__body {
+          padding: spx(32) 0;
+          border-radius: 0 0 spx(20) spx(20);
+          gap: spx(20);
+        }
+
+        .stay-card__head {
+          gap: spx(16);
+        }
+
+        .stay-card__title {
+          font-size: spx(27);
+          letter-spacing: spx(2.7);
+          margin-right: spx(-2.7);
+        }
+
+        .stay-card__tags {
+          width: spx(300);
+          gap: spx(4);
+        }
+
+        .stay-card__tag {
+          min-width: spx(146);
+          padding: spx(6) spx(10);
+          border-radius: spx(8);
+          font-size: spx(21);
+        }
+
+        // 価格は中央寄せ・矢印は右端に絶対配置
+        .stay-card__price-row {
+          position: relative;
+          justify-content: center;
+          padding-right: 0;
+        }
+
+        .stay-card__price-main {
+          font-size: spx(30);
+        }
+
+        .stay-card__price-unit {
+          font-size: spx(22);
+        }
+
+        .stay-card__arrow {
+          position: absolute;
+          top: 50%;
+          right: spx(17);
+          transform: translateY(-50%);
+          width: spx(35);
+          height: spx(35);
+          margin: 0;
+        }
       }
     }
   }
