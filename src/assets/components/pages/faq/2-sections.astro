@@ -83,6 +83,13 @@ import { faqCategories } from "../../../../data/faq";
       gap: ppx(40);
     }
 
+    // SPは最後のカテゴリだけ下に80（Figma。PCはフッターと密着）
+    &:last-of-type {
+      @include sp-only {
+        padding-bottom: spx(80);
+      }
+    }
+
     // SPは最後のセクションだけ下に余白がある
     &:last-child {
       padding-bottom: spx(80);
