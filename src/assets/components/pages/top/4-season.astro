@@ -273,11 +273,14 @@ const seasons = [
       line-height: 1.6;
       font-size: spx(40);
       letter-spacing: spx(2);
+      // FigmaはPCだけ行送りが150%
       @include tablet-up {
+        line-height: 1.5;
         font-size: ppx(55 * 1.2);
         letter-spacing: ppx(2.75 * 1.2);
       }
       @include desktop-up {
+        line-height: 1.5;
         font-size: ppx(55);
         letter-spacing: ppx(2.75);
       }

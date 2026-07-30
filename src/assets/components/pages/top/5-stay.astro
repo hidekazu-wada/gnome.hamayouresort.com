@@ -44,7 +44,7 @@ const cards = [
             <p class="stay__title-en">STAY</p>
             <p class="stay__title-ja">泊まる</p>
           </div>
-          <p class="stay__lead">豊富な宿泊スタイルから選べます</p>
+          <p class="stay__lead">豊富な宿泊スタイルから<br class="stay__lead-br" />選べます</p>
         </div>
       </div>
 
@@ -268,6 +268,13 @@ const cards = [
       }
     }
 
+    // SPだけ「から」のあとで折る
+    &__lead-br {
+      @include tablet-up {
+        display: none;
+      }
+    }
+
     &__lead {
       margin: 0;
       font-family: "Noto Sans JP", sans-serif;
@@ -277,11 +284,14 @@ const cards = [
       line-height: 1.6;
       font-size: spx(40);
       letter-spacing: spx(2);
+      // FigmaはPCだけ行送りが150%
       @include tablet-up {
+        line-height: 1.5;
         font-size: ppx(55 * 1.2);
         letter-spacing: ppx(2.75 * 1.2);
       }
       @include desktop-up {
+        line-height: 1.5;
         font-size: ppx(55);
         letter-spacing: ppx(2.75);
       }
@@ -296,15 +306,16 @@ const cards = [
       // SP: カード2列(334×2+8=676) が inner の左右padding(40×2)の内側より広いため
       // 幅を固定してはみ出しつつ中央配置（Figmaの左右余白22px相当）
       width: spx(676);
-      margin-top: spx(70);
+      // Figmaは見出しブロックとの間が30px
+      margin-top: spx(30);
       gap: spx(50) spx(8);
       @include tablet-up {
         width: 100%;
-        margin-top: ppx(80 * 1.2);
+        margin-top: ppx(100 * 1.2);
         gap: ppx(70 * 1.2) ppx(25 * 1.2);
       }
       @include desktop-up {
-        margin-top: ppx(80);
+        margin-top: ppx(100);
         gap: ppx(130) ppx(25);
       }
     }
