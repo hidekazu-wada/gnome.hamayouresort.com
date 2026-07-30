@@ -10,18 +10,18 @@ import LogoBadge from "../../../images/common/logo-badge.svg";
 import LogoWordmark from "../../../images/common/footer/logo-wordmark.svg";
 import IconArrow from "../../../images/common/icon-arrow.svg";
 
-// 下層ページ未着手のため href は仮（ご予約のみ確定URL）
+// 過ごし方はケース未指定のためファミリーへ（確定したら差し替え）
 const navItems = [
   { label: "TOP", href: "/" },
-  { label: "泊まる", href: "#" },
-  { label: "アクティビティ", href: "#" },
-  { label: "過ごし方", href: "#" },
-  { label: "共有施設・設備", href: "#" },
-  { label: "レンタル・販売品", href: "#" },
-  { label: "アクセス", href: "#" },
-  { label: "FAQ", href: "#" },
-  { label: "周辺情報", href: "#" },
-  { label: "お知らせ", href: "#" },
+  { label: "泊まる", href: "/stay/" },
+  { label: "アクティビティ", href: "/activity/" },
+  { label: "過ごし方", href: "/howto/family/" },
+  { label: "共有施設・設備", href: "/facility/" },
+  { label: "レンタル・販売品", href: "/rental/" },
+  { label: "アクセス", href: "/#access" },
+  { label: "FAQ", href: "/faq/" },
+  { label: "周辺情報", href: "/area/" },
+  { label: "お知らせ", href: "/news/" },
   {
     label: "ご予約",
     href: "https://www.nap-camp.com/yamanashi/13592",
@@ -72,8 +72,7 @@ const navItems = [
       </ul>
     </nav>
 
-    <!-- 企業研修・団体利用・ロケ撮影（リンク先は確定待ち） -->
-    <a class="menu__lead" href="#">
+    <a class="menu__lead" href="/private-area/">
       <span class="menu__lead-text">企業研修・団体利用・ロケ撮影</span>
       <span class="menu__lead-iconbox">
         <img class="menu__lead-icon" src={IconArrow.src} alt="" />

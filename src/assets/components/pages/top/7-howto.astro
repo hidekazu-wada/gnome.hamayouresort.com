@@ -20,11 +20,11 @@ import IllustCampfire from "../../../images/top/7-howto/illust-campfire.svg";
 
 // 過ごし方ケース（英字名は仮。写真・説明文はダミー）
 const cases = [
-  { ja: "ファミリー", en: "FAMILY", photo: CaseFamily },
-  { ja: "カップル", en: "COUPLE", photo: CaseFamily },
-  { ja: "女子会", en: "GIRLS", photo: CaseFamily },
-  { ja: "グルキャン", en: "GROUP", photo: CaseFamily },
-  { ja: "企業研修", en: "COMPANY", photo: CaseFamily },
+  { ja: "ファミリー", en: "FAMILY", slug: "family", photo: CaseFamily },
+  { ja: "カップル", en: "COUPLE", slug: "couple", photo: CaseFamily },
+  { ja: "女子会", en: "GIRLS", slug: "girls", photo: CaseFamily },
+  { ja: "グルキャン", en: "GROUP", slug: "group", photo: CaseFamily },
+  { ja: "企業研修", en: "COMPANY", slug: "training", photo: CaseFamily },
 ];
 
 const dummyDesc =
@@ -121,7 +121,7 @@ const dummyDesc =
                       />
                     </div>
                     <p class="howto__case-desc">{dummyDesc}</p>
-                    <a class="howto__more" href="#">
+                    <a class="howto__more" href={`/howto/${c.slug}/`}>
                       <span class="howto__more-text">MORE</span>
                       <img
                         class="howto__more-arrow"

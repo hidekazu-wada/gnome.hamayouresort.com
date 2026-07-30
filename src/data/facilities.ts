@@ -35,7 +35,8 @@ export const facilities: Facility[] = [
   { title: "炊事場", lines: dummy, photo: kitchen },
   { title: "体育館", lines: dummy },
   // 遷移先は確定待ち
-  { title: "温泉（いずみの湯）", lines: dummy, photo: onsen, href: "#" },
+  // いずみの湯は姉妹サイトへ（プレイパーク・KokkoはURL確定待ち）
+  { title: "温泉（いずみの湯）", lines: dummy, photo: onsen, href: "https://izuminoyu.hamayouresort.com/" },
   {
     title: "ほどほどの森",
     lines: dummy,
