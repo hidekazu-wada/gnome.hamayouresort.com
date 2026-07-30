@@ -341,8 +341,9 @@ const cards = [
       position: relative;
       box-sizing: border-box;
       align-self: stretch;
-      // 影の切れ防止でpadding-top 16pxを持たせているので、その分marginから引く
+      // 影の切れ防止のpaddingは負マージンで打ち消し、下の要素の位置をずらさない
       margin-top: spx(310 - 16);
+      margin-bottom: spx(-44);
       // SPは左右いっぱいに（inner の padding を相殺し、カードのピークを画面端まで見せる）
       margin-left: spx(-40);
       margin-right: spx(-40);
@@ -350,12 +351,14 @@ const cards = [
       padding: spx(16) spx(24) spx(44);
       @include tablet-up {
         margin-top: ppx((80 - 16) * 1.2);
+        margin-bottom: ppx(-44 * 1.2);
         margin-left: 0;
         margin-right: 0;
         padding: ppx(16 * 1.2) ppx(24 * 1.2) ppx(44 * 1.2);
       }
       @include desktop-up {
         margin-top: ppx(80 - 16);
+        margin-bottom: ppx(-44);
         // カード4枚(500×4+間隔45×3=2135) + シャドウ余白(24×2) に幅を絞り中央配置
         // → 5枚目はコンテナ外でクリップされ、デザイン同様両端に余白が残る
         width: ppx(2184);
@@ -494,8 +497,7 @@ const cards = [
       justify-content: center;
       align-items: center;
       gap: spx(16);
-      // スライダーのpadding-bottomぶんを引いて設計位置に合わせる（実測22px）
-      margin-top: spx(70 - 22);
+      margin-top: spx(70);
       @include tablet-up {
         gap: ppx(16 * 1.2);
         margin-top: ppx(70 * 1.2);
