@@ -12,8 +12,9 @@ import WaveSp from "../../../images/activity/detail/wave-to-reservation-sp.webp"
 // サイトごとの予約プランページ（実データ確定後に差し替え）
 const WEB_RESERVE_URL = "https://www.nap-camp.com/yamanashi/13592/plans/20042714";
 
+// SPだけの改行は <br class="stay-reservation__br-sp">
 const notes = [
-  "※ご宿泊日の30日前の午前0時から受付開始となります。",
+  '※ご宿泊日の30日前の午前0時から<br class="stay-reservation__br-sp">受付開始となります。',
   "※電話予約は承っておりません。",
   "※大型連休などは、連泊で予約が取れるように日にちを決めて一斉に受付開始をさせていただきます。",
   "　受付開始日はHPのお知らせやなっぷのブログでご案内します。",
@@ -56,7 +57,7 @@ const notes = [
   </a>
 
   <div class="stay-reservation__notes">
-    {notes.map((note) => <p>{note}</p>)}
+    {notes.map((note) => <p set:html={note} />)}
   </div>
 </section>
 
@@ -104,8 +105,8 @@ const notes = [
     flex-direction: column;
     align-items: center;
     background-color: #c0d4a9;
-    padding-top: spx(80);
-    padding-bottom: spx(60);
+    padding-top: spx(100);
+    padding-bottom: spx(50);
     gap: spx(50);
     @include tablet-up {
       padding-top: ppx(150);
@@ -196,7 +197,7 @@ const notes = [
       text-align: center;
       transition: opacity 0.3s ease;
       width: spx(600);
-      padding: spx(8) spx(60) spx(16);
+      padding: spx(14) 0 spx(18);
       border-radius: spx(16);
       box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
       @include tablet-up {
@@ -218,11 +219,12 @@ const notes = [
       display: block;
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 700;
-      line-height: 1.4;
+      line-height: 1.6; // FigmaのSPは42px・行送り160%
       white-space: nowrap;
-      font-size: spx(33);
-      letter-spacing: spx(2.05);
+      font-size: spx(42);
+      letter-spacing: spx(2.1);
       @include tablet-up {
+        line-height: 1.4;
         width: ppx(567);
         font-size: ppx(41);
         letter-spacing: ppx(2.05);
@@ -249,14 +251,24 @@ const notes = [
       font-weight: 400;
       color: #7c6351;
       text-align: center;
-      line-height: 1.8;
-      width: spx(600);
-      font-size: spx(24);
-      letter-spacing: spx(1.2);
+      line-height: 1.7; // FigmaのSP本文は行送り170%
+      width: spx(630);
+      font-size: spx(27);
+      letter-spacing: 0; // FigmaのSP本文は字間なし（PCのみ5%）
+      margin-top: spx(10); // Figmaはカード→注記が60（gap50＋10）
       @include tablet-up {
+        line-height: 1.8;
         width: ppx(1685);
         font-size: ppx(32);
         letter-spacing: ppx(1.6);
+        margin-top: 0;
+      }
+
+      // SPだけの改行
+      :global(.stay-reservation__br-sp) {
+        @include tablet-up {
+          display: none;
+        }
       }
     }
   }

@@ -6,6 +6,7 @@ import PaperTexture from "../../../images/common/paper-texture.png";
 import WavePc from "../../../images/stay/detail/wave-to-price.webp";
 import WaveSp from "../../../images/stay/detail/wave-to-price-sp.webp";
 import HotelPlan from "../../../images/stay/detail/hotel-set-plan.webp";
+import HotelPlanSp from "../../../images/stay/detail/hotel-set-plan-sp.webp";
 import type { Stay } from "../../../../data/stays";
 
 interface Props {
@@ -51,7 +52,12 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
                     <p class="stay-price__line">{line}</p>
                   ))}
                   {row.notes && (
-                    <div class="stay-price__notes">
+                    <div
+                      class:list={[
+                        "stay-price__notes",
+                        { "is-tight": row.notesTightGap },
+                      ]}
+                    >
                       {row.notes.map((note) => (
                         <p>{note}</p>
                       ))}
@@ -71,7 +77,10 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
     href={HOTEL_PLAN_URL}
     aria-label="雨の日でも安心 HOTEL SET PLAN（ホテルセットプラン）の詳細はこちら"
   >
-    <img class="stay-price__banner-img" src={HotelPlan.src} alt="" />
+    <picture>
+      <source srcset={HotelPlan.src} media="(min-width: 744px)" />
+      <img class="stay-price__banner-img" src={HotelPlanSp.src} alt="" />
+    </picture>
   </a>
 </section>
 
@@ -130,11 +139,12 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
     align-items: center;
     background-color: #138185;
     padding-top: spx(30);
-    padding-bottom: spx(60);
+    padding-bottom: spx(195);
     gap: spx(40);
     @include tablet-up {
-      padding-top: ppx(30);
-      padding-bottom: ppx(120);
+      // Figmaはタイトルがセクション先頭にぴったり・バナー下に231
+      padding-top: 0;
+      padding-bottom: ppx(231);
       gap: ppx(40);
     }
 
@@ -223,11 +233,12 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 400;
       color: #000;
-      line-height: 1.6;
+      line-height: 1.7; // FigmaのSP本文は行送り170%
       width: spx(570);
       font-size: spx(27);
-      letter-spacing: spx(1.35);
+      letter-spacing: 0; // FigmaのSP本文は字間なし（PCのみ5%）
       @include tablet-up {
+        line-height: 1.6;
         width: ppx(1440);
         font-size: ppx(32);
         letter-spacing: ppx(1.6);
@@ -238,20 +249,27 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
       font-weight: 700;
       color: #c3925e;
       font-size: spx(42);
-      letter-spacing: spx(2.1);
+      letter-spacing: 0;
       @include tablet-up {
         font-size: ppx(50);
         letter-spacing: ppx(2.5);
       }
     }
 
-    // 注記は1行分あけて小さく
+    // 注記は1行分あけて小さく（SPは24px基準の41、PCは本文32px基準の51）
     &__notes {
-      margin-top: spx(43);
-      font-size: spx(23);
+      margin-top: spx(41);
+      font-size: spx(24);
       @include tablet-up {
         margin-top: ppx(51);
         font-size: ppx(26);
+      }
+
+      // Figmaで空行が注記26px基準（アーリーチェックイン行）
+      &.is-tight {
+        @include tablet-up {
+          margin-top: ppx(42);
+        }
       }
     }
 
@@ -262,6 +280,7 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
       width: spx(630);
       @include tablet-up {
         width: ppx(1800);
+        margin-top: ppx(50); // Figmaは表→バナーが90（gap40＋50）
       }
 
       @include hover {

@@ -64,7 +64,14 @@ export type Stay = {
   /** 料金表の1行目に出す金額 */
   priceAmount: string;
   /** 料金表。amountは大きく、notesは小さく表示する */
-  priceRows: { label: string; amount?: string; lines?: string[]; notes?: string[] }[];
+  priceRows: {
+    label: string;
+    amount?: string;
+    lines?: string[];
+    notes?: string[];
+    /** PCで注記前の空行を26px基準(42px)にする（Figmaのアーリーチェックイン行） */
+    notesTightGap?: boolean;
+  }[];
   /** 注意事項。1項目＝1配列で、配列の要素が改行 */
   notes: string[][];
 };
@@ -93,6 +100,7 @@ const priceRows = [
   {
     label: "アーリー<br>チェックイン",
     lines: ["9:00～　3,300円", "12:00～　1,650円"],
+    notesTightGap: true,
     notes: [
       "※当日受付",
       "※受付時に現金でお支払いください",

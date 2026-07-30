@@ -134,7 +134,7 @@ const { stay } = Astro.props;
     justify-content: center;
     background-color: #bee0e1;
     padding-top: spx(50);
-    padding-bottom: spx(20);
+    padding-bottom: spx(50);
     @include tablet-up {
       padding-top: ppx(80);
       padding-bottom: ppx(20);
@@ -162,7 +162,7 @@ const { stay } = Astro.props;
       align-items: center;
       background-color: #fff;
       border-radius: spx(50);
-      padding-bottom: spx(60);
+      padding-bottom: spx(50);
       gap: spx(40);
       @include tablet-up {
         border-radius: ppx(50);
@@ -176,7 +176,7 @@ const { stay } = Astro.props;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: spx(25) spx(25) spx(50);
+      padding: spx(25) spx(25) 0;
       gap: spx(40);
       @include tablet-up {
         flex-direction: row;
@@ -290,10 +290,12 @@ const { stay } = Astro.props;
       line-height: 1.5;
       width: spx(560);
       font-size: spx(46);
+      margin-top: spx(10); // Figmaは区画コード→見出しが40（gap30＋10）
       @include tablet-up {
         line-height: 1.6;
         width: auto;
         font-size: ppx(55);
+        margin-top: 0;
       }
     }
 
@@ -315,11 +317,13 @@ const { stay } = Astro.props;
       display: flex;
       flex-wrap: wrap;
       align-items: flex-start;
-      width: spx(560);
+      width: spx(580);
       gap: spx(6);
+      margin-top: spx(10); // Figmaは説明文→タグが40（gap30＋10）
       @include tablet-up {
         width: ppx(715);
         gap: ppx(6);
+        margin-top: 0;
       }
     }
 
@@ -334,11 +338,13 @@ const { stay } = Astro.props;
       text-align: center;
       white-space: nowrap;
       line-height: 1.2;
-      min-width: spx(156);
-      padding: spx(8) spx(10) spx(10);
+      // FigmaのSPは固定幅187×高さ54・文字27
+      width: spx(187);
+      padding: spx(11) spx(10);
       border-radius: spx(10);
-      font-size: spx(22);
+      font-size: spx(27);
       @include tablet-up {
+        width: auto;
         min-width: ppx(156);
         padding: ppx(8) ppx(10) ppx(10);
         border-radius: ppx(10);
@@ -396,11 +402,12 @@ const { stay } = Astro.props;
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 400;
       color: #7c6351;
-      line-height: 1.6;
+      line-height: 1.7; // FigmaのSP本文は行送り170%
       width: spx(560);
       font-size: spx(27);
-      letter-spacing: spx(1.35);
+      letter-spacing: 0; // FigmaのSP本文は字間なし（PCのみ5%）
       @include tablet-up {
+        line-height: 1.6;
         width: ppx(1385);
         font-size: ppx(32);
         letter-spacing: ppx(1.6);
