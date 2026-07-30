@@ -203,7 +203,8 @@ const cards = [
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: spx(200) spx(40) spx(192);
+      // Figmaは繋ぎ枠95px＋セクション内60pxで、CONCEPT下端から153px
+      padding: spx(153) spx(40) spx(192);
       @include tablet-up {
         padding: ppx(338 * 1.2) ppx(40 * 1.2) ppx(120 * 1.2);
       }

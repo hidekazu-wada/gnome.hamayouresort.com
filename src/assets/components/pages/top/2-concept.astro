@@ -56,14 +56,8 @@ import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
   .concept {
     position: relative;
     z-index: 1;
-    // ヒーロー下端の陸地画像との境目（サブピクセルの継ぎ目）を被せて隠す
-    margin-top: -2.1vw;
-    @include tablet-up {
-      margin-top: -0.6vw;
-    }
-    @include desktop-up {
-      margin-top: -0.6vw;
-    }
+    // ヒーロー下端の陸地画像との境目（サブピクセルの継ぎ目）を1pxだけ被せて隠す
+    margin-top: -1px;
     overflow: clip;
     background-color: #bee0e1;
 
@@ -89,7 +83,7 @@ import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
       flex-direction: column;
       align-items: center;
       gap: spx(42);
-      padding: spx(100) spx(40) spx(80);
+      padding: spx(100) spx(40) 0;
       @include tablet-up {
         gap: ppx(42 * 1.2);
         padding: ppx(90 * 1.2) ppx(40 * 1.2) ppx(80 * 1.2);
@@ -159,16 +153,21 @@ import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
       }
     }
 
+    // Figmaは1テキストノード内でサイズが上がる行の行間を広く取るため、
+    // CSSの行送りとの差（実測 SP 9px / PC 13px）をmarginで足す
     &__heading-accent {
       display: block;
       line-height: 1.6;
       color: #138185;
       font-size: spx(76);
+      margin-top: spx(9);
       @include tablet-up {
         font-size: ppx(105 * 1.2);
+        margin-top: ppx(13 * 1.2);
       }
       @include desktop-up {
         font-size: ppx(105);
+        margin-top: ppx(13);
       }
     }
 
@@ -215,6 +214,8 @@ import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
       position: relative;
       z-index: 1;
       width: spx(353);
+      // Figmaは本文とイラストの間だけgapが34（親のgap42から8引く）
+      margin-top: spx(-8);
       @include tablet-up {
         position: absolute;
         left: ppx(248 * 1.2);
