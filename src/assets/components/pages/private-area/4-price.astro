@@ -1,0 +1,205 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+// クリーム面のテクスチャは明るい方（plain）を使う
+import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
+---
+
+<section class="private-price">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="private-price__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexturePlain.src});`}
+  >
+  </div>
+
+  <div class="private-price__head">
+    <h2 class="private-price__title">料金</h2>
+    <div class="private-price__title-line" aria-hidden="true"></div>
+  </div>
+
+  <p class="private-price__lead">
+    ご利用される施設や設備、時期、人数などをヒアリングしたのち、お見積りをご用意いたします。<br
+    />まずはお気軽にお問い合わせください。
+  </p>
+
+  <a class="private-price__card" href="/contact/">
+    <span class="private-price__card-main">お問い合わせフォームはこちら</span>
+    <span class="private-price__card-note">（ 受付時間 24時間 ）</span>
+  </a>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .private-price {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fffdf7;
+    padding-top: spx(60);
+    padding-bottom: spx(70);
+    @include tablet-up {
+      padding-top: ppx(90);
+      padding-bottom: ppx(130);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // Figmaでは線が高さ0で描かれるため、gapから線の太さ(5px)を引いて合わせる
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: spx(25);
+      @include tablet-up {
+        gap: ppx(25);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(47);
+        letter-spacing: ppx(2.35);
+        margin-right: ppx(-2.35);
+      }
+    }
+
+    // 丸キャップなので dash+線幅5 で SP 9/16・PC 11/21
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #7c6351 0,
+        #7c6351 #{spx(9)},
+        transparent #{spx(9)},
+        transparent #{spx(16)}
+      );
+      @include tablet-up {
+        width: ppx(1800);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #7c6351 0,
+          #7c6351 #{ppx(11)},
+          transparent #{ppx(11)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__lead {
+      position: relative;
+      z-index: 1;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #7c6351;
+      text-align: center;
+      width: spx(630);
+      margin-top: spx(90);
+      font-size: spx(27);
+      line-height: 1.7;
+      @include tablet-up {
+        width: ppx(1685);
+        margin-top: ppx(50);
+        font-size: ppx(32);
+        line-height: 1.8;
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    // フッターのお問い合わせカードと同じ作り。色だけ違う
+    &__card {
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #fffdf7;
+      color: #7c6351;
+      text-align: center;
+      transition: opacity 0.3s ease;
+      width: spx(600);
+      height: spx(140);
+      margin-top: spx(90);
+      padding: spx(8) spx(60) spx(16);
+      border-radius: spx(16);
+      box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
+      @include tablet-up {
+        width: auto;
+        height: auto;
+        min-height: ppx(176);
+        margin-top: ppx(50);
+        padding: ppx(10) ppx(75) ppx(20);
+        border-radius: ppx(20);
+        box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.85;
+        }
+      }
+    }
+
+    // Figmaは1行目の行送りだけ大きい（元コンポーネントの51px相当）
+    &__card-main {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      white-space: nowrap;
+      line-height: 2;
+      font-size: spx(33);
+      letter-spacing: spx(1.65);
+      @include tablet-up {
+        font-size: ppx(41);
+        letter-spacing: ppx(2.05);
+      }
+    }
+
+    &__card-note {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      white-space: nowrap;
+      line-height: 1.6;
+      font-size: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        font-size: ppx(33);
+        letter-spacing: ppx(2.05);
+      }
+    }
+  }
+</style>

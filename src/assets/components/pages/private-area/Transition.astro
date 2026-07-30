@@ -36,7 +36,8 @@ const shapes = [
 ] as const;
 
 const shape = shapes[step - 1];
-const texture = shape.bg === "plain" ? PaperTexturePlain : PaperTexture;
+// green面だけ暗い方のテクスチャ。plain/creamは明るい方（plain）
+const texture = shape.bg === "green" ? PaperTexture : PaperTexturePlain;
 ---
 
 <div

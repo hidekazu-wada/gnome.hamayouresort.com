@@ -4,6 +4,8 @@ import PageHeader from "../assets/components/common/pageHeader/PageHeader.astro"
 import Areas from "../assets/components/pages/private-area/1-areas.astro";
 import Scene from "../assets/components/pages/private-area/2-scene.astro";
 import Details from "../assets/components/pages/private-area/3-details.astro";
+import Price from "../assets/components/pages/private-area/4-price.astro";
+import Activity from "../assets/components/pages/private-area/5-activity.astro";
 import Transition from "../assets/components/pages/private-area/Transition.astro";
 
 const lead =
@@ -30,4 +32,8 @@ const lead =
   <Scene />
   <Transition step={2} />
   <Details />
+  <Transition step={5} />
+  <Price />
+  <Transition step={6} />
+  <Activity />
 </BaseLayout>
