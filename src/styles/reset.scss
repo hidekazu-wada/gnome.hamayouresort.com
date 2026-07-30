@@ -48,8 +48,9 @@ html {
  */
 body {
     margin: 0;
-    width: 100vw;
-    overflow-x: hidden;
+    /* 100vwはスクロールバー幅を含みfixed要素と食い違うため100%にする */
+    width: 100%;
+    overflow-x: clip;
     background-color: #f0f0f0;
     background-image: var(--bg-mobile-fallback), var(--bg-mobile);
     background-attachment: scroll;
