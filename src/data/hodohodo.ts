@@ -35,10 +35,12 @@ export const hodohodoItems: HodohodoItem[] = [
 
 export const hodohodoSpec: { label: string; lines: string[] }[] = [
   { label: "施設名", lines: ["ほどほどの森"] },
+  // lines: "" はSPだけの空行。SPだけの改行は <br class="hodo-spec__br-sp">
   {
     label: "収容人数",
     lines: [
-      "キャンプ：30名程度　イベント：50～100名程度",
+      'キャンプ：30名程度　<br class="hodo-spec__br-sp">イベント：50～100名程度',
+      "",
       "※内容によって異なりますので詳しくはお問い合わせください。",
     ],
   },

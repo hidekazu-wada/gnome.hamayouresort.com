@@ -73,11 +73,12 @@ import { facilities } from "../../../../data/facilities";
     flex-direction: column;
     align-items: center;
     background-color: #bee0e1;
-    padding-top: spx(60);
+    padding-top: spx(20);
     padding-bottom: spx(80);
     @include tablet-up {
       padding-top: ppx(100);
-      padding-bottom: ppx(100);
+      // Figmaはカード下端＝セクション下端
+      padding-bottom: 0;
     }
 
     &__texture {
@@ -95,16 +96,19 @@ import { facilities } from "../../../../data/facilities";
     }
 
     // PCは4列（490×4＋間隔20×3＝2020）
+    // SPは2列のコンパクトカード（310×2＋間10）。行内で高さを揃える
     &__grid {
       position: relative;
       z-index: 1;
       display: flex;
       flex-wrap: wrap;
-      align-items: flex-start;
+      align-items: stretch;
       justify-content: center;
+      width: spx(630);
       padding-top: spx(30);
-      gap: spx(50);
+      gap: spx(20) spx(10);
       @include tablet-up {
+        align-items: flex-start;
         width: ppx(2020);
         padding-top: ppx(30);
         gap: ppx(100) ppx(20);
@@ -117,10 +121,10 @@ import { facilities } from "../../../../data/facilities";
       flex-direction: column;
       align-items: center;
       background-color: #fff;
-      width: spx(630);
-      padding: spx(15) 0 spx(40);
-      border-radius: spx(30);
-      gap: spx(20);
+      width: spx(310);
+      padding: spx(10) 0 spx(25);
+      border-radius: spx(20);
+      gap: spx(13);
       filter: drop-shadow(0 #{spx(10)} #{spx(12)} rgba(0, 0, 0, 0.08));
       @include tablet-up {
         width: ppx(490);
@@ -134,9 +138,9 @@ import { facilities } from "../../../../data/facilities";
     &__photo {
       display: block;
       object-fit: cover;
-      width: spx(590);
-      height: spx(436);
-      border-radius: spx(20);
+      width: spx(290);
+      height: spx(214);
+      border-radius: spx(14);
       @include tablet-up {
         width: ppx(460);
         height: ppx(340);
@@ -155,9 +159,9 @@ import { facilities } from "../../../../data/facilities";
       color: #000;
       text-align: center;
       line-height: 1.6;
-      width: spx(590);
-      font-size: spx(36);
-      letter-spacing: spx(3.6);
+      width: spx(290);
+      font-size: spx(27);
+      letter-spacing: spx(2.7);
       @include tablet-up {
         width: ppx(490);
         font-size: ppx(40);
@@ -167,7 +171,7 @@ import { facilities } from "../../../../data/facilities";
 
     &__title-small {
       display: block;
-      font-size: spx(24);
+      font-size: spx(20);
       @include tablet-up {
         display: inline;
         font-size: ppx(26);
@@ -180,8 +184,9 @@ import { facilities } from "../../../../data/facilities";
       color: #000;
       text-align: center;
       line-height: 1.6;
-      width: spx(560);
-      font-size: spx(25);
+      word-break: break-all; // ダミーの◯連続を折り返す
+      width: spx(270);
+      font-size: spx(24);
       @include tablet-up {
         width: ppx(440);
         font-size: ppx(26);
@@ -203,14 +208,16 @@ import { facilities } from "../../../../data/facilities";
       text-align: center;
       white-space: nowrap;
       transition: opacity 0.3s ease;
-      padding: spx(26) spx(70);
+      margin-top: auto; // 行内で高さを揃えたときボタンを下端に置く
+      padding: spx(13) spx(35);
       border-width: spx(4);
       gap: spx(10);
-      font-size: spx(26);
-      line-height: spx(26);
-      letter-spacing: spx(1.3);
+      font-size: spx(23);
+      line-height: spx(23);
+      letter-spacing: spx(1.15);
       filter: drop-shadow(0 #{spx(10)} #{spx(12)} rgba(0, 0, 0, 0.08));
       @include tablet-up {
+        margin-top: 0;
         padding: ppx(26) ppx(70);
         border-width: ppx(4);
         gap: ppx(10);

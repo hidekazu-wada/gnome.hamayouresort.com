@@ -11,7 +11,8 @@ const FEE_URL = "#";
 
 <section class="hodo-items">
   <div class="hodo-items__head">
-    <h2 class="hodo-items__title">“ほどほどの森”でできること</h2>
+    {/* SPは「で」のあとで折る */}
+    <h2 class="hodo-items__title">“ほどほどの森”で<br class="hodo-items__br-sp" />できること</h2>
     <div class="hodo-items__title-line" aria-hidden="true"></div>
   </div>
 
@@ -53,6 +54,9 @@ const FEE_URL = "#";
       ))
     }
   </ul>
+
+  {/* SPだけの施設詳細ボタン（Figma SPにのみ存在。リンク先は確定待ち） */}
+  <a class="hodo-items__detail" href="/facility/">施設詳細はこちら</a>
 </section>
 
 <style lang="scss">
@@ -66,7 +70,7 @@ const FEE_URL = "#";
     flex-direction: column;
     align-items: center;
     background-color: #fbf2dc;
-    padding-top: spx(80);
+    padding-top: spx(50);
     padding-bottom: spx(80);
     gap: spx(40);
     @include tablet-up {
@@ -81,7 +85,7 @@ const FEE_URL = "#";
       flex-direction: column;
       align-items: center;
       width: 100%;
-      gap: spx(25);
+      gap: spx(30);
       @include tablet-up {
         gap: ppx(25);
       }
@@ -93,7 +97,7 @@ const FEE_URL = "#";
       color: #000;
       text-align: center;
       line-height: 1.8;
-      font-size: spx(42);
+      font-size: spx(46);
       letter-spacing: spx(2.1);
       margin-right: spx(-2.1);
       @include tablet-up {
@@ -133,9 +137,12 @@ const FEE_URL = "#";
       flex-wrap: wrap;
       align-items: stretch;
       justify-content: center;
+      align-items: stretch;
+      width: spx(630);
       padding-top: spx(30);
-      gap: spx(50);
+      gap: spx(20) spx(10);
       @include tablet-up {
+        align-items: flex-start;
         width: ppx(2020);
         padding-top: ppx(30);
         gap: ppx(100) ppx(20);
@@ -148,10 +155,10 @@ const FEE_URL = "#";
       flex-direction: column;
       align-items: center;
       background-color: #fff;
-      width: spx(630);
-      padding: spx(15) 0 spx(40);
-      border-radius: spx(30);
-      gap: spx(20);
+      width: spx(310);
+      padding: spx(10) 0 spx(25);
+      border-radius: spx(20);
+      gap: spx(13);
       filter: drop-shadow(0 #{spx(10)} #{spx(12)} rgba(0, 0, 0, 0.08));
       @include tablet-up {
         width: ppx(490);
@@ -165,9 +172,9 @@ const FEE_URL = "#";
     &__photo {
       display: block;
       object-fit: cover;
-      width: spx(590);
-      height: spx(436);
-      border-radius: spx(20);
+      width: spx(290);
+      height: spx(214);
+      border-radius: spx(14);
       @include tablet-up {
         width: ppx(460);
         height: ppx(340);
@@ -186,8 +193,8 @@ const FEE_URL = "#";
       color: #d6b156;
       text-align: center;
       line-height: 1.6;
-      width: spx(590);
-      font-size: spx(32);
+      width: spx(290);
+      font-size: spx(27);
       letter-spacing: spx(1.6);
       @include tablet-up {
         width: ppx(490);
@@ -202,8 +209,9 @@ const FEE_URL = "#";
       color: #000;
       text-align: center;
       line-height: 1.6;
-      width: spx(560);
-      font-size: spx(25);
+      word-break: break-all; // ダミーの◯連続を折り返す
+      width: spx(270);
+      font-size: spx(24);
       @include tablet-up {
         width: ppx(440);
         font-size: ppx(26);
@@ -227,12 +235,12 @@ const FEE_URL = "#";
       text-align: center;
       white-space: nowrap;
       transition: opacity 0.3s ease;
-      padding: spx(26) spx(70);
+      padding: spx(13) spx(35);
       border-width: spx(4);
       gap: spx(10);
-      font-size: spx(26);
-      line-height: spx(26);
-      letter-spacing: spx(1.3);
+      font-size: spx(23);
+      line-height: spx(23);
+      letter-spacing: spx(1.15);
       filter: drop-shadow(0 #{spx(10)} #{spx(12)} rgba(0, 0, 0, 0.08));
       @include tablet-up {
         padding: ppx(26) ppx(70);
@@ -258,6 +266,45 @@ const FEE_URL = "#";
       @include tablet-up {
         width: ppx(25);
         height: ppx(25);
+      }
+    }
+
+    &__br-sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+
+    // SPだけの施設詳細ボタン（473×96）
+    &__detail {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #8aad61;
+      border: spx(4) solid #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+      width: spx(473);
+      margin-top: spx(30);
+      padding: spx(31) 0;
+      font-size: spx(26);
+      line-height: spx(26);
+      letter-spacing: spx(1.3);
+      box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
+      @include tablet-up {
+        display: none;
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.8;
+        }
       }
     }
   }

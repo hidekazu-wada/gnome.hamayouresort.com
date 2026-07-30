@@ -1,0 +1,188 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../../styles/main.scss";
+
+// お問い合わせフォームの遷移先は確定待ち
+const FORM_URL = "#";
+---
+
+<section class="hodo-contact">
+  <div class="hodo-contact__head">
+    <h2 class="hodo-contact__title">お問い合わせ</h2>
+    <div class="hodo-contact__title-line" aria-hidden="true"></div>
+  </div>
+
+  <div class="hodo-contact__cards">
+    <a class="hodo-contact__card" href="tel:0555-82-2650">
+      <span class="hodo-contact__card-main">
+        <span class="hodo-contact__card-tel-label">TEL.&nbsp;</span>0555-82-2650
+      </span>
+      <span class="hodo-contact__card-note">（ 受付時間 9:00~17:00 ）</span>
+    </a>
+    <a class="hodo-contact__card" href={FORM_URL}>
+      <span class="hodo-contact__card-main hodo-contact__card-main--form"
+        >お問い合わせフォームはこちら</span
+      >
+      <span class="hodo-contact__card-note">（ 受付時間 24時間 ）</span>
+    </a>
+  </div>
+</section>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../../styles/variables";
+  @import "../../../../../styles/functions";
+  @import "../../../../../styles/mixins";
+
+  .hodo-contact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff6df;
+    padding-top: spx(100);
+    padding-bottom: spx(220);
+    gap: spx(50);
+    @include tablet-up {
+      padding-top: ppx(120);
+      padding-bottom: ppx(210);
+      gap: ppx(60);
+    }
+
+    &__head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: spx(30);
+      @include tablet-up {
+        gap: ppx(30);
+      }
+    }
+
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(60);
+        letter-spacing: ppx(3);
+        margin-right: ppx(-3);
+      }
+    }
+
+    &__title-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #000 0,
+        #000 #{spx(9)},
+        transparent #{spx(9)},
+        transparent #{spx(16)}
+      );
+      @include tablet-up {
+        width: ppx(2000);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #000 0,
+          #000 #{ppx(11)},
+          transparent #{ppx(11)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    &__cards {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: spx(20);
+      @include tablet-up {
+        flex-direction: row;
+        align-items: stretch;
+        gap: ppx(40);
+      }
+    }
+
+    &__card {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: spx(600);
+      height: spx(140);
+      padding: spx(8) spx(60) spx(16);
+      border-radius: spx(16);
+      background-color: #fffdf7;
+      text-decoration: none;
+      text-align: center;
+      color: #138185;
+      box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
+      transition: opacity 0.3s ease;
+      @include tablet-up {
+        width: auto;
+        height: auto;
+        min-height: ppx(176);
+        padding: ppx(10) ppx(75) ppx(20);
+        border-radius: ppx(20);
+        box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.85;
+        }
+      }
+    }
+
+    &__card-main {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      line-height: 1.6;
+      white-space: nowrap;
+      font-size: spx(51);
+      letter-spacing: spx(2.05);
+      @include tablet-up {
+        font-size: ppx(64);
+        letter-spacing: ppx(2.05);
+      }
+    }
+
+    &__card-main--form {
+      font-size: spx(33);
+      @include tablet-up {
+        font-size: ppx(41);
+      }
+    }
+
+    &__card-tel-label {
+      font-size: spx(33);
+      @include tablet-up {
+        font-size: ppx(41);
+      }
+    }
+
+    &__card-note {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      white-space: nowrap;
+      font-size: spx(26);
+      letter-spacing: spx(2.05);
+      @include tablet-up {
+        font-size: ppx(33);
+        letter-spacing: ppx(2.05);
+      }
+    }
+  }
+</style>
