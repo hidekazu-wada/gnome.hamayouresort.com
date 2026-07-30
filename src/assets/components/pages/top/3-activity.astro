@@ -496,14 +496,14 @@ const cards = [
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: spx(16);
+      gap: spx(20);
       margin-top: spx(70);
       @include tablet-up {
-        gap: ppx(16 * 1.2);
+        gap: ppx(20 * 1.2);
         margin-top: ppx(70 * 1.2);
       }
       @include desktop-up {
-        gap: ppx(16);
+        gap: ppx(20);
         margin-top: ppx(70);
       }
     }
@@ -520,20 +520,20 @@ const cards = [
       text-decoration: none;
       box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
       padding: spx(35) spx(110);
-      margin-top: spx(110);
+      margin-top: spx(106);
       @include tablet-up {
         gap: ppx(10 * 1.2);
         border-width: ppx(4 * 1.2);
         box-shadow: 0 ppx(10 * 1.2) ppx(12 * 1.2) rgba(0, 0, 0, 0.08);
         padding: ppx(35 * 1.2) ppx(110 * 1.2);
-        margin-top: ppx(110 * 1.2);
+        margin-top: ppx(106 * 1.2);
       }
       @include desktop-up {
         gap: ppx(10);
         border-width: ppx(4);
         box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
         padding: ppx(35) ppx(110);
-        margin-top: ppx(110);
+        margin-top: ppx(106);
       }
 
       @include hover {
@@ -575,18 +575,18 @@ const cards = [
 
   // Swiper が動的生成する bullet はグローバルで指定
   :global(.activity__pagination .swiper-pagination-bullet) {
-    width: spx(18);
-    height: spx(18);
+    width: spx(25);
+    height: spx(25);
     margin: 0 !important;
     background-color: #fff;
     opacity: 1;
     @include tablet-up {
-      width: ppx(18 * 1.2);
-      height: ppx(18 * 1.2);
+      width: ppx(30 * 1.2);
+      height: ppx(30 * 1.2);
     }
     @include desktop-up {
-      width: ppx(18);
-      height: ppx(18);
+      width: ppx(30);
+      height: ppx(30);
     }
   }
 
