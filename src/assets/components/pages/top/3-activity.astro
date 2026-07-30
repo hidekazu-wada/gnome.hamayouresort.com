@@ -312,11 +312,14 @@ const cards = [
       line-height: 1.6;
       font-size: spx(40);
       letter-spacing: spx(2);
+      // FigmaはPCだけ行送りが150%
       @include tablet-up {
+        line-height: 1.5;
         font-size: ppx(55 * 1.2);
         letter-spacing: ppx(2.75 * 1.2);
       }
       @include desktop-up {
+        line-height: 1.5;
         font-size: ppx(55);
         letter-spacing: ppx(2.75);
       }
@@ -338,20 +341,21 @@ const cards = [
       position: relative;
       box-sizing: border-box;
       align-self: stretch;
-      margin-top: spx(310);
+      // 影の切れ防止でpadding-top 16pxを持たせているので、その分marginから引く
+      margin-top: spx(310 - 16);
       // SPは左右いっぱいに（inner の padding を相殺し、カードのピークを画面端まで見せる）
       margin-left: spx(-40);
       margin-right: spx(-40);
       // カードのドロップシャドウがコンテナの overflow でクリップされないよう余白を確保
       padding: spx(16) spx(24) spx(44);
       @include tablet-up {
-        margin-top: ppx(80 * 1.2);
+        margin-top: ppx((80 - 16) * 1.2);
         margin-left: 0;
         margin-right: 0;
         padding: ppx(16 * 1.2) ppx(24 * 1.2) ppx(44 * 1.2);
       }
       @include desktop-up {
-        margin-top: ppx(80);
+        margin-top: ppx(80 - 16);
         // カード4枚(500×4+間隔45×3=2135) + シャドウ余白(24×2) に幅を絞り中央配置
         // → 5枚目はコンテナ外でクリップされ、デザイン同様両端に余白が残る
         width: ppx(2184);
@@ -364,8 +368,9 @@ const cards = [
 
     &__slide {
       height: auto;
+      // slidesPerView: "auto" 用の設計値固定幅
+      width: spx(530);
       @include desktop-up {
-        // slidesPerView: "auto" 用の設計値固定幅
         width: ppx(500);
         margin-right: ppx(45);
       }
@@ -597,8 +602,9 @@ const cards = [
       modules: [Pagination],
       // デザイン同様、中央カードの左右に前後カードがのぞくようループさせる
       loop: true,
-      slidesPerView: 1.4,
-      spaceBetween: 12,
+      // 設計値どおりのカード幅にするため slidesPerView は auto + CSS固定幅
+      slidesPerView: "auto",
+      spaceBetween: 0,
       centeredSlides: true,
       pagination: {
         el: ".activity__pagination",
