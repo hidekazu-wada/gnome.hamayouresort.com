@@ -2,8 +2,8 @@
 // メインSCSSファイルをインポート
 import "../../../../../styles/main.scss";
 
-import Hero from "../../../../images/facility/hodohodo/hero.webp";
 import CampIllust from "../../../../images/facility/hodohodo/camp-illust.svg";
+import { hodohodoHeroPhotos } from "../../../../../data/hodohodo";
 ---
 
 <section class="hodo-hero">
@@ -19,13 +19,36 @@ import CampIllust from "../../../../images/facility/hodohodo/camp-illust.svg";
 
   <div class="hodo-hero__card">
     <div class="hodo-hero__visual">
-      <img
-        class="hodo-hero__photo"
-        src={Hero.src}
-        width={Hero.width}
-        height={Hero.height}
-        alt=""
-      />
+      <!-- 写真は自動再生でディゾルブ切り替え -->
+      <div class="hodo-hero__photos">
+        {
+          hodohodoHeroPhotos.map((photo, i) => (
+            <img
+              class:list={["hodo-hero__photo", { "is-active": i === 0 }]}
+              src={photo.src}
+              width={photo.width}
+              height={photo.height}
+              alt=""
+              loading={i === 0 ? "eager" : "lazy"}
+            />
+          ))
+        }
+      </div>
+
+      <ul class="hodo-hero__dots">
+        {
+          hodohodoHeroPhotos.map((_, i) => (
+            <li>
+              <button
+                class:list={["hodo-hero__dot", { "is-active": i === 0 }]}
+                type="button"
+                data-index={i}
+                aria-label={`${i + 1}枚目の写真を表示`}
+              />
+            </li>
+          ))
+        }
+      </ul>
     </div>
 
     <!-- キャンプサイトのイラスト（SPは写真の下、PCは本文カラムの上に重ねる） -->
@@ -42,6 +65,41 @@ import CampIllust from "../../../../images/facility/hodohodo/camp-illust.svg";
     </div>
   </div>
 </section>
+
+<script>
+  // ClientRouter未使用のため直接初期化する（泊まる詳細と同じディゾルブ）
+  const hero = document.querySelector<HTMLElement>(".hodo-hero");
+
+  if (hero) {
+    const photos = Array.from(hero.querySelectorAll<HTMLElement>(".hodo-hero__photo"));
+    const dots = Array.from(hero.querySelectorAll<HTMLButtonElement>(".hodo-hero__dot"));
+
+    if (photos.length > 1) {
+      let current = 0;
+      let timer = 0;
+
+      const show = (index: number) => {
+        current = (index + photos.length) % photos.length;
+        photos.forEach((photo, i) => photo.classList.toggle("is-active", i === current));
+        dots.forEach((dot, i) => dot.classList.toggle("is-active", i === current));
+      };
+
+      const start = () => {
+        window.clearInterval(timer);
+        timer = window.setInterval(() => show(current + 1), 5000);
+      };
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener("click", () => {
+          show(i);
+          start();
+        });
+      });
+
+      start();
+    }
+  }
+</script>
 
 <style lang="scss">
   // 必要なmixin/functionをインポート
@@ -178,29 +236,71 @@ import CampIllust from "../../../../images/facility/hodohodo/camp-illust.svg";
       }
     }
 
-    // 写真の下はFigmaのドット領域ぶんの余白を確保
+    // 写真＋ドット（写真は重ねてディゾルブ）
     &__visual {
-      overflow: clip;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       flex-shrink: 0;
-      line-height: 0;
+      gap: spx(40);
+      @include tablet-up {
+        gap: ppx(50);
+      }
+    }
+
+    &__photos {
+      position: relative;
+      overflow: clip;
       width: spx(600);
-      margin-bottom: spx(65);
+      height: spx(450);
       border-radius: spx(30);
       @include tablet-up {
         width: ppx(976);
-        margin-bottom: ppx(80);
+        height: ppx(732);
         border-radius: ppx(50);
       }
     }
 
     &__photo {
+      position: absolute;
+      inset: 0;
       display: block;
       width: 100%;
+      height: 100%;
       object-fit: cover;
-      height: spx(450);
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    &__photo.is-active {
+      opacity: 1;
+    }
+
+    &__dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: spx(20);
       @include tablet-up {
-        height: ppx(732);
+        gap: ppx(20);
       }
+    }
+
+    &__dot {
+      display: block;
+      border-radius: 50%;
+      background-color: #cfcfcf;
+      transition: background-color 0.3s ease;
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        width: ppx(30);
+        height: ppx(30);
+      }
+    }
+
+    &__dot.is-active {
+      background-color: #7f7f7f;
     }
 
     &__illust {

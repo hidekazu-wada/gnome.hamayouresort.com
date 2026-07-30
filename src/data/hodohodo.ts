@@ -1,6 +1,7 @@
 // ほどほどの森の詳細ページのデータ。
 // 写真が未支給のものはFigmaでもグレーのままなので photo を持たせていない。
 
+import hero from "../assets/images/facility/hodohodo/hero.webp";
 import ashiyu from "../assets/images/facility/hodohodo/ashiyu.webp";
 import sauna from "../assets/images/facility/hodohodo/sauna.webp";
 import swing from "../assets/images/facility/hodohodo/swing.webp";
@@ -18,6 +19,9 @@ export type HodohodoItem = {
 };
 
 const dummy = ["補足説明◯◯◯◯◯◯◯◯◯◯◯◯", "◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"];
+
+/** ヒーローのディゾルブ写真（実データ確定までは既存写真のダミー3枚） */
+export const hodohodoHeroPhotos = [hero, ashiyu, sauna];
 
 export const hodohodoItems: HodohodoItem[] = [
   { title: "足湯", lines: dummy, photo: ashiyu, hasFee: true },
