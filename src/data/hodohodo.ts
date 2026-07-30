@@ -23,6 +23,17 @@ const dummy = ["補足説明◯◯◯◯◯◯◯◯◯◯◯◯", "◯◯◯◯
 /** ヒーローのディゾルブ写真（実データ確定までは既存写真のダミー3枚） */
 export const hodohodoHeroPhotos = [hero, ashiyu, sauna];
 
+/** 利用料モーダルの中身（実データ確定までダミー） */
+export const hodohodoFee = {
+  price: "◯◯◯◯◯円",
+  notes: [
+    "◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯",
+    "◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯",
+    "◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯",
+    "◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯",
+  ],
+};
+
 export const hodohodoItems: HodohodoItem[] = [
   { title: "足湯", lines: dummy, photo: ashiyu, hasFee: true },
   { title: "森のサウナ", lines: dummy, photo: sauna, hasFee: true },

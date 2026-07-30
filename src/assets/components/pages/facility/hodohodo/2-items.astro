@@ -3,10 +3,7 @@
 import "../../../../../styles/main.scss";
 
 import IconArrow from "../../../../images/facility/icon-arrow.svg";
-import { hodohodoItems } from "../../../../../data/hodohodo";
-
-// 利用料の遷移先は確定待ち
-const FEE_URL = "#";
+import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
 ---
 
 <section class="hodo-items">
@@ -45,10 +42,10 @@ const FEE_URL = "#";
           </p>
 
           {item.hasFee && (
-            <a class="hodo-items__fee" href={FEE_URL}>
+            <button class="hodo-items__fee" type="button" data-fee-open>
               <span>利用料</span>
               <img class="hodo-items__fee-icon" src={IconArrow.src} alt="" />
-            </a>
+            </button>
           )}
         </li>
       ))
@@ -57,7 +54,42 @@ const FEE_URL = "#";
 
   {/* SPだけの施設詳細ボタン（Figma SPにのみ存在。リンク先は確定待ち） */}
   <a class="hodo-items__detail" href="/facility/">施設詳細はこちら</a>
+
+  {/* 利用料モーダル（背景クリック・ESCで閉じる） */}
+  <dialog class="hodo-items__fee-modal" data-fee-modal aria-label="利用料">
+    <div class="hodo-items__fee-body">
+      <div class="hodo-items__fee-row">
+        <p class="hodo-items__fee-label">料金</p>
+        <p class="hodo-items__fee-value">{hodohodoFee.price}</p>
+      </div>
+      <div class="hodo-items__fee-row">
+        <p class="hodo-items__fee-label">注意事項</p>
+        <ul class="hodo-items__fee-notes">
+          {hodohodoFee.notes.map((note) => (
+            <li class="hodo-items__fee-note">・{note}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </dialog>
 </section>
+
+<script>
+  // ClientRouter未使用のため直接初期化する
+  const modal = document.querySelector<HTMLDialogElement>("[data-fee-modal]");
+  const openers = document.querySelectorAll<HTMLButtonElement>("[data-fee-open]");
+
+  if (modal) {
+    openers.forEach((btn) => {
+      btn.addEventListener("click", () => modal.showModal());
+    });
+
+    // 背景（dialog自身）クリックで閉じる。中身クリックでは閉じない
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.close();
+    });
+  }
+</script>
 
 <style lang="scss">
   // 必要なmixin/functionをインポート
@@ -234,6 +266,7 @@ const FEE_URL = "#";
       color: #fff;
       text-align: center;
       white-space: nowrap;
+      cursor: pointer;
       transition: opacity 0.3s ease;
       padding: spx(13) spx(35);
       border-width: spx(4);
@@ -305,6 +338,107 @@ const FEE_URL = "#";
         &:hover {
           opacity: 0.8;
         }
+      }
+    }
+
+    // 利用料モーダル（施設概要と同じ白カード2枚）
+    &__fee-modal {
+      margin: auto;
+      border: none;
+      outline: none;
+      padding: 0;
+      background: transparent;
+      max-width: none;
+      width: spx(630);
+      @include tablet-up {
+        width: ppx(1800);
+      }
+
+      &::backdrop {
+        background: rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    &__fee-body {
+      display: flex;
+      flex-direction: column;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(20);
+      }
+    }
+
+    &__fee-row {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      background-color: #fff;
+      width: 100%;
+      padding: spx(20) spx(30);
+      border-radius: spx(20);
+      gap: spx(15);
+      @include tablet-up {
+        padding: ppx(20) ppx(30);
+        border-radius: ppx(20);
+        gap: ppx(15);
+      }
+    }
+
+    &__fee-label {
+      flex-shrink: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      line-height: 1.6;
+      width: spx(150);
+      font-size: spx(27);
+      letter-spacing: 0;
+      @include tablet-up {
+        width: ppx(200);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    &__fee-value {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.6;
+      width: spx(405);
+      font-size: spx(27);
+      letter-spacing: 0;
+      @include tablet-up {
+        width: ppx(1525);
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+      }
+    }
+
+    // SPは項目間を1行ぶんあける（Figmaの空行）
+    &__fee-notes {
+      display: flex;
+      flex-direction: column;
+      width: spx(405);
+      gap: spx(43);
+      @include tablet-up {
+        width: ppx(1525);
+        gap: 0;
+      }
+    }
+
+    &__fee-note {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.6;
+      word-break: break-all; // ダミーの◯連続を折り返す
+      font-size: spx(27);
+      letter-spacing: 0;
+      @include tablet-up {
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
       }
     }
   }
