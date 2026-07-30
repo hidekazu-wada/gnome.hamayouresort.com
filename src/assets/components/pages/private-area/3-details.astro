@@ -6,11 +6,15 @@ import PaperTexture from "../../../images/common/paper-texture.png";
 import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
 import BadgeMap from "../../../images/private-area/badge-map.svg";
 import IconArrowWhite from "../../../images/news/icon-circle-arrow-white.svg";
+import Transition from "./Transition.astro";
 import { privateAreas } from "../../../../data/private-area";
 ---
 
 {
-  privateAreas.map((area) => (
+  privateAreas.map((area, i) => (
+    <Fragment>
+    {/* エリアの間に繋ぎを挟む */}
+    {i > 0 && <Transition step={i === 1 ? 3 : 4} />}
     <section
       class:list={["area-detail", `area-detail--${area.slug}`]}
       id={area.slug}
@@ -92,6 +96,7 @@ import { privateAreas } from "../../../../data/private-area";
         />
       </a>
     </section>
+    </Fragment>
   ))
 }
 

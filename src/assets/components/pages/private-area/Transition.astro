@@ -1,0 +1,197 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
+
+import pc1 from "../../../images/private-area/transitions/pc-1.webp";
+import pc2 from "../../../images/private-area/transitions/pc-2.webp";
+import pc3 from "../../../images/private-area/transitions/pc-3.webp";
+import pc4 from "../../../images/private-area/transitions/pc-4.webp";
+import pc5 from "../../../images/private-area/transitions/pc-5.webp";
+import pc6 from "../../../images/private-area/transitions/pc-6.webp";
+import sp1 from "../../../images/private-area/transitions/sp-1.webp";
+import sp2 from "../../../images/private-area/transitions/sp-2.webp";
+import sp3 from "../../../images/private-area/transitions/sp-3.webp";
+import sp4 from "../../../images/private-area/transitions/sp-4.webp";
+import sp5 from "../../../images/private-area/transitions/sp-5.webp";
+import sp6 from "../../../images/private-area/transitions/sp-6.webp";
+
+interface Props {
+  /** 上から何番目の繋ぎか（1〜6） */
+  step: 1 | 2 | 3 | 4 | 5 | 6;
+}
+
+const { step } = Astro.props;
+
+// 枠の背景はCSSで敷き、波・丘の図形だけを透過画像で重ねる
+const shapes = [
+  { pc: pc1, sp: sp1, bg: "plain" },
+  { pc: pc2, sp: sp2, bg: "plain" },
+  { pc: pc3, sp: sp3, bg: "plain" },
+  { pc: pc4, sp: sp4, bg: "green" },
+  { pc: pc5, sp: sp5, bg: "cream" },
+  { pc: pc6, sp: sp6, bg: "cream" },
+] as const;
+
+const shape = shapes[step - 1];
+const texture = shape.bg === "plain" ? PaperTexturePlain : PaperTexture;
+---
+
+<div
+  class:list={[
+    "area-transition",
+    `area-transition--${step}`,
+    `area-transition--bg-${shape.bg}`,
+  ]}
+  aria-hidden="true"
+>
+  <div
+    class="area-transition__texture"
+    style={`background-image: url(${texture.src});`}
+  >
+  </div>
+
+  <picture class="area-transition__shape">
+    <source srcset={shape.pc.src} media="(min-width: 744px)" />
+    <img class="area-transition__shape-img" src={shape.sp.src} alt="" />
+  </picture>
+</div>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  // 図形は枠の外にはみ出して隣のセクションに重なるので z-index を上げる
+  .area-transition {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+
+    &--bg-green {
+      background-color: #c0d4a9;
+    }
+
+    &--bg-cream {
+      background-color: #fffdf7;
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 色を敷いている面だけluminosityで合成する
+    &--bg-green &__texture,
+    &--bg-cream &__texture {
+      mix-blend-mode: luminosity;
+    }
+
+    &__shape {
+      position: absolute;
+      left: 0;
+      z-index: 1;
+      display: block;
+      width: 100%;
+    }
+
+    &__shape-img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    // 枠の高さと図形の高さ・オフセットはFigmaの実測値
+    &--1,
+    &--3 {
+      height: spx(66);
+      @include tablet-up {
+        height: ppx(188);
+      }
+    }
+
+    &--1 &__shape,
+    &--3 &__shape {
+      top: spx(-11.7);
+      height: spx(79);
+      @include tablet-up {
+        top: ppx(-11.54);
+        height: ppx(212);
+      }
+    }
+
+    &--2 {
+      height: spx(90);
+      @include tablet-up {
+        height: ppx(289);
+      }
+    }
+
+    &--2 &__shape {
+      top: spx(-54.98);
+      height: spx(145);
+      @include tablet-up {
+        top: 0;
+        height: ppx(289);
+      }
+    }
+
+    &--4 {
+      height: spx(66);
+      @include tablet-up {
+        height: ppx(188);
+      }
+    }
+
+    &--4 &__shape {
+      top: spx(-12.2);
+      height: spx(79);
+      @include tablet-up {
+        top: ppx(-11.54);
+        height: ppx(212);
+      }
+    }
+
+    &--5 {
+      height: spx(66);
+      @include tablet-up {
+        height: ppx(200);
+      }
+    }
+
+    &--5 &__shape {
+      top: spx(-10.7);
+      height: spx(79);
+      @include tablet-up {
+        top: ppx(-11.54);
+        height: ppx(209);
+      }
+    }
+
+    &--6 {
+      height: spx(92);
+      @include tablet-up {
+        height: ppx(173);
+      }
+    }
+
+    &--6 &__shape {
+      top: 0;
+      height: spx(92);
+      @include tablet-up {
+        height: ppx(173);
+      }
+    }
+  }
+</style>
