@@ -1,0 +1,104 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+
+/** 自動遷移までの秒数。文面と揃えること */
+const REDIRECT_SECONDS = 10;
+---
+
+<section class="notfound">
+  <!-- 背景の紙テクスチャ -->
+  <div
+    class="notfound__texture"
+    aria-hidden="true"
+    style={`background-image: url(${PaperTexture.src});`}
+  >
+  </div>
+
+  <div class="notfound__body">
+    <p class="notfound__text">トップページへご案内いたします。</p>
+    {/* SPは「自動的に」のあとで折る */}
+    <p class="notfound__text">※このページは{REDIRECT_SECONDS}秒後に自動的に<br class="notfound__br-sp" />ジャンプします。</p>
+  </div>
+</section>
+
+<script>
+  // ClientRouter未使用のため直接初期化する
+  const REDIRECT_MS = 10000;
+  setTimeout(() => {
+    location.replace("/");
+  }, REDIRECT_MS);
+</script>
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .notfound {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #bee0e1;
+    padding-top: spx(60);
+    padding-bottom: spx(130);
+    @include tablet-up {
+      padding-top: ppx(150);
+      padding-bottom: ppx(220);
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    &__body {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: spx(600);
+      gap: spx(25);
+      @include tablet-up {
+        width: auto;
+        gap: ppx(40);
+      }
+    }
+
+    &__text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(30);
+      letter-spacing: spx(1.5);
+      margin-right: spx(-1.5);
+      @include tablet-up {
+        font-size: ppx(30);
+        letter-spacing: ppx(1.5);
+        margin-right: ppx(-1.5);
+      }
+    }
+
+    &__br-sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+  }
+</style>
