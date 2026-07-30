@@ -5,6 +5,7 @@ import "../../../../styles/main.scss";
 import PaperTexture from "../../../images/common/paper-texture.png";
 import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
 import BadgeMap from "../../../images/private-area/badge-map.svg";
+import BadgeMapHover from "../../../images/private-area/badge-map-hover.svg";
 import IconArrowWhite from "../../../images/news/icon-circle-arrow-white.svg";
 import Transition from "./Transition.astro";
 import { privateAreas } from "../../../../data/private-area";
@@ -46,8 +47,15 @@ import { privateAreas } from "../../../../data/private-area";
       <p class="area-detail__body">{area.body}</p>
 
       {/* PCは見出しの右に絶対配置、SPは本文の下に中央寄せ */}
+      {/* ホバーで緑地のバッジにディゾルブする（指示書） */}
       <a class="area-detail__map-badge" href="#">
-        <img src={BadgeMap.src} alt="エリアMAP" />
+        <img class="area-detail__map-badge-img" src={BadgeMap.src} alt="エリアMAP" />
+        <img
+          class="area-detail__map-badge-img area-detail__map-badge-img--hover"
+          src={BadgeMapHover.src}
+          alt=""
+          aria-hidden="true"
+        />
       </a>
 
       <div class="area-detail__features-head">
@@ -243,10 +251,12 @@ import { privateAreas } from "../../../../data/private-area";
       width: spx(497);
       height: spx(297);
     }
+    // Kokkoだけ支給イラストの上に30pxの余白を足す造り
     &--kokko &__illust--pc {
       @include tablet-up {
         width: ppx(723);
-        height: ppx(462);
+        height: ppx(432);
+        margin-top: ppx(30);
       }
     }
 
@@ -274,27 +284,34 @@ import { privateAreas } from "../../../../data/private-area";
       position: relative;
       z-index: 2;
       display: block;
-      width: spx(170);
+      width: spx(165);
       margin-top: spx(20);
-      transition: opacity 0.3s ease;
       @include tablet-up {
         position: absolute;
-        left: ppx(1730);
+        // 支給データは165px幅なので、中心をFigmaの位置に合わせる
+        left: ppx(1732.5);
         top: ppx(268);
-        width: ppx(170);
+        width: ppx(165);
         margin-top: 0;
       }
+    }
 
-      @include hover {
-        &:hover {
-          opacity: 0.7;
-        }
-      }
+    &__map-badge-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: opacity 0.3s ease;
+    }
 
-      img {
-        display: block;
-        width: 100%;
-        height: auto;
+    &__map-badge-img--hover {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+    }
+
+    @include hover {
+      &__map-badge:hover &__map-badge-img--hover {
+        opacity: 1;
       }
     }
 
