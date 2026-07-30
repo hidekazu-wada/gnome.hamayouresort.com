@@ -28,12 +28,14 @@ interface Props {
    * date: お知らせ詳細の日付用 / large: 貸切エリアのキャッチコピー用
    */
   leadVariant?: "default" | "info" | "date" | "large";
+  /** SPで英字タイトルが2行になるページ用（高さ700→771。ホテルセットプラン） */
+  tallSp?: boolean;
 }
 
-const { titleEn, titleJa, lead, leadVariant = "default" } = Astro.props;
+const { titleEn, titleJa, lead, leadVariant = "default", tallSp = false } = Astro.props;
 ---
 
-<div class="page-header">
+<div class:list={["page-header", { "page-header--tall-sp": tallSp }]}>
   <!-- 背景の紙テクスチャ -->
   <div
     class="page-header__texture"
@@ -97,6 +99,13 @@ const { titleEn, titleJa, lead, leadVariant = "default" } = Astro.props;
     height: spx(700);
     @include tablet-up {
       height: ppx(804);
+    }
+
+    // SPで英字タイトルが2行になるページ（雲や各要素の位置はそのまま）
+    &--tall-sp {
+      @include sp-only {
+        height: spx(771);
+      }
     }
 
     &__texture {
@@ -305,19 +314,20 @@ const { titleEn, titleJa, lead, leadVariant = "default" } = Astro.props;
       :global(.page-header__lead-em) {
         color: #d6b156;
       }
+    }
 
-      :global(.page-header__br-pc) {
-        display: none;
-        @include tablet-up {
-          display: inline;
-        }
-      }
-
-      :global(.page-header__br-sp) {
+    // set:html で差し込むためスコープが付かない（titleEn / lead 共通）
+    :global(.page-header__br-pc) {
+      display: none;
+      @include tablet-up {
         display: inline;
-        @include tablet-up {
-          display: none;
-        }
+      }
+    }
+
+    :global(.page-header__br-sp) {
+      display: inline;
+      @include tablet-up {
+        display: none;
       }
     }
   }
