@@ -34,9 +34,13 @@ const { activity } = Astro.props;
           <div class="detail-overview__row-body">
             <dt class="detail-overview__label">{row.label}</dt>
             <dd class="detail-overview__value">
-              {row.lines.map((line) => (
-                <p>{line}</p>
-              ))}
+              {row.lines.map((line) =>
+                line === "" ? (
+                  <p class="detail-overview__blank" aria-hidden="true" />
+                ) : (
+                  <p set:html={line} />
+                ),
+              )}
             </dd>
           </div>
           <div class="detail-overview__line" aria-hidden="true" />
@@ -202,12 +206,27 @@ const { activity } = Astro.props;
       line-height: 1.7;
       width: spx(600);
       font-size: spx(27);
-      letter-spacing: spx(1.6);
+      letter-spacing: 0; // FigmaのSP本文は字間なし（PCのみ5%）
       @include tablet-up {
         line-height: 1.6;
         width: ppx(1505);
         font-size: ppx(32);
         letter-spacing: ppx(1.6);
+      }
+
+      // SPだけの空行（データの "" を1行ぶんの高さで再現。PCは詰める）
+      :global(.detail-overview__blank) {
+        height: spx(46);
+        @include tablet-up {
+          display: none;
+        }
+      }
+
+      // SPだけの改行（データ側の <br class="detail-overview__br-sp">）
+      :global(.detail-overview__br-sp) {
+        @include tablet-up {
+          display: none;
+        }
       }
     }
 

@@ -157,7 +157,7 @@ const { activity } = Astro.props;
       line-height: 1.7;
       width: spx(570);
       font-size: spx(27);
-      letter-spacing: spx(1.6);
+      letter-spacing: 0; // FigmaのSP本文は字間なし（PCのみ5%）
       @include tablet-up {
         line-height: 1.6;
         width: ppx(1450);
@@ -176,12 +176,12 @@ const { activity } = Astro.props;
     }
 
     // 金額の直後の行だけ間隔をあける
-    // （SPは空行1つ分、PCは行送り2.3で上下に広げる）
+    // （SPは空行1つ分。PCはFigmaの混在フォントサイズぶんの11pxだけ。
+    //   line-height で広げると行の下側にも余白がつき、以降が11pxずれる）
     &__line.is-after-amount {
       margin-top: spx(46);
       @include tablet-up {
-        margin-top: 0;
-        line-height: 2.3;
+        margin-top: ppx(11);
       }
     }
   }
