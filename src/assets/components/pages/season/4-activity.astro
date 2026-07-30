@@ -31,9 +31,10 @@ const texture = season.bg ? PaperTexture : PaperTexturePlain;
   >
   </div>
 
+  {/* SPは「におすすめの」のあとで折る */}
   <h2 class="season-activity__title">
     <span class="season-activity__title-em">{season.ja}</span
-    >におすすめのアクティビティ
+    >におすすめの<br class="season-activity__br-sp" />アクティビティ
   </h2>
 
   <div class="season-activity__slider swiper">
@@ -91,9 +92,9 @@ const texture = season.bg ? PaperTexture : PaperTexturePlain;
     flex-direction: column;
     align-items: center;
     background-color: var(--bg);
-    padding-bottom: spx(80);
+    padding-bottom: spx(70);
     @include tablet-up {
-      padding-bottom: ppx(100);
+      padding-bottom: ppx(20);
     }
 
     &__texture {
@@ -140,15 +141,21 @@ const texture = season.bg ? PaperTexture : PaperTexturePlain;
       color: var(--accent);
     }
 
+    &__br-sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+
     // PCは設計どおり4枚（530×4＋間隔10×3）が収まる幅に絞って中央寄せ
     &__slider {
       position: relative;
       z-index: 1;
       width: 100%;
-      padding-top: spx(40);
+      padding-top: spx(60);
       @include tablet-up {
         width: ppx(2150);
-        margin: 0 auto;
+        margin: ppx(10) auto 0;
         padding-top: ppx(60);
       }
     }
@@ -169,7 +176,7 @@ const texture = season.bg ? PaperTexture : PaperTexturePlain;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding-top: spx(40);
+      padding-top: spx(60);
       gap: spx(20);
       @include tablet-up {
         padding-top: ppx(110);
