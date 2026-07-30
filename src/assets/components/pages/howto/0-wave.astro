@@ -13,17 +13,20 @@ interface Props {
 
 const { to } = Astro.props;
 
-// 枠の高さと画像のはみ出し量はセクションごとに違う
+// 枠の高さと画像のはみ出し量はセクションごとに違う（heightSp はSPの設計高さ/720）
 const waves = {
-  schedule: { src: toSchedule.src, height: 207.816, top: -5.55, left: -0.44, width: 100.885 },
-  day: { src: toDay.src, height: 324.783, top: 0, left: 0, width: 100 },
-  activity: { src: toActivity.src, height: 200, top: -5.77, left: -0.43, width: 100.881 },
+  schedule: { src: toSchedule.src, height: 207.816, heightSp: 66, top: -5.55, left: -0.44, width: 100.885 },
+  day: { src: toDay.src, height: 324.783, heightSp: 92, top: 0, left: 0, width: 100 },
+  activity: { src: toActivity.src, height: 200, heightSp: 96, top: -5.77, left: -0.43, width: 100.881 },
 };
 
 const wave = waves[to];
 ---
 
-<div class="howto-wave" style={`--ratio: ${wave.height / 2560};`}>
+<div
+  class="howto-wave"
+  style={`--ratio: ${wave.height / 2560}; --ratio-sp: ${wave.heightSp / 720};`}
+>
   <img
     class="howto-wave__img"
     src={wave.src}
@@ -41,7 +44,10 @@ const wave = waves[to];
   // 高さは設計の比率で出す。SPも同じ画像を高さに合わせて縮める
   .howto-wave {
     position: relative;
-    height: calc(100vw * var(--ratio));
+    height: calc(100vw * var(--ratio-sp));
+    @include tablet-up {
+      height: calc(100vw * var(--ratio));
+    }
 
     &__img {
       position: absolute;

@@ -87,9 +87,9 @@ const { howto } = Astro.props;
     flex-direction: column;
     align-items: center;
     background-color: #bee0e1;
-    padding-bottom: spx(80);
+    padding-bottom: spx(110);
     @include tablet-up {
-      padding-bottom: ppx(100);
+      padding-bottom: 0;
     }
 
     &__texture {
@@ -140,10 +140,10 @@ const { howto } = Astro.props;
       position: relative;
       z-index: 1;
       width: 100%;
-      padding-top: spx(40);
+      padding-top: spx(60);
       @include tablet-up {
         width: ppx(2150);
-        margin: 0 auto;
+        margin: ppx(10) auto 0;
         padding-top: ppx(60);
       }
     }
@@ -164,10 +164,10 @@ const { howto } = Astro.props;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding-top: spx(40);
+      padding-top: spx(60);
       gap: spx(20);
       @include tablet-up {
-        padding-top: ppx(100);
+        padding-top: ppx(110);
         gap: ppx(20);
       }
 
@@ -205,8 +205,9 @@ const { howto } = Astro.props;
       text-align: center;
       white-space: nowrap;
       transition: opacity 0.3s ease;
+      width: spx(496);
       margin-top: spx(60);
-      padding: spx(35) spx(80);
+      padding: spx(31) 0;
       border-width: spx(4);
       gap: spx(10);
       font-size: spx(26);
@@ -214,8 +215,9 @@ const { howto } = Astro.props;
       letter-spacing: spx(1.3);
       box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
       @include tablet-up {
+        width: ppx(496);
         margin-top: ppx(110);
-        padding: ppx(35) ppx(110);
+        padding: ppx(31) 0;
         border-width: ppx(4);
         gap: ppx(10);
         font-size: ppx(26);

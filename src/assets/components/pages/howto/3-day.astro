@@ -66,7 +66,7 @@ const { day } = Astro.props;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: spx(80);
+    padding-top: spx(60);
     padding-bottom: spx(15);
     gap: spx(40);
     @include tablet-up {
@@ -151,8 +151,8 @@ const { day } = Astro.props;
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: spx(25) 0;
-      gap: spx(30);
+      padding: spx(10) 0 spx(40);
+      gap: spx(40);
       @include tablet-up {
         flex-direction: row;
         align-items: center;
@@ -203,8 +203,8 @@ const { day } = Astro.props;
       line-height: 1.6;
       white-space: nowrap;
       gap: spx(20);
-      font-size: spx(32);
-      letter-spacing: spx(3.2);
+      font-size: spx(40);
+      letter-spacing: spx(4);
       @include tablet-up {
         gap: ppx(20);
         font-size: ppx(40);
@@ -214,8 +214,8 @@ const { day } = Astro.props;
 
     &__time-icon {
       display: block;
-      width: spx(44);
-      height: spx(44);
+      width: spx(55);
+      height: spx(55);
       @include tablet-up {
         width: ppx(55);
         height: ppx(55);
@@ -227,9 +227,9 @@ const { day } = Astro.props;
       font-weight: 700;
       color: #c3925e;
       line-height: 1.6;
-      font-size: spx(46);
-      letter-spacing: spx(4.6);
-      margin-right: spx(-4.6);
+      font-size: spx(43);
+      letter-spacing: spx(4.3);
+      margin-right: spx(-4.3);
       @include tablet-up {
         font-size: ppx(65);
         letter-spacing: ppx(6.5);
@@ -241,11 +241,10 @@ const { day } = Astro.props;
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 400;
       color: #000;
-      line-height: 1.7;
+      line-height: 1.8;
       width: spx(630);
       font-size: spx(27);
       @include tablet-up {
-        line-height: 1.8;
         width: ppx(715);
         font-size: ppx(30);
       }

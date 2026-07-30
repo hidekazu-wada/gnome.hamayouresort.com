@@ -24,23 +24,28 @@ const items = howto.schedule.flatMap((day) => day.items);
   >
   </div>
 
-  <div class="howto-schedule__head">
-    <div class="howto-schedule__days">
-      {howto.schedule.map((day) => <p>{day.day}</p>)}
-    </div>
-    <div class="howto-schedule__line" aria-hidden="true"></div>
-  </div>
+  {/* SPはDay見出しごと横スクロールさせる（Figmaは1700幅のストリップ） */}
+  <div class="howto-schedule__scroll">
+    <div class="howto-schedule__inner">
+      <div class="howto-schedule__head">
+        <div class="howto-schedule__days">
+          {howto.schedule.map((day) => <p>{day.day}</p>)}
+        </div>
+        <div class="howto-schedule__line" aria-hidden="true"></div>
+      </div>
 
-  <ul class="howto-schedule__list">
-    {
-      items.map((item) => (
-        <li class="howto-schedule__item">
-          <p class="howto-schedule__time">{item.time}</p>
-          <p class="howto-schedule__label">{item.label}</p>
-        </li>
-      ))
-    }
-  </ul>
+      <ul class="howto-schedule__list">
+        {
+          items.map((item) => (
+            <li class="howto-schedule__item">
+              <p class="howto-schedule__time">{item.time}</p>
+              <p class="howto-schedule__label">{item.label}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
 </section>
 
 <style lang="scss">
@@ -55,11 +60,36 @@ const items = howto.schedule.flatMap((day) => day.items);
     flex-direction: column;
     align-items: center;
     background-color: #e2dbc1;
-    padding-top: spx(90);
-    gap: spx(35);
+    padding-top: spx(40);
+    padding-bottom: spx(60);
     @include tablet-up {
       padding-top: ppx(150);
-      gap: ppx(47);
+      padding-bottom: 0;
+    }
+
+    // SPはDay見出し・線・項目をまとめて横スクロール
+    &__scroll {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      overflow-x: auto;
+      @include tablet-up {
+        width: auto;
+        overflow-x: visible;
+      }
+    }
+
+    &__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: spx(1700);
+      gap: spx(47);
+      @include tablet-up {
+        align-items: center;
+        width: auto;
+        gap: ppx(47);
+      }
     }
 
     &__texture {
@@ -78,13 +108,12 @@ const items = howto.schedule.flatMap((day) => day.items);
 
     // 区切り線の太さ(2px)をgapから引く
     &__head {
-      position: relative;
-      z-index: 1;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       gap: spx(25);
       @include tablet-up {
+        align-items: center;
         gap: ppx(25);
       }
     }
@@ -99,12 +128,15 @@ const items = howto.schedule.flatMap((day) => day.items);
       text-align: center;
       white-space: nowrap;
       line-height: 1.8;
-      width: spx(630);
-      padding-left: spx(20);
-      gap: spx(300);
-      font-size: spx(36);
-      letter-spacing: spx(1.8);
+      // 白フチ（Figmaはstroke 5のOUTSIDE）
+      -webkit-text-stroke: spx(10) #fff;
+      paint-order: stroke fill;
+      padding-left: spx(100);
+      gap: spx(808);
+      font-size: spx(47);
+      letter-spacing: spx(2.35);
       @include tablet-up {
+        -webkit-text-stroke-width: ppx(10);
         width: ppx(2120);
         padding-left: ppx(74);
         gap: ppx(1143);
@@ -113,43 +145,26 @@ const items = howto.schedule.flatMap((day) => day.items);
       }
     }
 
+    // Figmaは実線
     &__line {
-      width: spx(630);
+      background-color: #000;
       height: spx(2);
-      background-repeat: repeat-x;
-      background-image: repeating-linear-gradient(
-        to right,
-        #000 0,
-        #000 #{spx(2)},
-        transparent #{spx(2)},
-        transparent #{spx(10)}
-      );
+      width: spx(1500);
+      margin-left: spx(100);
       @include tablet-up {
         width: ppx(2120);
         height: ppx(2);
-        background-image: repeating-linear-gradient(
-          to right,
-          #000 0,
-          #000 #{ppx(2)},
-          transparent #{ppx(2)},
-          transparent #{ppx(10)}
-        );
+        margin-left: 0;
       }
     }
 
-    // SPは入りきらないので横スクロールさせる
     &__list {
-      position: relative;
-      z-index: 1;
       display: flex;
       align-items: flex-start;
-      max-width: 100%;
-      overflow-x: auto;
-      padding: 0 spx(45) spx(40);
+      padding-left: spx(100);
       gap: spx(40);
       @include tablet-up {
-        overflow-x: visible;
-        padding: 0;
+        padding-left: 0;
         gap: ppx(90);
       }
     }
@@ -160,7 +175,7 @@ const items = howto.schedule.flatMap((day) => day.items);
       align-items: center;
       flex-shrink: 0;
       text-align: center;
-      width: spx(60);
+      width: spx(94);
       gap: spx(11);
       @include tablet-up {
         width: ppx(94);
@@ -174,7 +189,7 @@ const items = howto.schedule.flatMap((day) => day.items);
       font-weight: 700;
       color: #c3925e;
       line-height: 1.8;
-      font-size: spx(26);
+      font-size: spx(35);
       @include tablet-up {
         font-size: ppx(35);
       }
@@ -186,9 +201,9 @@ const items = howto.schedule.flatMap((day) => day.items);
       font-weight: 400;
       color: #000;
       line-height: 1.2;
-      width: spx(24);
-      font-size: spx(24);
-      letter-spacing: spx(1.2);
+      width: spx(30);
+      font-size: spx(30);
+      letter-spacing: spx(1.5);
       @include tablet-up {
         width: ppx(30);
         font-size: ppx(30);

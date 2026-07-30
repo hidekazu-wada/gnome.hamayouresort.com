@@ -79,8 +79,8 @@ const { howto } = Astro.props;
     flex-direction: column;
     align-items: center;
     background-color: #bee0e1;
-    padding-top: spx(60);
-    padding-bottom: spx(10);
+    padding-top: spx(140);
+    padding-bottom: spx(40);
     @include tablet-up {
       padding-top: ppx(90);
       padding-bottom: ppx(10);
@@ -135,10 +135,13 @@ const { howto } = Astro.props;
       flex-wrap: wrap;
       align-items: flex-start;
       justify-content: center;
+      // SPは3個＋2個で折り返す（円150×3＋間20×2＝490だけ許す）
       width: 100%;
-      gap: spx(20);
+      max-width: spx(530);
+      gap: spx(10) spx(20);
       @include tablet-up {
         flex-wrap: nowrap;
+        max-width: none;
         gap: ppx(70);
       }
     }
@@ -155,10 +158,10 @@ const { howto } = Astro.props;
       text-align: center;
       line-height: 1;
       transition: opacity 0.3s ease;
-      width: spx(120);
-      height: spx(120);
-      font-size: spx(20);
-      letter-spacing: spx(2);
+      width: spx(150);
+      height: spx(150);
+      font-size: spx(24);
+      letter-spacing: spx(1.2);
       @include tablet-up {
         width: ppx(178);
         height: ppx(178);
@@ -177,11 +180,12 @@ const { howto } = Astro.props;
       background-color: #d6b156;
     }
 
+    // SPはgapを使わず各要素のmarginで間隔を作る（display:contentsで平置きのため）
     &__main {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: spx(30);
+      gap: 0;
       @include tablet-up {
         flex-direction: row;
         align-items: flex-start;
@@ -190,12 +194,13 @@ const { howto } = Astro.props;
     }
 
     // 白いピルの左右パディング70で、CASE01とリード文の字面が揃う
+    // SPは中身を__mainに直接ぶら下げて、リード文だけ写真の後ろへ回す
     &__text {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      width: spx(630);
+      display: contents;
       @include tablet-up {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
         width: ppx(940);
       }
     }
@@ -205,9 +210,9 @@ const { howto } = Astro.props;
       font-weight: 400;
       color: #d6b156;
       line-height: 1;
-      padding-left: spx(30);
-      font-size: spx(30);
-      letter-spacing: spx(3);
+      padding-left: 0;
+      font-size: spx(36);
+      letter-spacing: spx(3.6);
       @include tablet-up {
         padding-left: ppx(70);
         font-size: ppx(40);
@@ -226,11 +231,11 @@ const { howto } = Astro.props;
       color: #000;
       line-height: 1;
       white-space: nowrap;
-      margin-top: spx(12);
-      padding: spx(14) spx(23.6) spx(20) spx(30);
+      margin-top: spx(8);
+      padding: spx(17) spx(41) spx(17) spx(50);
       border-radius: spx(20);
-      font-size: spx(64);
-      letter-spacing: spx(6.4);
+      font-size: spx(90);
+      letter-spacing: spx(9);
       @include tablet-up {
         margin-top: ppx(18);
         padding: ppx(20) ppx(58) ppx(30) ppx(70);
@@ -251,11 +256,11 @@ const { howto } = Astro.props;
       color: #000;
       line-height: 1;
       white-space: nowrap;
-      margin-top: spx(12);
+      margin-top: spx(14);
       padding: spx(14) spx(27.8) spx(14) spx(30);
       border-radius: spx(14);
-      font-size: spx(22);
-      letter-spacing: spx(2.2);
+      font-size: spx(24);
+      letter-spacing: spx(2.4);
       @include tablet-up {
         margin-top: ppx(15);
         padding: ppx(20) ppx(67.4) ppx(20) ppx(70);
@@ -266,16 +271,18 @@ const { howto } = Astro.props;
     }
 
     &__lead {
+      order: 10; // SPは写真の下
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 400;
       color: #000;
       line-height: 1.7;
-      margin-top: spx(25);
-      padding-left: spx(30);
+      margin-top: spx(35);
+      padding-left: 0;
       width: spx(600);
       font-size: spx(26);
       letter-spacing: spx(2.6);
       @include tablet-up {
+        order: 0;
         margin-top: ppx(35);
         padding-left: ppx(70);
         width: ppx(940);
@@ -291,9 +298,11 @@ const { howto } = Astro.props;
       border-style: solid;
       border-color: #fff;
       width: spx(630);
+      margin-top: spx(31);
       border-width: spx(10);
       border-radius: spx(30);
       @include tablet-up {
+        margin-top: 0;
         width: ppx(920);
         border-width: ppx(15);
         border-radius: ppx(40);
@@ -304,7 +313,7 @@ const { howto } = Astro.props;
       display: block;
       width: 100%;
       object-fit: cover;
-      height: spx(420);
+      height: spx(426);
       @include tablet-up {
         height: ppx(621);
       }
