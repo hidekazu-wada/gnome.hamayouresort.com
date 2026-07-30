@@ -513,8 +513,11 @@ const cards = [
       justify-content: center;
       gap: spx(4);
       width: spx(300);
+      // PC/TBは max-width 90% だとコンテナが477pxになり、
+      // 3個（156×3＋gap6×2＝480px）が1行に収まらないので外す
       max-width: 90%;
       @include tablet-up {
+        max-width: none;
         gap: ppx(6 * 1.2);
         width: ppx(480 * 1.2);
       }
