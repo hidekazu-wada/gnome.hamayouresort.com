@@ -1,0 +1,570 @@
+---
+// メインSCSSファイルをインポート
+import "../../../../styles/main.scss";
+
+import PaperTexture from "../../../images/common/paper-texture.png";
+import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
+import BadgeMap from "../../../images/private-area/badge-map.svg";
+import IconArrowWhite from "../../../images/news/icon-circle-arrow-white.svg";
+import { privateAreas } from "../../../../data/private-area";
+---
+
+{
+  privateAreas.map((area) => (
+    <section
+      class:list={["area-detail", `area-detail--${area.slug}`]}
+      id={area.slug}
+    >
+      {/* 背景。greenは色＋テクスチャ、plainはテクスチャそのもの */}
+      <div
+        class="area-detail__texture"
+        aria-hidden="true"
+        style={`background-image: url(${area.bg === "green" ? PaperTexture.src : PaperTexturePlain.src});`}
+      />
+
+      <div class="area-detail__head">
+        <p class="area-detail__eyebrow">{area.eyebrow}</p>
+        <p class="area-detail__name">{area.nameSub && <span class="area-detail__name-sub">{area.nameSub}</span>}{area.name}</p>
+        <img
+          class="area-detail__illust area-detail__illust--pc"
+          src={area.mainIllustration.src}
+          alt=""
+          loading="lazy"
+        />
+        <img
+          class="area-detail__illust area-detail__illust--sp"
+          src={(area.spIllustration ?? area.mainIllustration).src}
+          alt=""
+          loading="lazy"
+        />
+      </div>
+
+      <p class="area-detail__body">{area.body}</p>
+
+      {/* PCは見出しの右に絶対配置、SPは本文の下に中央寄せ */}
+      <a class="area-detail__map-badge" href="#">
+        <img src={BadgeMap.src} alt="エリアMAP" />
+      </a>
+
+      <div class="area-detail__features-head">
+        {/* SPだけ「で」のあとで折る。空白が入らないよう1行で書く */}
+        <h2 class="area-detail__features-title">“<span class="area-detail__features-name">{area.name}</span>”で<br class="area-detail__br-sp" />できること</h2>
+        <div class="area-detail__features-line" aria-hidden="true" />
+      </div>
+
+      <ul class="area-detail__features">
+        {area.features.map((feature) => (
+          <li class="area-detail__card">
+            {feature.photo ? (
+              <img
+                class="area-detail__photo"
+                src={feature.photo.src}
+                width={feature.photo.width}
+                height={feature.photo.height}
+                alt=""
+                loading="lazy"
+              />
+            ) : (
+              <div class="area-detail__photo area-detail__photo--empty" />
+            )}
+            <p class="area-detail__card-title">{feature.title}</p>
+            <p class="area-detail__card-note">{feature.note}</p>
+            {feature.feeHref && (
+              <a class="area-detail__fee" href={feature.feeHref}>
+                <span class="area-detail__fee-label">利用料</span>
+                <img
+                  class="area-detail__fee-icon"
+                  src={IconArrowWhite.src}
+                  alt=""
+                />
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <a class="area-detail__more" href={area.detailHref}>
+        <span class="area-detail__more-label">施設詳細はこちら</span>
+        <img
+          class="area-detail__more-icon"
+          src={IconArrowWhite.src}
+          alt=""
+        />
+      </a>
+    </section>
+  ))
+}
+
+<style lang="scss">
+  // 必要なmixin/functionをインポート
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .area-detail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: spx(110);
+    padding-bottom: spx(35);
+    @include tablet-up {
+      padding-top: ppx(150);
+      padding-bottom: ppx(35);
+    }
+
+    &--hodohodo,
+    &--kokko {
+      background-color: #c0d4a9;
+    }
+
+    &__texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 色を敷いている面だけluminosityで合成する
+    &--hodohodo &__texture,
+    &--kokko &__texture {
+      mix-blend-mode: luminosity;
+    }
+
+    &__head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: spx(670);
+      gap: spx(13);
+      @include tablet-up {
+        width: ppx(870);
+        gap: ppx(18);
+      }
+    }
+
+    &__eyebrow {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #507425;
+      text-align: center;
+      line-height: 1;
+      font-size: spx(26);
+      letter-spacing: spx(2.6);
+      margin-right: spx(-2.6);
+      @include tablet-up {
+        font-size: ppx(28);
+        letter-spacing: ppx(2.8);
+        margin-right: ppx(-2.8);
+      }
+    }
+
+    &__name {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.2;
+      font-size: spx(65);
+      letter-spacing: spx(6.5);
+      margin-right: spx(-6.5);
+      @include tablet-up {
+        font-size: ppx(75);
+        letter-spacing: ppx(7.5);
+        margin-right: ppx(-7.5);
+      }
+    }
+
+    // Figmaの行送りに合わせて1行目だけ1.3にする
+    &__name-sub {
+      display: block;
+      line-height: 1.3;
+      font-size: spx(43);
+      letter-spacing: spx(4.3);
+      @include tablet-up {
+        font-size: ppx(50);
+        letter-spacing: ppx(5);
+      }
+    }
+
+    &__illust {
+      display: block;
+    }
+
+    &__illust--pc {
+      display: none;
+      @include tablet-up {
+        display: block;
+      }
+    }
+
+    &__illust--sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+
+    &--hodohodo &__illust--sp {
+      width: spx(590);
+      height: spx(240);
+    }
+    &--hodohodo &__illust--pc {
+      @include tablet-up {
+        width: ppx(870);
+        height: ppx(354);
+      }
+    }
+
+    &--playpark &__illust--sp {
+      width: spx(501);
+      height: spx(299);
+    }
+    &--playpark &__illust--pc {
+      @include tablet-up {
+        width: ppx(754);
+        height: ppx(450);
+      }
+    }
+
+    &--kokko &__illust--sp {
+      width: spx(497);
+      height: spx(297);
+    }
+    &--kokko &__illust--pc {
+      @include tablet-up {
+        width: ppx(723);
+        height: ppx(462);
+      }
+    }
+
+    &__body {
+      position: relative;
+      z-index: 1;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      width: spx(600);
+      margin-top: spx(60);
+      font-size: spx(27);
+      line-height: 1.7;
+      @include tablet-up {
+        width: ppx(1680);
+        margin-top: ppx(100);
+        font-size: ppx(30);
+        line-height: 2.1;
+        letter-spacing: ppx(1.5);
+      }
+    }
+
+    // SPは本文の下に置き、PCは見出しの右に重ねる
+    &__map-badge {
+      position: relative;
+      z-index: 2;
+      display: block;
+      width: spx(170);
+      margin-top: spx(20);
+      transition: opacity 0.3s ease;
+      @include tablet-up {
+        position: absolute;
+        left: ppx(1730);
+        top: ppx(268);
+        width: ppx(170);
+        margin-top: 0;
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+    }
+
+    // Figmaでは線が高さ0で描かれるため、gapから線の太さ(5px)を引いて合わせる
+    &__features-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: spx(40);
+      gap: spx(25);
+      // PCは親のgap100とFrame786のpt80の合計
+      @include tablet-up {
+        margin-top: ppx(180);
+        gap: ppx(25);
+      }
+    }
+
+    &__features-title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.5;
+      font-size: spx(46);
+      letter-spacing: spx(2.3);
+      margin-right: spx(-2.3);
+      @include tablet-up {
+        line-height: 1.8;
+        font-size: ppx(60);
+        letter-spacing: ppx(3);
+        margin-right: ppx(-3);
+      }
+    }
+
+    &__features-name {
+      color: #507425;
+    }
+
+    &__br-sp {
+      @include tablet-up {
+        display: none;
+      }
+    }
+
+    // 丸キャップなので dash+線幅5 で SP 9/16・PC 11/21
+    &__features-line {
+      width: spx(630);
+      height: spx(5);
+      background-repeat: repeat-x;
+      background-image: repeating-linear-gradient(
+        to right,
+        #000 0,
+        #000 #{spx(9)},
+        transparent #{spx(9)},
+        transparent #{spx(16)}
+      );
+      @include tablet-up {
+        width: ppx(2000);
+        height: ppx(5);
+        background-image: repeating-linear-gradient(
+          to right,
+          #000 0,
+          #000 #{ppx(11)},
+          transparent #{ppx(11)},
+          transparent #{ppx(21)}
+        );
+      }
+    }
+
+    // SPは2列（310×2＋間隔10＝630）、PCは4列（490×4＋間隔20×3＝2020）
+    &__features {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      justify-content: center;
+      width: spx(630);
+      margin-top: spx(30);
+      gap: spx(20) spx(10);
+      // PCは親のgap100とFrame787のpt30の合計
+      @include tablet-up {
+        width: ppx(2020);
+        margin-top: ppx(130);
+        gap: ppx(100) ppx(20);
+      }
+    }
+
+    &__card {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #fff;
+      width: spx(310);
+      padding: spx(10) 0 spx(25);
+      border-radius: spx(20);
+      gap: spx(13);
+      @include tablet-up {
+        width: ppx(490);
+        padding: ppx(15) 0 ppx(40);
+        border-radius: ppx(30);
+        gap: ppx(20);
+      }
+    }
+
+    &__photo {
+      display: block;
+      object-fit: cover;
+      width: spx(290);
+      height: spx(214);
+      border-radius: spx(12);
+      @include tablet-up {
+        width: ppx(460);
+        height: ppx(340);
+        border-radius: ppx(20);
+      }
+    }
+
+    // 写真が未支給のものはグレーで置いておく
+    &__photo--empty {
+      background-color: #c4c4c4;
+    }
+
+    &__card-title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #d6b156;
+      text-align: center;
+      line-height: 1.6;
+      width: spx(270);
+      font-size: spx(27);
+      letter-spacing: spx(1.35);
+      margin-right: spx(-1.35);
+      @include tablet-up {
+        width: ppx(490);
+        font-size: ppx(35);
+        letter-spacing: ppx(1.75);
+        margin-right: ppx(-1.75);
+      }
+    }
+
+    // ◯の連続は改行位置が無いので、どこでも折り返して行を詰める
+    &__card-note {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      text-align: center;
+      word-break: break-all;
+      line-height: 1.6;
+      width: spx(270);
+      font-size: spx(24);
+      @include tablet-up {
+        width: ppx(440);
+        font-size: ppx(26);
+      }
+    }
+
+    &__fee {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #8aad61;
+      border-style: solid;
+      border-color: #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+      margin-top: auto;
+      width: spx(186);
+      padding: spx(14) 0 spx(17);
+      border-width: spx(3);
+      gap: spx(6);
+      font-size: spx(23);
+      line-height: spx(23);
+      letter-spacing: spx(1.15);
+      @include tablet-up {
+        width: ppx(256);
+        padding: ppx(22) 0;
+        border-width: ppx(4);
+        gap: ppx(10);
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    &__fee-label {
+      margin-right: spx(-1.15);
+      @include tablet-up {
+        margin-right: ppx(-1.3);
+      }
+    }
+
+    &__fee-icon {
+      display: block;
+      margin-top: spx(3);
+      width: spx(20);
+      height: spx(20);
+      @include tablet-up {
+        margin-top: 0;
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+
+    &__more {
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #8aad61;
+      border-style: solid;
+      border-color: #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+      width: spx(473);
+      margin-top: spx(70);
+      padding: spx(31) 0;
+      border-width: spx(4);
+      gap: spx(10);
+      font-size: spx(26);
+      line-height: spx(26);
+      letter-spacing: spx(1.3);
+      @include tablet-up {
+        width: ppx(473);
+        margin-top: ppx(100);
+        padding: ppx(31) 0;
+        border-width: ppx(4);
+        gap: ppx(10);
+        font-size: ppx(26);
+        line-height: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    &__more-label {
+      margin-right: spx(-1.3);
+      @include tablet-up {
+        margin-right: ppx(-1.3);
+      }
+    }
+
+    &__more-icon {
+      display: block;
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+  }
+</style>

@@ -151,8 +151,10 @@ import { privateAreas } from "../../../../data/private-area";
       }
     }
 
+    // Figmaの行送りに合わせて1行目だけ1.3にする
     &__name-sub {
       display: block;
+      line-height: 1.3;
       font-size: spx(25);
       letter-spacing: spx(2.5);
       @include tablet-up {
