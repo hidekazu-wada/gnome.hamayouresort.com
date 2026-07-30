@@ -368,8 +368,10 @@ const cards = [
 
     &__slide {
       height: auto;
-      // slidesPerView: "auto" 用の設計値固定幅
-      width: spx(530);
+      // slidesPerView: "auto" 用の設計値固定幅。幅は写真幅で、
+      // カード間のピッチ（SP 530 / PC 545）をmargin-rightで作る
+      width: spx(500);
+      margin-right: spx(30);
       @include desktop-up {
         width: ppx(500);
         margin-right: ppx(45);
@@ -492,7 +494,8 @@ const cards = [
       justify-content: center;
       align-items: center;
       gap: spx(16);
-      margin-top: spx(70);
+      // スライダーのpadding-bottomぶんを引いて設計位置に合わせる（実測22px）
+      margin-top: spx(70 - 22);
       @include tablet-up {
         gap: ppx(16 * 1.2);
         margin-top: ppx(70 * 1.2);
