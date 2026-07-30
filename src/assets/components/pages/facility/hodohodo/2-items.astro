@@ -167,14 +167,12 @@ import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
     &__grid {
       display: flex;
       flex-wrap: wrap;
-      align-items: stretch;
+      align-items: stretch; // 行内でカードの高さを揃える
       justify-content: center;
-      align-items: stretch;
       width: spx(630);
       padding-top: spx(30);
       gap: spx(20) spx(10);
       @include tablet-up {
-        align-items: flex-start;
         width: ppx(2020);
         padding-top: ppx(30);
         gap: ppx(100) ppx(20);
