@@ -121,7 +121,8 @@ import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
       @include tablet-up {
         font-size: ppx(305 * 1.2);
         top: ppx(-163 * 1.2);
-        left: calc(50% + #{ppx(305 * 1.2)});
+        // PC同様に右寄せ（右端から25×1.2の位置に右端を合わせる）
+        left: calc(100% - #{ppx(25 * 1.2)});
       }
       @include desktop-up {
         font-size: ppx(305);
@@ -223,11 +224,12 @@ import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
       width: spx(353);
       // Figmaは本文とイラストの間だけgapが34（親のgap42から8引く）
       margin-top: spx(-8);
+      // タブレットは見出しに重ならないよう小さくして左へ寄せる
       @include tablet-up {
         position: absolute;
-        left: ppx(248 * 1.2);
+        left: ppx(80 * 1.2);
         top: ppx(21 * 1.2);
-        width: ppx(453 * 1.2);
+        width: ppx(420);
       }
       @include desktop-up {
         left: ppx(248);
