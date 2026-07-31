@@ -47,7 +47,12 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
             <span class="stay-price__label-text" set:html={row.label} />
           </dt>
           <dd class="stay-price__value">
-            <div class="stay-price__value-body">
+            <div
+              class:list={[
+                "stay-price__value-body",
+                { "is-inline-pc": row.linesInlinePc },
+              ]}
+            >
               {i === 0 ? (
                 <p class="stay-price__amount">{stay.priceAmount}</p>
               ) : (
@@ -278,6 +283,18 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
         width: ppx(1440);
         font-size: ppx(32);
         letter-spacing: ppx(1.6);
+      }
+    }
+
+    // キャンセル料行: SPは3行積み・PCは1行に並べる（間隔は全角スペース相当）
+    &__value-body.is-inline-pc :global(.stay-price__line) {
+      @include tablet-up {
+        display: inline-block;
+        margin-right: ppx(32);
+
+        &:last-child {
+          margin-right: 0;
+        }
       }
     }
 

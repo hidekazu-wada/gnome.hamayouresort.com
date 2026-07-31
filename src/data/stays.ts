@@ -73,6 +73,8 @@ export type Stay = {
     notes?: string[];
     /** PCで注記前の空行を26px基準(42px)にする（Figmaのアーリーチェックイン行） */
     notesTightGap?: boolean;
+    /** PCではlinesを1行に並べる（SPは行のまま積む。キャンセル料行） */
+    linesInlinePc?: boolean;
   }[];
   /** 注意事項。1項目＝1配列で、配列の要素が改行 */
   notes: string[][];
@@ -117,7 +119,9 @@ const priceRows = [
   },
   {
     label: "キャンセル料",
-    lines: ["3日前・・・30％　前日・・・50％　当日・・・100％"],
+    // SPは3行積み・PCは1行（全角スペースはビルドで潰れるため行分割＋CSSで間隔を作る）
+    lines: ["3日前・・・30％", "前日・・・50％", "当日・・・100％"],
+    linesInlinePc: true,
   },
 ];
 
