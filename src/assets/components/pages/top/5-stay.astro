@@ -7,6 +7,7 @@ import JoinSp from "../../../images/top/5-stay/join-sp.png";
 import Sunburst from "../../../images/top/3-activity/sunburst.png";
 import BadgeFrame from "../../../images/top/5-stay/badge-frame.svg";
 import Arrow from "../../../images/top/5-stay/arrow.svg";
+import ArrowHover from "../../../images/top/5-stay/arrow-hover.svg";
 import MoreArrow from "../../../images/top/3-activity/more-arrow.svg";
 import BottomPhoto from "../../../images/top/5-stay/bottom-photo.png";
 import BottomPhotoSp from "../../../images/top/5-stay/bottom-photo-sp.png";
@@ -21,14 +22,14 @@ import Card8 from "../../../images/top/5-stay/card8.jpg";
 
 // 宿泊サイトカード（写真は Figma ダミー）
 const cards = [
-  { photo: Card1, badgeTop: "人気", badgeBottom: "No,1", title1: "木々に囲まれた", title2: "林間サイト", price: "9,350", code: "F-1", tags: ["区画サイト", "最大5名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"] },
-  { photo: Card2, badgeTop: "", badgeBottom: "湖畔沿い", title1: "水の音に癒される", title2: "湖畔サイト", price: "7,700", code: "", tags: ["フリーサイト", "最大5名", "湖畔沿い", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー△"] },
-  { photo: Card3, badgeTop: "最大", badgeBottom: "15名", title1: "大人数で楽しめる", title2: "グループサイト", price: "19,800", code: "G-1", tags: ["区画サイト", "最大15名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー◯"] },
-  { photo: Card4, badgeTop: "最大", badgeBottom: "12名", title1: "少人数グループなら", title2: "ダブルサイト", price: "18,700", code: "D-1", tags: ["区画サイト", "最大12名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー◯"] },
-  { photo: Card5, badgeTop: "", badgeBottom: "最安", title1: "平日限定", title2: "おまかせサイト", price: "3,300", code: "", tags: ["フリーサイト", "最大3名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"] },
-  { photo: Card6, badgeTop: "ママに", badgeBottom: "大人気", title1: "心落ち着く空間の", title2: "ゲルテント", price: "19,800", code: "", tags: ["区画サイト", "最大8名", "林間", "ACあり", "車両乗入×", "ペット×", "キャンピングカー×"] },
-  { photo: Card7, badgeTop: "屋根付き", badgeBottom: "デッキ", title1: "限りなく外に近い", title2: "トレーラーハウス", price: "18,700", code: "", tags: ["キャビン", "最大4名", "林間", "ACなし", "車両乗入×", "ペット×", "キャンピングカー×"] },
-  { photo: Card8, badgeTop: "初心者に", badgeBottom: "おすすめ", title1: "場所を指定できる", title2: "区画サイト", price: "9,350", code: "R-1", tags: ["区画サイト", "最大5名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"] },
+  { photo: Card1, slug: "rinkan", badgeTop: "人気", badgeBottom: "No,1", title1: "木々に囲まれた", title2: "林間サイト", price: "9,350", code: "F-1", tags: ["区画サイト", "最大5名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"] },
+  { photo: Card2, slug: "kohan", badgeTop: "", badgeBottom: "湖畔沿い", badgeSize: "sm", title1: "水の音に癒される", title2: "湖畔サイト", price: "7,700", code: "", tags: ["フリーサイト", "最大5名", "湖畔沿い", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー△"] },
+  { photo: Card3, slug: "group", badgeTop: "最大", badgeBottom: "15名", title1: "大人数で楽しめる", title2: "グループサイト", price: "19,800", code: "G-1", tags: ["区画サイト", "最大15名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー◯"] },
+  { photo: Card4, slug: "double", badgeTop: "最大", badgeBottom: "12名", title1: "少人数グループなら", title2: "ダブルサイト", price: "18,700", code: "D-1", tags: ["区画サイト", "最大12名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー◯"] },
+  { photo: Card5, slug: "omakase", badgeTop: "", badgeBottom: "最安", title1: "平日限定", title2: "おまかせサイト", price: "3,300", code: "", tags: ["フリーサイト", "最大3名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"] },
+  { photo: Card6, slug: "gel", badgeTop: "ママに", badgeBottom: "大人気", badgeSize: "md", title1: "心落ち着く空間の", title2: "ゲルテント", price: "19,800", code: "", tags: ["区画サイト", "最大8名", "林間", "ACあり", "車両乗入×", "ペット×", "キャンピングカー×"] },
+  { photo: Card7, slug: "trailer", badgeTop: "屋根付き", badgeBottom: "デッキ", title1: "限りなく外に近い", title2: "トレーラーハウス", price: "18,700", code: "", tags: ["キャビン", "最大4名", "林間", "ACなし", "車両乗入×", "ペット×", "キャンピングカー×"] },
+  { photo: Card8, slug: "kukaku", badgeTop: "初心者に", badgeBottom: "おすすめ", badgeSize: "sm", title1: "場所を指定できる", title2: "区画サイト", price: "9,350", code: "R-1", tags: ["区画サイト", "最大5名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"] },
 ];
 ---
 
@@ -52,16 +53,27 @@ const cards = [
       <div class="stay__grid">
         {
           cards.map((card) => (
-            <article class="stay__card">
+            <a class="stay__card" href={`/stay/${card.slug}/`}>
               <div class="stay__card-photo">
-                <img class="stay__card-img" src={card.photo.src} alt="" />
+                {/* ズーム時のはみ出しをクリップする箱（バッジやコードは外に置く） */}
+                <div class="stay__card-photo-box">
+                  <img class="stay__card-img" src={card.photo.src} alt="" />
+                </div>
                 <div class="stay__card-badge">
                   <img class="stay__card-badge-frame" src={BadgeFrame.src} alt="" />
                   <span class="stay__card-badge-text">
                     {card.badgeTop && (
                       <span class="stay__card-badge-top">{card.badgeTop}</span>
                     )}
-                    <span class="stay__card-badge-bottom">{card.badgeBottom}</span>
+                    <span
+                      class:list={[
+                        "stay__card-badge-bottom",
+                        { "is-sm": card.badgeSize === "sm" },
+                        { "is-md": card.badgeSize === "md" },
+                      ]}
+                    >
+                      {card.badgeBottom}
+                    </span>
                   </span>
                 </div>
                 {card.code && <span class="stay__card-code">{card.code}</span>}
@@ -86,10 +98,17 @@ const cards = [
                     <span class="stay__card-price-amount">¥{card.price}〜</span>
                     <span class="stay__card-price-unit">／1泊</span>
                   </p>
-                  <img class="stay__card-arrow" src={Arrow.src} alt="" />
+                  <span class="stay__card-arrowbox">
+                    <img class="stay__card-arrow" src={Arrow.src} alt="" />
+                    <img
+                      class="stay__card-arrow stay__card-arrow--hover"
+                      src={ArrowHover.src}
+                      alt=""
+                    />
+                  </span>
                 </div>
               </div>
-            </article>
+            </a>
           ))
         }
       </div>
@@ -325,6 +344,8 @@ const cards = [
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      text-decoration: none;
+      color: inherit;
       width: spx(334);
       max-width: 100%;
       @include tablet-up {
@@ -332,6 +353,23 @@ const cards = [
       }
       @include desktop-up {
         width: ppx(530);
+      }
+
+      // ホバーで中の画像だけズーム＋右下の矢印を濃い色にディゾルブ
+      @include hover {
+        &:hover {
+          .stay__card-img {
+            transform: scale(1.08);
+          }
+
+          .stay__card-arrow {
+            opacity: 0;
+          }
+
+          .stay__card-arrow--hover {
+            opacity: 1;
+          }
+        }
       }
     }
 
@@ -344,11 +382,10 @@ const cards = [
       }
     }
 
-    &__card-img {
-      display: block;
+    &__card-photo-box {
+      overflow: hidden;
       width: 100%;
       height: 100%;
-      object-fit: cover;
       border-radius: spx(20) spx(20) 0 0;
       @include tablet-up {
         border-radius: ppx(30 * 1.2) ppx(30 * 1.2) 0 0;
@@ -356,6 +393,14 @@ const cards = [
       @include desktop-up {
         border-radius: ppx(30) ppx(30) 0 0;
       }
+    }
+
+    &__card-img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
     }
 
     // バッジ（花形フレーム＋テキスト）
@@ -419,6 +464,27 @@ const cards = [
       }
       @include desktop-up {
         font-size: ppx(38);
+      }
+
+      // Figmaはバッジごとに大きさが違う（大人気=34 / 湖畔沿い・おすすめ=27）
+      &.is-md {
+        font-size: spx(27);
+        @include tablet-up {
+          font-size: ppx(34 * 1.2);
+        }
+        @include desktop-up {
+          font-size: ppx(34);
+        }
+      }
+
+      &.is-sm {
+        font-size: spx(21);
+        @include tablet-up {
+          font-size: ppx(27 * 1.2);
+        }
+        @include desktop-up {
+          font-size: ppx(27);
+        }
       }
     }
 
@@ -610,16 +676,30 @@ const cards = [
       }
     }
 
-    &__card-arrow {
+    &__card-arrowbox {
+      position: relative;
       display: block;
       width: spx(32);
-      height: auto;
+      aspect-ratio: 1;
       @include tablet-up {
         width: ppx(50 * 1.2);
       }
       @include desktop-up {
         width: ppx(50);
       }
+    }
+
+    &__card-arrow {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: opacity 0.3s ease;
+    }
+
+    &__card-arrow--hover {
+      opacity: 0;
     }
 
     // MORE ボタン
@@ -650,9 +730,11 @@ const cards = [
         padding: ppx(35) ppx(110);
       }
 
+      transition: background-color 0.3s ease;
+
       @include hover {
         &:hover {
-          opacity: 0.85;
+          background-color: #d6b156;
         }
       }
     }
