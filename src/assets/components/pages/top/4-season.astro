@@ -434,6 +434,9 @@ const seasons = [
         width: ppx(470);
         z-index: 2;
       }
+      @include desktop-up {
+        top: -8vw; // 実機確認による調整
+      }
     }
 
     &__illust-img {
