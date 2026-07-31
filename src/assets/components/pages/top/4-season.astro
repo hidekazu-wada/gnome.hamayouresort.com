@@ -2,6 +2,7 @@
 // メインSCSSファイルをインポート
 import "../../../../styles/main.scss";
 
+import BgTexture from "../../../images/top/4-season/bg-texture.png";
 import JoinPc from "../../../images/top/4-season/join-pc.png";
 import JoinSp from "../../../images/top/4-season/join-sp.png";
 import Sunburst from "../../../images/top/3-activity/sunburst.png";
@@ -43,8 +44,8 @@ const seasons = [
 ---
 
 <section class="season">
-  <!-- 本体（ライトグレー地） -->
-  <div class="season__body">
+  <!-- 本体（ライトグレー地＋粒子テクスチャ） -->
+  <div class="season__body" style={`background-image: url(${BgTexture.src});`}>
     <div class="season__inner">
       <!-- 見出し -->
       <div class="season__title">
@@ -150,10 +151,20 @@ const seasons = [
     }
 
     // 本体（ライトグレー地・連続した下地）
+    // Figmaはグレーの粒子テクスチャのタイル（SP140 / PC200）
     &__body {
       position: relative;
       z-index: 1;
       background-color: #f2f2f2;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      @include tablet-up {
+        background-size: ppx(200 * 1.2);
+      }
+      @include desktop-up {
+        background-size: ppx(200);
+      }
     }
 
     &__inner {
