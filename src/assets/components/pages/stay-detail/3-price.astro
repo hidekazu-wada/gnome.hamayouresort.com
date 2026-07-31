@@ -5,8 +5,12 @@ import "../../../../styles/main.scss";
 import PaperTexture from "../../../images/common/paper-texture.png";
 import WavePc from "../../../images/stay/detail/wave-to-price.webp";
 import WaveSp from "../../../images/stay/detail/wave-to-price-sp.webp";
-import HotelPlan from "../../../images/stay/detail/hotel-set-plan.webp";
-import HotelPlanSp from "../../../images/stay/detail/hotel-set-plan-sp.webp";
+// ホテルセットプランバナーの装飾（ボタンのホバーを効かせるためHTML＋分割素材で構成）
+import HotelPlanHotel from "../../../images/stay/detail/hotel-plan-hotel.svg";
+import HotelPlanRain from "../../../images/stay/detail/hotel-plan-rain.svg";
+import HotelPlanTeruteru from "../../../images/stay/detail/hotel-plan-teruteru.svg";
+import HotelPlanCircles from "../../../images/stay/detail/hotel-plan-circles.svg";
+import HotelPlanArrow from "../../../images/stay/detail/hotel-plan-arrow.svg";
 import type { Stay } from "../../../../data/stays";
 
 interface Props {
@@ -77,10 +81,42 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
     href={HOTEL_PLAN_URL}
     aria-label="雨の日でも安心 HOTEL SET PLAN（ホテルセットプラン）の詳細はこちら"
   >
-    <picture>
-      <source srcset={HotelPlan.src} media="(min-width: 744px)" />
-      <img class="stay-price__banner-img" src={HotelPlanSp.src} alt="" />
-    </picture>
+    <!-- 白丸の帯＋キャッチコピー -->
+    <span class="stay-price__banner-catch">
+      <img
+        class="stay-price__banner-catch-circles"
+        src={HotelPlanCircles.src}
+        alt=""
+      />
+      <span class="stay-price__banner-catch-text">雨の日でも安心</span>
+    </span>
+
+    <span class="stay-price__banner-texts">
+      <span class="stay-price__banner-en">HOTEL SET PLAN</span>
+      <span class="stay-price__banner-ja">ホテルセットプラン</span>
+    </span>
+
+    <span class="stay-price__banner-btn">
+      <span class="stay-price__banner-btn-text">詳細はこちら</span>
+      <img
+        class="stay-price__banner-btn-icon"
+        src={HotelPlanArrow.src}
+        alt=""
+      />
+    </span>
+
+    <!-- 装飾イラスト -->
+    <img
+      class="stay-price__banner-hotel"
+      src={HotelPlanHotel.src}
+      alt=""
+    />
+    <img class="stay-price__banner-rain" src={HotelPlanRain.src} alt="" />
+    <img
+      class="stay-price__banner-teruteru"
+      src={HotelPlanTeruteru.src}
+      alt=""
+    />
   </a>
 </section>
 
@@ -273,27 +309,214 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
       }
     }
 
-    // ホテルセットプランのバナー
+    // ホテルセットプランのバナー（装飾はSVG・テキストとボタンはHTML）
     &__banner {
+      position: relative;
       display: block;
-      transition: opacity 0.3s ease;
+      background-color: #bee0e1;
       width: spx(630);
+      height: spx(343);
+      border-radius: spx(10.5);
       @include tablet-up {
         width: ppx(1800);
+        height: ppx(323);
+        border-radius: ppx(30);
         margin-top: ppx(50); // Figmaは表→バナーが90（gap40＋50）
-      }
-
-      @include hover {
-        &:hover {
-          opacity: 0.85;
-        }
       }
     }
 
-    &__banner-img {
+    // 白丸の帯＋キャッチコピー
+    &__banner-catch {
+      position: absolute;
+      display: block;
+      left: spx(154.4);
+      top: spx(86.3);
+      width: spx(320.2);
+      height: spx(43.1);
+      @include tablet-up {
+        left: ppx(640);
+        top: ppx(33);
+        width: ppx(520);
+        height: ppx(70);
+      }
+    }
+
+    &__banner-catch-circles {
       display: block;
       width: 100%;
+      height: 100%;
+    }
+
+    &__banner-catch-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      line-height: 1;
+      white-space: nowrap;
+      font-size: spx(28.9);
+      letter-spacing: spx(17.36);
+      margin-right: spx(-17.36); // 字間の末尾分を打ち消して中央に
+      @include tablet-up {
+        font-size: ppx(47);
+        letter-spacing: ppx(28.2);
+        margin-right: ppx(-28.2);
+      }
+    }
+
+    &__banner-texts {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      white-space: nowrap;
+      top: spx(132.4);
+      gap: spx(6.2);
+      @include tablet-up {
+        top: ppx(108);
+        gap: ppx(10);
+      }
+    }
+
+    &__banner-en {
+      display: block;
+      line-height: 1.1;
+      font-size: spx(64.65);
+      letter-spacing: spx(3.23);
+      margin-right: spx(-3.23);
+      @include tablet-up {
+        font-size: ppx(105);
+        letter-spacing: ppx(5.25);
+        margin-right: ppx(-5.25);
+      }
+    }
+
+    &__banner-ja {
+      display: block;
+      line-height: 1.7;
+      font-size: spx(19.7);
+      letter-spacing: spx(0.99);
+      margin-right: spx(-0.99);
+      @include tablet-up {
+        font-size: ppx(32);
+        letter-spacing: ppx(1.6);
+        margin-right: ppx(-1.6);
+      }
+    }
+
+    // 詳細はこちらボタン。バナー全体が1リンクなので、ホバーはバナー側で受ける
+    &__banner-btn {
+      position: absolute;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #8aad61;
+      border-style: solid;
+      border-color: #fff;
+      border-radius: 999px;
+      transition: background-color 0.3s ease;
+      left: spx(390);
+      top: spx(290.5);
+      transform: translateY(-50%);
+      width: spx(220);
+      height: spx(67);
+      border-width: spx(2.8);
+      gap: spx(7);
+      box-shadow: 0 spx(7) spx(8.4) rgba(0, 0, 0, 0.08);
+      @include tablet-up {
+        left: ppx(1423);
+        top: ppx(232);
+        width: auto;
+        height: auto;
+        padding: ppx(35) ppx(60);
+        border-width: ppx(4);
+        gap: ppx(10);
+        box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
+      }
+    }
+
+    // ホバー: ボタンがゴールドにディゾルブ（指示書 #d6b156）
+    @include hover {
+      &__banner:hover &__banner-btn {
+        background-color: #d6b156;
+      }
+    }
+
+    &__banner-btn-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      white-space: nowrap;
+      font-size: spx(18.1);
+      letter-spacing: spx(0.9);
+      @include tablet-up {
+        font-size: ppx(26);
+        letter-spacing: ppx(1.3);
+      }
+    }
+
+    &__banner-btn-icon {
+      display: block;
+      width: spx(17.4);
+      height: spx(17.4);
+      @include tablet-up {
+        width: ppx(25);
+        height: ppx(25);
+      }
+    }
+
+    // 装飾イラスト
+    &__banner-hotel {
+      position: absolute;
+      display: block;
+      left: spx(10);
+      bottom: 0;
+      width: spx(207.6);
       height: auto;
+      @include tablet-up {
+        left: 0;
+        bottom: ppx(33);
+        width: ppx(366);
+      }
+    }
+
+    &__banner-rain {
+      position: absolute;
+      display: block;
+      top: 0;
+      right: spx(17.6);
+      width: spx(171.2);
+      height: auto;
+      @include tablet-up {
+        right: ppx(50);
+        width: ppx(330);
+      }
+    }
+
+    &__banner-teruteru {
+      position: absolute;
+      display: block;
+      left: spx(491.2);
+      top: spx(77);
+      width: spx(65.3);
+      height: auto;
+      @include tablet-up {
+        left: ppx(1187);
+        top: ppx(18);
+        width: ppx(106);
+      }
     }
   }
 </style>
