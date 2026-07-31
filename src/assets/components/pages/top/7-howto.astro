@@ -7,8 +7,9 @@ import PaperTexture from "../../../images/common/paper-texture.png";
 import Sunburst from "../../../images/top/3-activity/sunburst.png";
 import JoinPc from "../../../images/top/7-howto/join-pc.svg";
 import JoinSp from "../../../images/top/7-howto/join-sp.svg";
-import FootPc from "../../../images/top/7-howto/foot-pc.png";
-import FootSp from "../../../images/top/7-howto/foot-sp.png";
+import FootSwooshPc from "../../../images/top/7-howto/foot-swoosh-pc.svg";
+import FootSwooshSp from "../../../images/top/7-howto/foot-swoosh-sp.svg";
+import FootTrees from "../../../images/top/7-howto/foot-trees.svg";
 import CircleGold from "../../../images/top/7-howto/circle-gold.svg";
 import CircleBlack from "../../../images/top/7-howto/circle-black.svg";
 import NavArrowLeft from "../../../images/top/7-howto/nav-arrow-left.svg";
@@ -158,9 +159,10 @@ const dummyDesc =
   <!-- 下端: ACCESSへの繋ぎ（緑の草スウッシュ＋木々）。ベージュ部は透過で本体背景を見せる -->
   <div class="howto__foot">
     <picture class="howto__foot-picture">
-      <source srcset={FootPc.src} media="(min-width: 744px)" />
-      <img class="howto__foot-img" src={FootSp.src} alt="" />
+      <source srcset={FootSwooshPc.src} media="(min-width: 744px)" />
+      <img class="howto__foot-img" src={FootSwooshSp.src} alt="" />
     </picture>
+    <img class="howto__foot-trees" src={FootTrees.src} alt="" />
   </div>
 </section>
 
@@ -232,7 +234,7 @@ const dummyDesc =
 
     &__illust-campfire {
       position: absolute;
-      z-index: 1;
+      z-index: 3; // 上の繋ぎ（z:2）より手前に出す
       left: spx(334);
       top: spx(51);
       width: spx(350);
@@ -772,23 +774,47 @@ const dummyDesc =
     }
 
     // 下端の繋ぎ（草スウッシュ＋木々）
+    // 旧PNGと同じ枠（PC 2560x289 / SP 720x145）を保ち、
+    // スウッシュと木々を別SVGで絶対配置する
     &__foot {
       position: relative;
       z-index: 1;
       width: 100%;
-      // SP画像はフレーム上に木がはみ出した分（約55px）を含むため引き上げる
+      aspect-ratio: 720 / 145;
+      // SPは木がフレーム上にはみ出した分（約55px）を引き上げる
       margin-top: spx(-55);
       line-height: 0;
       font-size: 0;
       pointer-events: none;
       @include tablet-up {
+        aspect-ratio: 2560 / 289;
         margin-top: 0;
       }
     }
 
     &__foot-picture {
+      position: absolute;
+      left: 0;
+      bottom: 0;
       display: block;
-      width: 100%;
+      width: spx(467);
+      @include tablet-up {
+        width: ppx(1658);
+      }
+    }
+
+    &__foot-trees {
+      position: absolute;
+      display: block;
+      height: auto;
+      left: spx(570);
+      bottom: spx(7);
+      width: spx(99);
+      @include tablet-up {
+        left: ppx(2080);
+        bottom: ppx(15);
+        width: ppx(200);
+      }
     }
 
     &__foot-img {
