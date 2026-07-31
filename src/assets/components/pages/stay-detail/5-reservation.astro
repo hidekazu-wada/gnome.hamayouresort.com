@@ -195,7 +195,9 @@ const notes = [
       background-color: #fffdf7;
       color: #7c6351;
       text-align: center;
-      transition: opacity 0.3s ease;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
       width: spx(600);
       padding: spx(14) 0 spx(18);
       border-radius: spx(16);
@@ -208,9 +210,11 @@ const notes = [
         box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
       }
 
+      // ホバー: 茶背景＋クリーム文字にディゾルブ（指示書 #7c6351）
       @include hover {
         &:hover {
-          opacity: 0.85;
+          background-color: #7c6351;
+          color: #fffdf7;
         }
       }
     }
