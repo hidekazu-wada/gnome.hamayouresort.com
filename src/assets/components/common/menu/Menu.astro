@@ -9,6 +9,15 @@ import PaperTexture from "../../../images/common/paper-texture.png";
 import LogoBadge from "../../../images/common/logo-badge.svg";
 import LogoWordmark from "../../../images/common/footer/logo-wordmark.svg";
 import IconArrow from "../../../images/common/icon-arrow.svg";
+import IconArrowGreen from "../../../images/common/icon-arrow-green.svg";
+
+// 現在ページの判定（ご予約と同じ金色スタイルをカレント表示に使う）
+const currentPath = Astro.url.pathname;
+const isCurrent = (href: string) => {
+  if (href.startsWith("http") || href.includes("#")) return false;
+  if (href === "/") return currentPath === "/";
+  return currentPath.startsWith(href.replace(/\/$/, ""));
+};
 
 // 過ごし方はケース未指定のためファミリーへ（確定したら差し替え）
 const navItems = [
@@ -59,10 +68,17 @@ const navItems = [
           navItems.map((item) => (
             <li class="menu__item">
               <a
-                class:list={["menu__link", { "is-highlight": item.highlight }]}
+                class:list={[
+                  "menu__link",
+                  { "is-highlight": item.highlight },
+                  { "is-current": !item.external && isCurrent(item.href) },
+                ]}
                 href={item.href}
                 target={item.external ? "_blank" : undefined}
                 rel={item.external ? "noopener noreferrer" : undefined}
+                aria-current={
+                  !item.external && isCurrent(item.href) ? "page" : undefined
+                }
               >
                 {item.label}
               </a>
@@ -76,6 +92,11 @@ const navItems = [
       <span class="menu__lead-text">企業研修・団体利用・ロケ撮影</span>
       <span class="menu__lead-iconbox">
         <img class="menu__lead-icon" src={IconArrow.src} alt="" />
+        <img
+          class="menu__lead-icon menu__lead-icon--hover"
+          src={IconArrowGreen.src}
+          alt=""
+        />
       </span>
     </a>
   </div>
@@ -108,6 +129,9 @@ const navItems = [
       position: relative;
       height: spx(930);
       @include tablet-up {
+        height: tpx(1599);
+      }
+      @include desktop-up {
         height: ppx(770);
       }
     }
@@ -135,8 +159,13 @@ const navItems = [
       left: spx(50);
       width: spx(229);
       transition: opacity 0.3s ease;
-      // PCはバッジロゴ。SVGに影の余白が含まれるため設計座標から補正する
+      // TB・PCはバッジロゴ。SVGに影の余白が含まれるため設計座標から補正する
       @include tablet-up {
+        top: tpx(57);
+        left: tpx(36);
+        width: tpx(602);
+      }
+      @include desktop-up {
         top: ppx(62);
         left: ppx(39);
         width: ppx(734.24);
@@ -167,7 +196,14 @@ const navItems = [
       left: 50%;
       width: spx(610);
       transform: translateX(-50%);
+      // TBは中央寄せの2カラム
       @include tablet-up {
+        top: tpx(464);
+        left: 50%;
+        width: tpx(990);
+        transform: translateX(-50%);
+      }
+      @include desktop-up {
         top: ppx(340);
         left: ppx(906);
         width: ppx(1340);
@@ -180,6 +216,9 @@ const navItems = [
       flex-wrap: wrap;
       gap: spx(15) spx(10);
       @include tablet-up {
+        gap: tpx(40) tpx(30);
+      }
+      @include desktop-up {
         gap: ppx(40) ppx(20);
       }
     }
@@ -202,7 +241,18 @@ const navItems = [
       line-height: spx(26);
       letter-spacing: spx(1.3);
       box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
       @include tablet-up {
+        width: tpx(480);
+        padding: tpx(52) tpx(40);
+        font-size: tpx(39);
+        line-height: tpx(39);
+        letter-spacing: tpx(1.95);
+        box-shadow: 0 tpx(10) tpx(12) rgba(0, 0, 0, 0.08);
+      }
+      @include desktop-up {
         width: ppx(320);
         padding: ppx(35) ppx(40);
         font-size: ppx(26);
@@ -211,13 +261,22 @@ const navItems = [
         box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
       }
 
+      // ホバー: 濃い緑にディゾルブ（Figma指定 #507425）
       @include hover {
         &:hover {
-          opacity: 0.7;
+          background-color: #507425;
+          color: #fffdf7;
         }
       }
 
+      // ご予約（CTA）
       &.is-highlight {
+        background-color: #d6b156;
+        color: #fffdf7;
+      }
+
+      // 現在いるページ（ご予約と同じ金色の見た目）
+      &.is-current {
         background-color: #d6b156;
         color: #fffdf7;
       }
@@ -232,16 +291,31 @@ const navItems = [
       top: spx(869);
       left: spx(105);
       gap: spx(10);
-      transition: opacity 0.3s ease;
       @include tablet-up {
+        top: tpx(103);
+        left: tpx(1070);
+        gap: tpx(10);
+      }
+      @include desktop-up {
         top: ppx(129);
         left: ppx(1490);
         gap: ppx(10);
       }
 
+      // ホバー: 文字と矢印を緑にディゾルブ（Figma指定 #507425）
       @include hover {
         &:hover {
-          opacity: 0.7;
+          .menu__lead-text {
+            color: #507425;
+          }
+
+          .menu__lead-icon {
+            opacity: 0;
+          }
+
+          .menu__lead-icon--hover {
+            opacity: 1;
+          }
         }
       }
     }
@@ -251,11 +325,18 @@ const navItems = [
       font-weight: 700;
       color: #000;
       white-space: nowrap;
+      transition: color 0.3s ease;
       font-size: spx(32);
       line-height: spx(26);
       letter-spacing: spx(1.6);
       padding-bottom: spx(4);
       @include tablet-up {
+        font-size: tpx(30);
+        line-height: tpx(26);
+        letter-spacing: tpx(1.5);
+        padding-bottom: tpx(4);
+      }
+      @include desktop-up {
         font-size: ppx(32);
         line-height: ppx(26);
         letter-spacing: ppx(1.6);
@@ -281,6 +362,11 @@ const navItems = [
       display: block;
       width: 110%;
       height: 110%;
+      transition: opacity 0.3s ease;
+    }
+
+    &__lead-icon--hover {
+      opacity: 0;
     }
   }
 
