@@ -120,7 +120,8 @@ import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
       transform: translateX(-100%);
       @include tablet-up {
         font-size: ppx(305 * 1.2);
-        top: ppx(-163 * 1.2);
+        // 実機確認: テントのイラストと被らないようセクション内に下げる
+        top: ppx(40 * 1.2);
         // PC同様に右寄せ（右端から25×1.2の位置に右端を合わせる）
         left: calc(100% - #{ppx(25 * 1.2)});
       }
@@ -224,11 +225,17 @@ import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
       width: spx(353);
       // Figmaは本文とイラストの間だけgapが34（親のgap42から8引く）
       margin-top: spx(-8);
-      // タブレットは見出しに重ならないよう小さくして左へ寄せる
+      // SPは左寄せ（Figmaはx107だが実機確認でさらに左のx70へ）
+      align-self: flex-start;
+      margin-left: spx(70);
+      // タブレットは見出しに重ならないよう小さくして左へ寄せ、
+      // 下端が「一生の思い出を」の下端に揃う高さまで下げる
       @include tablet-up {
         position: absolute;
+        align-self: auto;
+        margin-left: 0;
         left: ppx(80 * 1.2);
-        top: ppx(21 * 1.2);
+        top: ppx(170);
         width: ppx(420);
       }
       @include desktop-up {
