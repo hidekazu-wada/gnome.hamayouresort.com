@@ -56,9 +56,12 @@ import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
   .concept {
     position: relative;
     z-index: 1;
-    // ヒーロー下端の陸地画像との境目（サブピクセルの継ぎ目）を1pxだけ被せて隠す
-    margin-top: -1px;
-    // PCは実機確認で1vwぶんさらに上へ被せる
+    // ヒーロー下端の陸地画像との境目（サブピクセルの継ぎ目）の-1pxに加えて、
+    // 実機確認による被せ量: SP2vw / TB1.2vw（PC×1.2） / PC1vw
+    margin-top: calc(-2vw - 1px);
+    @include tablet-up {
+      margin-top: calc(-1.2vw - 1px);
+    }
     @include desktop-up {
       margin-top: calc(-1vw - 1px);
     }
