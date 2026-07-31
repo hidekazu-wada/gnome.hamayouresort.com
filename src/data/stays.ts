@@ -43,6 +43,8 @@ export type Stay = {
   code: string;
   /** 写真左上のバッジ。1〜2行 */
   badgeLines: string[];
+  /** バッジ最終行の大きさ（Figmaはバッジごとに違う）。md=34/26, sm=27/22, sp-md=SPのみ26 */
+  badgeSize?: "md" | "sm" | "sp-md";
   /** カードの角丸タグ */
   tags: string[];
   /** 「¥9,350〜」の部分 */
@@ -261,6 +263,7 @@ const base = [
     heroHeading: "丸い天井が包み込む<br>非日常の空間",
     code: "Y-1",
     badgeLines: ["ママに", "大人気"],
+    badgeSize: "md",
     tags: ["区画サイト", "最大5名", "林間", "ACあり", "車両乗入×", "ペット×", "キャンピングカー×"],
     price: "¥19,800〜",
     filters: {
@@ -280,6 +283,7 @@ const base = [
     heroHeading: "屋根付きデッキでゆったり<br>トレーラーハウス",
     code: "T-1",
     badgeLines: ["屋根付き", "デッキ"],
+    badgeSize: "sp-md",
     tags: ["キャビン", "最大4名", "林間", "ACなし", "車両乗入×", "ペット×", "キャンピングカー×"],
     price: "¥18,700〜",
     filters: {
@@ -299,6 +303,7 @@ const base = [
     heroHeading: "場所を選んで予約できる<br>区画サイト",
     code: "R-1",
     badgeLines: ["初心者に", "おすすめ"],
+    badgeSize: "sm",
     tags: ["区画サイト", "最大5名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"],
     price: "¥9,350〜",
     filters: {

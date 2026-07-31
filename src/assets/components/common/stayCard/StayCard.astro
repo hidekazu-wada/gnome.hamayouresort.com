@@ -45,6 +45,10 @@ const { stay, compact = false } = Astro.props;
               // 2行のときだけ最終行を大きく。1行バッジは中間サイズ（is-single）
               { "is-main": stay.badgeLines.length >= 2 && i === stay.badgeLines.length - 1 },
               { "is-single": stay.badgeLines.length === 1 },
+              // バッジごとのサイズ違い（最終行のみ）
+              { "is-md": i === stay.badgeLines.length - 1 && stay.badgeSize === "md" },
+              { "is-sm": i === stay.badgeLines.length - 1 && stay.badgeSize === "sm" },
+              { "is-sp-md": i === stay.badgeLines.length - 1 && stay.badgeSize === "sp-md" },
             ]}
           >
             {line}
@@ -212,6 +216,21 @@ const { stay, compact = false } = Astro.props;
 
     // 1行バッジ（湖畔沿い・最安など）は中間サイズ
     &__badge-line.is-single {
+      font-size: spx(27);
+      @include tablet-up {
+        font-size: ppx(27);
+      }
+    }
+
+    // バッジごとのサイズ違い（Figma: 大人気=34 / おすすめ=27）
+    &__badge-line.is-main.is-md {
+      font-size: spx(34);
+      @include tablet-up {
+        font-size: ppx(34);
+      }
+    }
+
+    &__badge-line.is-main.is-sm {
       font-size: spx(27);
       @include tablet-up {
         font-size: ppx(27);
@@ -432,6 +451,15 @@ const { stay, compact = false } = Astro.props;
 
         .stay-card__badge-line.is-single {
           font-size: spx(21);
+        }
+
+        .stay-card__badge-line.is-main.is-md,
+        .stay-card__badge-line.is-main.is-sp-md {
+          font-size: spx(26);
+        }
+
+        .stay-card__badge-line.is-main.is-sm {
+          font-size: spx(22);
         }
 
         .stay-card__code {
