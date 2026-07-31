@@ -58,6 +58,10 @@ import ConceptIllust from "../../../images/top/2-concept/concept-illust.svg";
     z-index: 1;
     // ヒーロー下端の陸地画像との境目（サブピクセルの継ぎ目）を1pxだけ被せて隠す
     margin-top: -1px;
+    // PCは実機確認で1vwぶんさらに上へ被せる
+    @include desktop-up {
+      margin-top: calc(-1vw - 1px);
+    }
     overflow: clip;
     background-color: #bee0e1;
 
