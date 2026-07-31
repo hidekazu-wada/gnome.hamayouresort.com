@@ -4,7 +4,8 @@ import "../../../../styles/main.scss";
 
 // この節は色を敷かず、テクスチャ画像そのものを背景にする（Figma同様）
 import PaperTexture from "../../../images/common/paper-texture-plain.png";
-import Wave from "../../../images/hotel-set-plan/wave-to-notes.webp";
+import WavePc from "../../../images/hotel-set-plan/wave-to-notes.svg";
+import WaveSp from "../../../images/hotel-set-plan/wave-to-notes-sp.svg";
 import Hill from "../../../images/hotel-set-plan/hill.svg";
 
 const notes = [
@@ -21,7 +22,10 @@ const notes = [
   class="hsp-notes-wave"
   style={`background-image: url(${PaperTexture.src});`}
 >
-  <img class="hsp-notes-wave__img" src={Wave.src} alt="" />
+  <picture class="hsp-notes-wave__picture">
+    <source srcset={WavePc.src} media="(min-width: 744px)" />
+    <img class="hsp-notes-wave__img" src={WaveSp.src} alt="" />
+  </picture>
   <!-- 丘と木。料金セクションの上まではみ出す -->
   <img class="hsp-notes-wave__hill" src={Hill.src} alt="" />
 </div>
@@ -73,18 +77,22 @@ const notes = [
       background-size: ppx(200);
     }
 
-    &__img {
+    // SVGは波の上端が枠より上にはみ出した状態で書き出されている
+    &__picture {
       position: absolute;
       display: block;
-      height: auto;
+      left: 0;
+      width: 100%;
       top: spx(-11.51);
-      left: spx(-11.16);
-      width: spx(742.671);
       @include tablet-up {
         top: ppx(-11.53);
-        left: ppx(-11.26);
-        width: ppx(2582.656);
       }
+    }
+
+    &__img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
     // Figmaでは左右反転して配置されている
