@@ -95,9 +95,13 @@ const tagLines = (tag: string) =>
       text-align: center;
       line-height: 1.6;
       width: 100%;
+      // Figmaの白フチ（stroke 7・OUTSIDE → text-strokeは中央基準なので2倍の14）
+      -webkit-text-stroke: spx(14) #fff;
+      paint-order: stroke fill;
       font-size: spx(40);
       letter-spacing: spx(2);
       @include tablet-up {
+        -webkit-text-stroke-width: ppx(14);
         font-size: ppx(40);
         letter-spacing: ppx(2);
       }
