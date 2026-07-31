@@ -198,7 +198,7 @@ import { activities } from "../../../../data/activities";
       color: #fff;
       text-align: center;
       white-space: nowrap;
-      transition: opacity 0.3s ease;
+      transition: background-color 0.3s ease;
       width: spx(496);
       margin-top: spx(60);
       padding: spx(31) 0;
@@ -220,9 +220,10 @@ import { activities } from "../../../../data/activities";
         box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
       }
 
+      // ホバー: #d6b156にディゾルブ（指示書）
       @include hover {
         &:hover {
-          opacity: 0.8;
+          background-color: #d6b156;
         }
       }
     }

@@ -204,7 +204,9 @@ const WEB_RESERVE_URL = "https://www.nap-camp.com/yamanashi/13592";
       background-color: #fffdf7;
       color: #7c6351;
       text-align: center;
-      transition: opacity 0.3s ease;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
       width: spx(600);
       padding: spx(8) spx(60) spx(16);
       border-radius: spx(16);
@@ -217,9 +219,11 @@ const WEB_RESERVE_URL = "https://www.nap-camp.com/yamanashi/13592";
         box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
       }
 
+      // ホバー: 茶背景＋クリーム文字にディゾルブ（指示書 #7c6351）
       @include hover {
         &:hover {
-          opacity: 0.85;
+          background-color: #7c6351;
+          color: #fffdf7;
         }
       }
     }

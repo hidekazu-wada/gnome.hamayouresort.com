@@ -99,7 +99,9 @@ const { links } = Astro.props;
       color: #000;
       text-align: center;
       white-space: nowrap;
-      transition: opacity 0.3s ease;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
       width: spx(300);
       padding: spx(23) 0;
       border-width: spx(4);
@@ -117,9 +119,11 @@ const { links } = Astro.props;
         letter-spacing: ppx(1.3);
       }
 
+      // ホバー: 黒背景＋白文字にディゾルブ（指示書）
       @include hover {
         &:hover {
-          opacity: 0.6;
+          background-color: #000;
+          color: #fff;
         }
       }
     }

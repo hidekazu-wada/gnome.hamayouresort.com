@@ -206,7 +206,7 @@ import { facilities } from "../../../../data/facilities";
       color: #fff;
       text-align: center;
       white-space: nowrap;
-      transition: opacity 0.3s ease;
+      transition: background-color 0.3s ease;
       margin-top: auto; // 行内で高さを揃えたときボタンを下端に置く
       padding: spx(13) spx(35);
       border-width: spx(4);
@@ -225,9 +225,10 @@ import { facilities } from "../../../../data/facilities";
         filter: drop-shadow(0 #{ppx(10)} #{ppx(12)} rgba(0, 0, 0, 0.08));
       }
 
+      // ホバー: #d6b156にディゾルブ（指示書）
       @include hover {
         &:hover {
-          opacity: 0.8;
+          background-color: #d6b156;
         }
       }
     }

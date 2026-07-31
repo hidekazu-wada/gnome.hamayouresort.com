@@ -265,7 +265,7 @@ import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
       text-align: center;
       white-space: nowrap;
       cursor: pointer;
-      transition: opacity 0.3s ease;
+      transition: background-color 0.3s ease;
       padding: spx(13) spx(35);
       border-width: spx(4);
       gap: spx(10);
@@ -283,9 +283,10 @@ import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
         filter: drop-shadow(0 #{ppx(10)} #{ppx(12)} rgba(0, 0, 0, 0.08));
       }
 
+      // ホバー: #d6b156にディゾルブ（指示書）
       @include hover {
         &:hover {
-          opacity: 0.8;
+          background-color: #d6b156;
         }
       }
     }
@@ -320,7 +321,7 @@ import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
       color: #fff;
       text-align: center;
       white-space: nowrap;
-      transition: opacity 0.3s ease;
+      transition: background-color 0.3s ease;
       width: spx(473);
       margin-top: spx(30);
       padding: spx(31) 0;
@@ -332,9 +333,10 @@ import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
         display: none;
       }
 
+      // ホバー: #d6b156にディゾルブ（指示書）
       @include hover {
         &:hover {
-          opacity: 0.8;
+          background-color: #d6b156;
         }
       }
     }
