@@ -708,7 +708,7 @@ const cards = [
       align-items: center;
       justify-content: center;
       gap: spx(10);
-      margin-top: spx(90);
+      margin-top: spx(50); // 実機確認: カードとの間を詰めて背景画像を上げる
       background-color: #8aad61;
       border: spx(4) solid #fff;
       border-radius: 999px;
@@ -785,6 +785,10 @@ const cards = [
       font-size: 0;
       pointer-events: none;
       @include tablet-up {
+        // 実機確認: 稜線位置を上げてMORE→INFORMATION間を短縮
+        margin-top: -150vw;
+      }
+      @include desktop-up {
         margin-top: -145vw; // PC画像（1600x3394）: 稜線が MORE ボタン直下に来る位置
       }
     }

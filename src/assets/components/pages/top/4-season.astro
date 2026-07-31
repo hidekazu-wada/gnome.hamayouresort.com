@@ -439,15 +439,18 @@ const seasons = [
     &__illust {
       flex-shrink: 0;
       width: spx(305);
+      // タブレットは0.9掛けで右上へ（下の画像とPC同等の間隔を確保）
       @include tablet-up {
         position: absolute;
-        left: ppx(1660);
-        top: ppx(-170);
-        width: ppx(470);
+        left: ppx(1837);
+        top: ppx(-190);
+        width: ppx(470 * 0.9);
         z-index: 2;
       }
       @include desktop-up {
+        left: ppx(1660);
         top: -8vw; // 実機確認による調整
+        width: ppx(470);
       }
     }
 
