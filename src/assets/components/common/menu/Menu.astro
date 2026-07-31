@@ -35,7 +35,6 @@ const navItems = [
     label: "ご予約",
     href: "https://www.nap-camp.com/yamanashi/13592",
     external: true,
-    highlight: true,
   },
 ];
 ---
@@ -70,7 +69,6 @@ const navItems = [
               <a
                 class:list={[
                   "menu__link",
-                  { "is-highlight": item.highlight },
                   { "is-current": !item.external && isCurrent(item.href) },
                 ]}
                 href={item.href}
@@ -117,6 +115,15 @@ const navItems = [
     overflow-y: auto;
     overflow-x: clip;
     background-color: #bee0e1;
+    // TBは画面が縦に長いときフッターを最下部に貼り付け、
+    // 余りはメニュー上部（ナビの下）で吸収する
+    @include tablet-up {
+      display: flex;
+      flex-direction: column;
+    }
+    @include desktop-up {
+      display: block;
+    }
     opacity: 0;
     visibility: hidden;
     transition:
@@ -129,10 +136,14 @@ const navItems = [
       position: relative;
       height: spx(930);
       @include tablet-up {
-        height: tpx(1599);
+        height: auto;
+        min-height: tpx(1599);
+        flex: 1 0 auto;
       }
       @include desktop-up {
         height: ppx(770);
+        min-height: 0;
+        flex: none;
       }
     }
 
@@ -269,13 +280,7 @@ const navItems = [
         }
       }
 
-      // ご予約（CTA）
-      &.is-highlight {
-        background-color: #d6b156;
-        color: #fffdf7;
-      }
-
-      // 現在いるページ（ご予約と同じ金色の見た目）
+      // 現在いるページだけ金色
       &.is-current {
         background-color: #d6b156;
         color: #fffdf7;
