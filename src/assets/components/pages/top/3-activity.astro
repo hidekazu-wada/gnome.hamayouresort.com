@@ -443,6 +443,14 @@ const cards = [
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    // カード自体は動かさず、中の画像だけふわっとズーム
+    @include hover {
+      &__card:hover .activity__card-img {
+        transform: scale(1.08);
+      }
     }
 
     &__card-vertical {
@@ -518,6 +526,7 @@ const cards = [
       border: spx(4) solid #fff;
       border-radius: 999px;
       text-decoration: none;
+      transition: background-color 0.3s ease;
       box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
       padding: spx(35) spx(110);
       margin-top: spx(106);
@@ -538,7 +547,7 @@ const cards = [
 
       @include hover {
         &:hover {
-          opacity: 0.85;
+          background-color: #d6b156;
         }
       }
     }

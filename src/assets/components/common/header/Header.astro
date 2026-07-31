@@ -6,8 +6,11 @@ import "../../../../styles/main.scss";
 import PanelPc from "../../../images/common/header/panel-pc.png";
 import PanelSp from "../../../images/common/header/panel-sp.png";
 import IconInstagram from "../../../images/common/header/icon-instagram.svg";
+import IconInstagramHover from "../../../images/common/header/icon-instagram-hover.svg";
 import IconMenu from "../../../images/common/header/icon-menu.svg";
+import IconMenuHover from "../../../images/common/header/icon-menu-hover.svg";
 import IconCloseLine from "../../../images/common/header/icon-close-line.svg";
+import IconCloseLineHover from "../../../images/common/header/icon-close-line-hover.svg";
 
 const INSTAGRAM_URL = "https://www.instagram.com/campvillage_gnome/?hl=ja";
 ---
@@ -25,7 +28,14 @@ const INSTAGRAM_URL = "https://www.instagram.com/campvillage_gnome/?hl=ja";
     target="_blank"
     rel="noopener noreferrer"
   >
-    <img class="header__instagram-icon" src={IconInstagram.src} alt="" />
+    <span class="header__instagram-iconbox">
+      <img class="header__instagram-icon" src={IconInstagram.src} alt="" />
+      <img
+        class="header__instagram-icon header__instagram-icon--hover"
+        src={IconInstagramHover.src}
+        alt=""
+      />
+    </span>
     <span class="header__instagram-text">Instagram</span>
   </a>
 
@@ -37,19 +47,36 @@ const INSTAGRAM_URL = "https://www.instagram.com/campvillage_gnome/?hl=ja";
     aria-label="メニューを開く"
   >
     <span class="header__toggle-icon">
-      <!-- MENU（ハンバーガー） -->
-      <img class="header__toggle-bars" src={IconMenu.src} alt="" />
-      <!-- CLOSE（×）: 同じ線を±30度で重ねる -->
-      <img
-        class="header__toggle-line header__toggle-line--1"
-        src={IconCloseLine.src}
-        alt=""
-      />
-      <img
-        class="header__toggle-line header__toggle-line--2"
-        src={IconCloseLine.src}
-        alt=""
-      />
+      <!-- 通常色（黒）のセット -->
+      <span class="header__toggle-set">
+        <!-- MENU（ハンバーガー） -->
+        <img class="header__toggle-bars" src={IconMenu.src} alt="" />
+        <!-- CLOSE（×）: 同じ線を±30度で重ねる -->
+        <img
+          class="header__toggle-line header__toggle-line--1"
+          src={IconCloseLine.src}
+          alt=""
+        />
+        <img
+          class="header__toggle-line header__toggle-line--2"
+          src={IconCloseLine.src}
+          alt=""
+        />
+      </span>
+      <!-- ホバー色（緑）のセット。ホバーでディゾルブ -->
+      <span class="header__toggle-set header__toggle-set--hover">
+        <img class="header__toggle-bars" src={IconMenuHover.src} alt="" />
+        <img
+          class="header__toggle-line header__toggle-line--1"
+          src={IconCloseLineHover.src}
+          alt=""
+        />
+        <img
+          class="header__toggle-line header__toggle-line--2"
+          src={IconCloseLineHover.src}
+          alt=""
+        />
+      </span>
     </span>
     <span class="header__toggle-label">
       <span class="header__toggle-label-text header__toggle-label-text--menu"
@@ -156,14 +183,26 @@ const INSTAGRAM_URL = "https://www.instagram.com/campvillage_gnome/?hl=ja";
         gap: ppx(13);
       }
 
+      // ホバーで緑（#507425）にディゾルブ
       @include hover {
         &:hover {
-          opacity: 0.6;
+          .header__instagram-icon {
+            opacity: 0;
+          }
+
+          .header__instagram-icon--hover {
+            opacity: 1;
+          }
+
+          .header__instagram-text {
+            color: #507425;
+          }
         }
       }
     }
 
-    &__instagram-icon {
+    &__instagram-iconbox {
+      position: relative;
       display: block;
       width: spx(50);
       height: spx(50);
@@ -177,7 +216,29 @@ const INSTAGRAM_URL = "https://www.instagram.com/campvillage_gnome/?hl=ja";
       }
     }
 
+    &__instagram-icon {
+      position: absolute;
+      inset: 0;
+      display: block;
+      transition: opacity 0.3s ease;
+      width: spx(50);
+      height: spx(50);
+      @include tablet-up {
+        width: ppx(50 * 1.2);
+        height: ppx(50 * 1.2);
+      }
+      @include desktop-up {
+        width: ppx(50);
+        height: ppx(50);
+      }
+    }
+
+    &__instagram-icon--hover {
+      opacity: 0;
+    }
+
     &__instagram-text {
+      transition: color 0.3s ease;
       display: none;
       @include tablet-up {
         display: block;
@@ -214,9 +275,20 @@ const INSTAGRAM_URL = "https://www.instagram.com/campvillage_gnome/?hl=ja";
         height: ppx(76);
       }
 
+      // ホバーで緑（#507425）にディゾルブ
       @include hover {
         &:hover {
-          opacity: 0.6;
+          .header__toggle-set {
+            opacity: 0;
+          }
+
+          .header__toggle-set--hover {
+            opacity: 1;
+          }
+
+          .header__toggle-label-text {
+            color: #507425;
+          }
         }
       }
     }
@@ -237,6 +309,18 @@ const INSTAGRAM_URL = "https://www.instagram.com/campvillage_gnome/?hl=ja";
         width: ppx(68);
         height: ppx(38);
       }
+    }
+
+    // 通常色／ホバー色のセット（重ねてディゾルブ）
+    &__toggle-set {
+      position: absolute;
+      inset: 0;
+      display: block;
+      transition: opacity 0.3s ease;
+    }
+
+    &__toggle-set--hover {
+      opacity: 0;
     }
 
     // ハンバーガー（68x38の枠に対し画像は上下に2pxずつはみ出す）
@@ -312,7 +396,9 @@ const INSTAGRAM_URL = "https://www.instagram.com/campvillage_gnome/?hl=ja";
       color: #000;
       text-align: center;
       white-space: nowrap;
-      transition: opacity 0.3s ease;
+      transition:
+        opacity 0.3s ease,
+        color 0.3s ease;
       font-size: spx(26);
       letter-spacing: spx(-0.78);
       @include tablet-up {
