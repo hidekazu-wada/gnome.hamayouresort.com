@@ -352,8 +352,12 @@ const cards = [
       @include tablet-up {
         margin-top: ppx((80 - 16) * 1.2);
         margin-bottom: ppx(-44 * 1.2);
-        margin-left: 0;
-        margin-right: 0;
+        // PC同様、カード4枚(2135)+シャドウ余白に幅を絞って中央配置
+        // → 5枚目はコンテナ外でクリップされ、両端に余白が残る
+        width: ppx(2135 + 48 * 1.2);
+        align-self: center;
+        margin-left: auto;
+        margin-right: auto;
         padding: ppx(16 * 1.2) ppx(24 * 1.2) ppx(44 * 1.2);
       }
       @include desktop-up {
