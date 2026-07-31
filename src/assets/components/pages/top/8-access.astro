@@ -207,6 +207,7 @@ const embedUrl =
       background-color: #000;
       text-decoration: none;
       box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
+      transition: background-color 0.3s ease;
       @include tablet-up {
         gap: ppx(10);
         width: ppx(413);
@@ -215,9 +216,10 @@ const embedUrl =
         box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
       }
 
+      // ホバー: ティール（#138185）にディゾルブ
       @include hover {
         &:hover {
-          opacity: 0.8;
+          background-color: #138185;
         }
       }
     }

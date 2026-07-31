@@ -53,11 +53,18 @@ const news = [
             class:list={["information__filter", { "is-active": f.active }]}
           >
             <span class="information__filter-text">{f.label}</span>
-            <img
-              class="information__filter-arrow"
-              src={f.active ? ArrowWhite.src : ArrowGreen.src}
-              alt=""
-            />
+            <span class="information__filter-arrowbox">
+              <img
+                class="information__filter-arrow information__filter-arrow--green"
+                src={ArrowGreen.src}
+                alt=""
+              />
+              <img
+                class="information__filter-arrow information__filter-arrow--white"
+                src={ArrowWhite.src}
+                alt=""
+              />
+            </span>
           </button>
         ))
       }
@@ -68,13 +75,14 @@ const news = [
       {
         news.map((n) => (
           <li class="information__item">
-            <div class="information__item-main">
+            {/* 記事詳細のスラッグが未確定のため、遷移先は一覧ページ（仮） */}
+            <a class="information__item-main" href="/news/">
               <div class="information__item-head">
                 <p class="information__item-date">{n.date}</p>
                 <span class="information__item-cat">{n.cat}</span>
               </div>
               <p class="information__item-title">{n.title}</p>
-            </div>
+            </a>
             <div class="information__item-line" aria-hidden="true" />
           </li>
         ))
@@ -234,7 +242,7 @@ const news = [
       background-color: #fffdf7;
       box-shadow: 0 spx(8.3) spx(10) rgba(0, 0, 0, 0.08);
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: background-color 0.3s ease;
       @include tablet-up {
         gap: ppx(10 * 1.2);
         width: ppx(413 * 1.2);
@@ -255,13 +263,29 @@ const news = [
       &.is-active .information__filter-text {
         color: #fff;
       }
+      &.is-active .information__filter-arrow--green {
+        opacity: 0;
+      }
+      &.is-active .information__filter-arrow--white {
+        opacity: 1;
+      }
 
+      // ホバー: 緑背景＋白文字＋白矢印にディゾルブ（アクティブは変化なし）
       @include hover {
-        &:hover {
-          opacity: 0.8;
-        }
-        &.is-active:hover {
-          opacity: 1;
+        &:not(.is-active):hover {
+          background-color: #8aad61;
+
+          .information__filter-text {
+            color: #fffdf7;
+          }
+
+          .information__filter-arrow--green {
+            opacity: 0;
+          }
+
+          .information__filter-arrow--white {
+            opacity: 1;
+          }
         }
       }
     }
@@ -285,16 +309,30 @@ const news = [
       }
     }
 
-    &__filter-arrow {
+    &__filter-arrowbox {
+      position: relative;
       display: block;
       width: spx(23);
-      height: auto;
+      aspect-ratio: 25 / 14;
       @include tablet-up {
         width: ppx(25 * 1.2);
       }
       @include desktop-up {
         width: ppx(25);
       }
+    }
+
+    &__filter-arrow {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: opacity 0.3s ease;
+    }
+
+    &__filter-arrow--white {
+      opacity: 0;
     }
 
     // お知らせリスト
@@ -337,7 +375,19 @@ const news = [
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      text-decoration: none;
+      color: inherit;
       gap: spx(5);
+
+      // ホバーで日付と見出しを緑にディゾルブ
+      @include hover {
+        &:hover {
+          .information__item-date,
+          .information__item-title {
+            color: #507425;
+          }
+        }
+      }
       @include tablet-up {
         flex-direction: row;
         gap: ppx(30 * 1.2);
@@ -364,6 +414,7 @@ const news = [
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 700;
       color: #000;
+      transition: color 0.3s ease;
       line-height: 1.8;
       white-space: nowrap;
       font-size: spx(26);
@@ -411,6 +462,7 @@ const news = [
     }
 
     &__item-title {
+      transition: color 0.3s ease;
       margin: 0;
       padding-top: spx(5);
       font-family: "Noto Sans JP", sans-serif;

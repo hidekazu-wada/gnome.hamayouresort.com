@@ -128,7 +128,9 @@ const FORM_URL = "#";
       text-align: center;
       color: #138185;
       box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
-      transition: opacity 0.3s ease;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
       @include tablet-up {
         width: auto;
         height: auto;
@@ -138,9 +140,11 @@ const FORM_URL = "#";
         box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
       }
 
+      // ホバー: ティール背景＋クリーム文字にディゾルブ（フッターと同じ）
       @include hover {
         &:hover {
-          opacity: 0.85;
+          background-color: #138185;
+          color: #fffdf7;
         }
       }
     }

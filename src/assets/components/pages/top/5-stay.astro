@@ -774,6 +774,10 @@ const cards = [
     &__bottom {
       position: relative;
       z-index: 0;
+      // 下端の切り詰め分を描画ごと切る（INFORMATIONに被せない）。
+      // flow-rootで内側のネガティブマージンを枠の高さに反映させる
+      display: flow-root;
+      overflow: clip;
       width: 100%;
       // 重なり量はデザインカンプ基準: 山の稜線が MORE ボタンの直下（約20px）に来る位置
       margin-top: -320vw; // SP画像（1123x4096、稜線は上端から約307vw）
@@ -782,14 +786,16 @@ const cards = [
       pointer-events: none;
       @include tablet-up {
         margin-top: -145vw; // PC画像（1600x3394）: 稜線が MORE ボタン直下に来る位置
-        // デザインより下端が約300px(2560基準)長く見えるため切り詰め（親の overflow: clip で切れる）
-        margin-bottom: -12vw;
       }
     }
 
     &__bottom-picture {
       display: block;
       width: 100%;
+      @include tablet-up {
+        // デザインより下端が約300px(2560基準)長いぶんを枠内で切り詰める
+        margin-bottom: -12vw;
+      }
     }
 
     &__bottom-img {
