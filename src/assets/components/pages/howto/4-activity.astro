@@ -62,8 +62,9 @@ const { howto } = Astro.props;
       modules: [Autoplay, Pagination],
       loop: true,
       autoplay: { delay: 4000, disableOnInteraction: false },
-      slidesPerView: 1.15,
-      spaceBetween: 12,
+      // SPはカード幅530のスライドを中央に置き、前後を左右にチラ見せ（Figma準拠）
+      slidesPerView: "auto",
+      spaceBetween: 0,
       centeredSlides: true,
       pagination: { el: ".howto-activity__pagination", clickable: true },
       breakpoints: {
@@ -152,6 +153,7 @@ const { howto } = Astro.props;
       display: flex;
       justify-content: center;
       height: auto;
+      width: spx(530);
       @include tablet-up {
         width: ppx(530);
         margin-right: ppx(10);

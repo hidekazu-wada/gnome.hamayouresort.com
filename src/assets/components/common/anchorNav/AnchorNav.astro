@@ -76,10 +76,11 @@ const { links } = Astro.props;
       display: flex;
       flex-wrap: wrap;
       align-items: flex-start;
-      justify-content: center;
+      justify-content: flex-start; // SPは左寄せ
       width: spx(610);
       gap: spx(15) spx(10);
       @include tablet-up {
+        justify-content: center;
         width: auto;
         gap: ppx(20);
       }
