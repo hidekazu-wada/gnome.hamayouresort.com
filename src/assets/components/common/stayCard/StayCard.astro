@@ -5,6 +5,7 @@ import "../../../../styles/main.scss";
 import Badge from "../../../images/stay/badge.svg";
 import BadgeCheck from "../../../images/stay/badge-check.svg";
 import IconArrow from "../../../images/common/icon-arrow-gray.svg";
+import IconArrowDark from "../../../images/common/icon-arrow-dark.svg";
 import type { Stay } from "../../../../data/stays";
 
 interface Props {
@@ -71,7 +72,14 @@ const { stay, compact = false } = Astro.props;
         <span class="stay-card__price-main">{stay.price}</span>
         <span class="stay-card__price-unit">／1泊</span>
       </p>
-      <img class="stay-card__arrow" src={IconArrow.src} alt="" />
+      <span class="stay-card__arrowbox">
+        <img class="stay-card__arrow" src={IconArrow.src} alt="" />
+        <img
+          class="stay-card__arrow stay-card__arrow--hover"
+          src={IconArrowDark.src}
+          alt=""
+        />
+      </span>
     </div>
   </div>
 </a>
@@ -113,9 +121,20 @@ const { stay, compact = false } = Astro.props;
       transition: transform 0.4s ease;
     }
 
+    // ホバー: 中の画像が拡大＋右下の矢印を濃い色にディゾルブ（指示書）
     @include hover {
-      &:hover .stay-card__photo-img {
-        transform: scale(1.08);
+      &:hover {
+        .stay-card__photo-img {
+          transform: scale(1.08);
+        }
+
+        .stay-card__arrow {
+          opacity: 0;
+        }
+
+        .stay-card__arrow--hover {
+          opacity: 1;
+        }
       }
     }
 
@@ -351,7 +370,8 @@ const { stay, compact = false } = Astro.props;
     }
 
     // 50pxの枠に対し画像は上下左右5%はみ出す
-    &__arrow {
+    &__arrowbox {
+      position: relative;
       display: block;
       width: spx(55);
       height: spx(55);
@@ -361,6 +381,19 @@ const { stay, compact = false } = Astro.props;
         height: ppx(55);
         margin: ppx(-2.5);
       }
+    }
+
+    &__arrow {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      transition: opacity 0.3s ease;
+    }
+
+    &__arrow--hover {
+      opacity: 0;
     }
 
     // 泊まる一覧のSPだけ2カラム用のコンパクト表示（334×675）。
@@ -453,7 +486,7 @@ const { stay, compact = false } = Astro.props;
           font-size: spx(22);
         }
 
-        .stay-card__arrow {
+        .stay-card__arrowbox {
           position: absolute;
           top: 50%;
           right: spx(17);
