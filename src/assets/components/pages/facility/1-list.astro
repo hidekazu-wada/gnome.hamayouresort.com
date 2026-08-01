@@ -44,7 +44,7 @@ import { facilities } from "../../../../data/facilities";
             {facility.lines.map((line, i) => (
               <>
                 {i > 0 && <br />}
-                {line}
+                <Fragment set:html={line} />
               </>
             ))}
           </p>
@@ -189,6 +189,13 @@ import { facilities } from "../../../../data/facilities";
       @include tablet-up {
         width: ppx(440);
         font-size: ppx(26);
+      }
+
+      // SPだけの改行（set:htmlで挿入されるためglobal指定）
+      :global(.facility-list__br-sp) {
+        @include tablet-up {
+          display: none;
+        }
       }
     }
 

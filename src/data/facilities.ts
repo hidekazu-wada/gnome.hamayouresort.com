@@ -12,14 +12,18 @@ export type Facility = {
   /** カードの見出し。小さく添える文字がある場合は small に入れる */
   title: string;
   small?: string;
-  /** 補足説明。改行位置は配列で指定 */
+  /** 補足説明。改行位置は配列で指定。SPだけの改行は <br class="facility-list__br-sp"> */
   lines: string[];
   photo?: ImageMetadata;
   /** MOREボタンの遷移先。無い施設はボタンを出さない */
   href?: string;
 };
 
-const dummy = ["補足説明◯◯◯◯◯◯◯◯◯◯◯◯", "◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"];
+// SPは「補足説明」の後で1回改行する（Figma準拠）
+const dummy = [
+  '補足説明<br class="facility-list__br-sp">◯◯◯◯◯◯◯◯◯◯◯◯',
+  "◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯",
+];
 
 export const facilities: Facility[] = [
   {
