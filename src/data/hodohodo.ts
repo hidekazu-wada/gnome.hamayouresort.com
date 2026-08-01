@@ -16,8 +16,6 @@ export type HodohodoItem = {
   photo?: ImageMetadata;
   /** 「利用料」ボタンを出すか。遷移先は確定待ち */
   hasFee?: boolean;
-  /** SPでタイトルが2行に折り返すカードは左揃えにする */
-  titleLeftSp?: boolean;
 };
 
 const dummy = ["補足説明◯◯◯◯◯◯◯◯◯◯◯◯", "◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"];
@@ -47,7 +45,7 @@ export const hodohodoItems: HodohodoItem[] = [
   { title: "クロスボウ", lines: dummy, photo: crossbow },
   { title: "ファイヤーピット", lines: dummy },
   { title: "燻製器", lines: dummy },
-  { title: "ダイニングスペースと水場", lines: dummy, titleLeftSp: true },
+  { title: "ダイニングスペースと水場", lines: dummy },
 ];
 
 export const hodohodoSpec: { label: string; lines: string[] }[] = [

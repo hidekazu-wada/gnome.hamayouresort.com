@@ -30,14 +30,7 @@ import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
             <div class="hodo-items__photo hodo-items__photo--empty" />
           )}
 
-          <p
-            class:list={[
-              "hodo-items__card-title",
-              { "is-left-sp": item.titleLeftSp },
-            ]}
-          >
-            {item.title}
-          </p>
+          <p class="hodo-items__card-title">{item.title}</p>
 
           <p class="hodo-items__text">
             {item.lines.map((line, i) => (
@@ -180,7 +173,8 @@ import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
       display: flex;
       flex-wrap: wrap;
       align-items: stretch; // 行内でカードの高さを揃える
-      justify-content: center;
+      // 半端な最終行のカードも左から詰める（Figma準拠）。満杯の行は幅ぴったりなので影響なし
+      justify-content: flex-start;
       width: spx(630);
       padding-top: spx(30);
       gap: spx(20) spx(10);
@@ -238,14 +232,6 @@ import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
       width: spx(290);
       font-size: spx(27);
       letter-spacing: spx(1.6);
-
-      // SPで2行に折り返すタイトルは左揃え（ダイニングスペースと水場）
-      &.is-left-sp {
-        text-align: left;
-        @include tablet-up {
-          text-align: center;
-        }
-      }
       @include tablet-up {
         width: ppx(490);
         font-size: ppx(35);
