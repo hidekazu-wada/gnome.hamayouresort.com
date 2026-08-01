@@ -106,15 +106,17 @@ const needsWaveTexture = to !== "footer";
       mix-blend-mode: normal;
     }
 
+    // 波の上端は枠上端と刃合わせのため、丸め誤差で枠背景が点線状に透ける。
+    // 1px上に被せて塞ぐ（テクスチャも同じ分ずらす）
     &__picture {
       position: absolute;
       display: block;
       z-index: 1;
       left: 0;
       width: 100%;
-      top: spx(-11.7);
+      top: calc(#{spx(-11.7)} - 1px);
       @include tablet-up {
-        top: ppx(-11.54);
+        top: calc(#{ppx(-11.54)} - 1px);
       }
     }
 
@@ -140,13 +142,13 @@ const needsWaveTexture = to !== "footer";
       -webkit-mask-image: var(--mask-sp);
       -webkit-mask-size: 100% auto;
       -webkit-mask-repeat: no-repeat;
-      top: spx(-11.7);
+      top: calc(#{spx(-11.7)} - 1px);
       aspect-ratio: 720 / 79;
       background-size: spx(140);
       @include tablet-up {
         mask-image: var(--mask-pc);
         -webkit-mask-image: var(--mask-pc);
-        top: ppx(-11.54);
+        top: calc(#{ppx(-11.54)} - 1px);
         aspect-ratio: 2560 / 212;
         background-size: ppx(200);
       }
