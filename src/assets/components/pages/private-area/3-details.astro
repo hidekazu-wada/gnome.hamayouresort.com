@@ -6,6 +6,8 @@ import PaperTexture from "../../../images/common/paper-texture.png";
 import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
 import BadgeMap from "../../../images/private-area/badge-map.svg";
 import BadgeMapHover from "../../../images/private-area/badge-map-hover.svg";
+// エリアマップモーダルの地図（Figmaの赤枠注記込みで書き出し）
+import AreaMapAnnotated from "../../../images/private-area/area-map-annotated.webp";
 import IconArrowWhite from "../../../images/news/icon-circle-arrow-white.svg";
 import Transition from "./Transition.astro";
 import { privateAreas } from "../../../../data/private-area";
@@ -47,8 +49,8 @@ import { privateAreas } from "../../../../data/private-area";
       <p class="area-detail__body">{area.body}</p>
 
       {/* PCは見出しの右に絶対配置、SPは本文の下に中央寄せ */}
-      {/* ホバーで緑地のバッジにディゾルブする（指示書） */}
-      <a class="area-detail__map-badge" href="#">
+      {/* ホバーで緑地のバッジにディゾルブし、クリックでエリアマップモーダルを開く */}
+      <button class="area-detail__map-badge" type="button" data-map-open>
         <img class="area-detail__map-badge-img" src={BadgeMap.src} alt="エリアMAP" />
         <img
           class="area-detail__map-badge-img area-detail__map-badge-img--hover"
@@ -56,7 +58,7 @@ import { privateAreas } from "../../../../data/private-area";
           alt=""
           aria-hidden="true"
         />
-      </a>
+      </button>
 
       <div class="area-detail__features-head">
         {/* SPだけ「で」のあとで折る。空白が入らないよう1行で書く */}
@@ -107,6 +109,35 @@ import { privateAreas } from "../../../../data/private-area";
     </Fragment>
   ))
 }
+
+{/* エリアマップモーダル（3エリア共通。背景クリック・ESCで閉じる） */}
+<dialog class="area-map-modal" data-map-modal aria-label="エリアマップ">
+  <div class="area-map-modal__panel">
+    <p class="area-map-modal__title">エリアマップ</p>
+    <img
+      class="area-map-modal__img"
+      src={AreaMapAnnotated.src}
+      alt="エリアマップ"
+    />
+  </div>
+</dialog>
+
+<script>
+  // ClientRouter未使用のため直接初期化する
+  const mapModal = document.querySelector<HTMLDialogElement>("[data-map-modal]");
+  const mapOpeners = document.querySelectorAll<HTMLButtonElement>("[data-map-open]");
+
+  if (mapModal) {
+    mapOpeners.forEach((btn) => {
+      btn.addEventListener("click", () => mapModal.showModal());
+    });
+
+    // 背景（dialog自身）クリックで閉じる。中身クリックでは閉じない
+    mapModal.addEventListener("click", (e) => {
+      if (e.target === mapModal) mapModal.close();
+    });
+  }
+</script>
 
 <style lang="scss">
   // 必要なmixin/functionをインポート
@@ -284,6 +315,7 @@ import { privateAreas } from "../../../../data/private-area";
       position: relative;
       z-index: 2;
       display: block;
+      cursor: pointer;
       width: spx(165);
       margin-top: spx(20);
       @include tablet-up {
@@ -589,6 +621,60 @@ import { privateAreas } from "../../../../data/private-area";
         width: ppx(25);
         height: ppx(25);
       }
+    }
+  }
+
+  // エリアマップモーダル（Figma: PC 1338幅 / SP 680幅の白パネル）
+  .area-map-modal {
+    margin: auto;
+    border: none;
+    outline: none;
+    padding: 0;
+    background: transparent;
+    max-width: none;
+    max-height: 90svh;
+    width: spx(680);
+    @include tablet-up {
+      width: ppx(1338);
+    }
+
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    &__panel {
+      background-color: #fff;
+      // 縦が収まらない環境ではパネル内でスクロール
+      max-height: 90svh;
+      overflow-y: auto;
+    }
+
+    // 罫線までがタイトル部（SP: 線までの高さ64 / PC: 132）
+    &__title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #565656;
+      text-align: center;
+      line-height: 1.8;
+      border-bottom-style: solid;
+      border-bottom-color: #7f7f7f;
+      font-size: spx(30);
+      padding-bottom: spx(10);
+      border-bottom-width: spx(1);
+      // 線から地図までの間隔
+      margin-bottom: spx(10);
+      @include tablet-up {
+        font-size: ppx(47);
+        padding-bottom: ppx(47);
+        border-bottom-width: ppx(2);
+        margin-bottom: ppx(103);
+      }
+    }
+
+    &__img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
   }
 </style>

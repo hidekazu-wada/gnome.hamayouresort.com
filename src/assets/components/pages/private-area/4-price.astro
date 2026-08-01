@@ -151,7 +151,9 @@ import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
       background-color: #fffdf7;
       color: #7c6351;
       text-align: center;
-      transition: opacity 0.3s ease;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
       width: spx(600);
       height: spx(140);
       margin-top: spx(90);
@@ -168,9 +170,11 @@ import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
         box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
       }
 
+      // ホバー: 茶背景＋クリーム文字にディゾルブ（指示書 #7c6351）
       @include hover {
         &:hover {
-          opacity: 0.85;
+          background-color: #7c6351;
+          color: #fffdf7;
         }
       }
     }
