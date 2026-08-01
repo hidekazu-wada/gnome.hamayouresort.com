@@ -28,13 +28,13 @@ const { season } = Astro.props;
       <div class="season-point__slider swiper">
         <ul class="swiper-wrapper">
           {
-            season.point.photos.map((photo, i) => (
+            season.points.map((point, i) => (
               <li class="season-point__slide swiper-slide">
                 <img
                   class="season-point__photo"
-                  src={photo.src}
-                  width={photo.width}
-                  height={photo.height}
+                  src={point.photo.src}
+                  width={point.photo.width}
+                  height={point.photo.height}
                   alt=""
                   loading={i === 0 ? "eager" : "lazy"}
                 />
@@ -46,23 +46,39 @@ const { season } = Astro.props;
       <div class="season-point__pagination"></div>
     </div>
 
+    <!-- テキストはスライドごとのセットを重ねて置き、写真と同期してディゾルブ -->
     <div class="season-point__text">
-      <span class="season-point__badge">
-        <span class="season-point__badge-label">おすすめ</span>
-        <span class="season-point__badge-no">01</span>
-      </span>
-      <p class="season-point__lead">
-        {season.point.titleLines.map((line) => <span>{line}</span>)}
-      </p>
-      <p class="season-point__desc">{season.point.body}</p>
+      {
+        season.points.map((point, i) => (
+          <div
+            class:list={["season-point__text-slide", { "is-active": i === 0 }]}
+            data-point-index={i}
+            aria-hidden={i === 0 ? undefined : "true"}
+          >
+            <span class="season-point__badge">
+              <span class="season-point__badge-label">おすすめ</span>
+              <span class="season-point__badge-no">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+            </span>
+            <p class="season-point__lead">
+              {point.titleLines.map((line) => (
+                <span>{line}</span>
+              ))}
+            </p>
+            <p class="season-point__desc">{point.body}</p>
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>
 
 <script>
   import Swiper from "swiper";
-  import { Autoplay, Pagination } from "swiper/modules";
+  import { Autoplay, EffectFade, Pagination } from "swiper/modules";
   import "swiper/css";
+  import "swiper/css/effect-fade";
   import "swiper/css/pagination";
 
   document.querySelectorAll<HTMLElement>(".season-point").forEach((section) => {
@@ -70,12 +86,30 @@ const { season } = Astro.props;
     const pagination = section.querySelector<HTMLElement>(".season-point__pagination");
     if (!el || !pagination) return;
 
+    const textSlides = Array.from(
+      section.querySelectorAll<HTMLElement>(".season-point__text-slide")
+    );
+
+    // 指示書: 写真と右側（番号・タイトル・本文）が自動再生でディゾルブ切り替え
     const swiper = new Swiper(el, {
-      modules: [Autoplay, Pagination],
+      modules: [Autoplay, EffectFade, Pagination],
+      effect: "fade",
+      fadeEffect: { crossFade: true },
+      speed: 800,
       loop: true,
       autoplay: { delay: 5000, disableOnInteraction: false },
       slidesPerView: 1,
       pagination: { el: pagination, clickable: true },
+      on: {
+        realIndexChange(sw) {
+          textSlides.forEach((slide, i) => {
+            const active = i === sw.realIndex;
+            slide.classList.toggle("is-active", active);
+            if (active) slide.removeAttribute("aria-hidden");
+            else slide.setAttribute("aria-hidden", "true");
+          });
+        },
+      },
     });
     // フォント・画像読み込み後に幅を再計測（vw幅の初期計測ずれ対策）
     window.addEventListener("load", () => swiper.update());
@@ -238,15 +272,31 @@ const { season } = Astro.props;
       }
     }
 
+    // 全スライドを同じマスに重ね、高さは一番背の高いスライドに合わせる
     &__text {
+      display: grid;
+      @include tablet-up {
+        height: ppx(558);
+      }
+    }
+
+    &__text-slide {
+      grid-area: 1 / 1;
       display: flex;
       flex-direction: column;
       align-items: center;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      pointer-events: none;
       gap: spx(30);
       @include tablet-up {
         align-items: flex-start;
-        height: ppx(558);
         gap: ppx(30);
+      }
+
+      &.is-active {
+        opacity: 1;
+        pointer-events: auto;
       }
     }
 

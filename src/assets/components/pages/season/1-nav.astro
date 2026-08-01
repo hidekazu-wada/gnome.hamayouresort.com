@@ -92,7 +92,9 @@ import { seasons } from "../../../../data/seasons";
       color: #000;
       text-align: center;
       white-space: nowrap;
-      transition: opacity 0.3s ease;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
       width: spx(290);
       padding: spx(33) 0;
       border-width: spx(3.691);
@@ -106,9 +108,11 @@ import { seasons } from "../../../../data/seasons";
         line-height: ppx(26);
       }
 
+      // ホバー: 黒背景＋白文字にディゾルブ（指示書）
       @include hover {
         &:hover {
-          opacity: 0.6;
+          background-color: #000;
+          color: #fff;
         }
       }
     }
