@@ -2,11 +2,18 @@
 // メインSCSSファイルをインポート
 import "../../../../styles/main.scss";
 
-import toSpring from "../../../images/season/wave-to-spring.webp";
-import toSummer from "../../../images/season/wave-to-summer.webp";
-import toAutumn from "../../../images/season/wave-to-autumn.webp";
-import toWinter from "../../../images/season/wave-to-winter.webp";
-import toFooter from "../../../images/season/wave-to-footer.webp";
+import PaperTexture from "../../../images/common/paper-texture.png";
+import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
+
+// 繋ぎの波（ユーザー支給SVG）。形は共通で色だけ違う。秋は春と同色のため使い回し
+import toSpringPc from "../../../images/season/wave-to-spring.svg";
+import toSpringSp from "../../../images/season/wave-to-spring-sp.svg";
+import toSummerPc from "../../../images/season/wave-to-summer.svg";
+import toSummerSp from "../../../images/season/wave-to-summer-sp.svg";
+import toWinterPc from "../../../images/season/wave-to-winter.svg";
+import toWinterSp from "../../../images/season/wave-to-winter-sp.svg";
+import toFooterPc from "../../../images/season/wave-to-footer.svg";
+import toFooterSp from "../../../images/season/wave-to-footer-sp.svg";
 
 interface Props {
   /** どのセクションへの繋ぎか */
@@ -16,16 +23,40 @@ interface Props {
 const { to } = Astro.props;
 
 const waves = {
-  spring: toSpring,
-  summer: toSummer,
-  autumn: toAutumn,
-  winter: toWinter,
-  footer: toFooter,
+  spring: { pc: toSpringPc, sp: toSpringSp },
+  summer: { pc: toSummerPc, sp: toSummerSp },
+  autumn: { pc: toSpringPc, sp: toSpringSp },
+  winter: { pc: toWinterPc, sp: toWinterSp },
+  footer: { pc: toFooterPc, sp: toFooterSp },
 };
+
+// 枠の背景＝下のセクションの地（Figmaの繋ぎフレームと同じ）。冬だけ色なしの素テクスチャ
+const bgColors: Record<string, string | null> = {
+  spring: "#fff7fa",
+  summer: "#bee0e1",
+  autumn: "#e2dbc1",
+  winter: null,
+  footer: "#bee0e1",
+};
+
+const bgColor = bgColors[to];
+const texture = bgColor ? PaperTexture : PaperTexturePlain;
 ---
 
-<div class="season-wave">
-  <img class="season-wave__img" src={waves[to].src} alt="" />
+<div
+  class:list={["season-wave", { "is-plain": !bgColor }]}
+  style={bgColor ? `background-color: ${bgColor};` : undefined}
+>
+  <div
+    class="season-wave__texture"
+    aria-hidden="true"
+    style={`background-image: url(${texture.src});`}
+  >
+  </div>
+  <picture class="season-wave__picture">
+    <source srcset={waves[to].pc.src} media="(min-width: 744px)" />
+    <img class="season-wave__img" src={waves[to].sp.src} alt="" />
+  </picture>
 </div>
 
 <style lang="scss">
@@ -34,7 +65,7 @@ const waves = {
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
 
-  // 画像は枠より上と左右に少しはみ出す。SPは同じ画像を高さに合わせて縮める
+  // SVGは波の上端が枠より上にはみ出した状態で書き出されている
   .season-wave {
     position: relative;
     height: spx(66);
@@ -42,14 +73,41 @@ const waves = {
       height: ppx(207.816);
     }
 
-    &__img {
+    &__texture {
       position: absolute;
-      top: -5.55%;
-      left: -0.44%;
+      inset: 0;
+      z-index: 0;
+      background-repeat: repeat;
+      background-position: top left;
+      background-size: spx(140);
+      mix-blend-mode: luminosity;
+      pointer-events: none;
+      @include tablet-up {
+        background-size: ppx(200);
+      }
+    }
+
+    // 色を敷かない節（冬）は合成モードを掛けない
+    &.is-plain &__texture {
+      mix-blend-mode: normal;
+    }
+
+    &__picture {
+      position: absolute;
       display: block;
-      width: 100.885%;
-      height: 105.55%;
-      object-fit: fill;
+      z-index: 1;
+      left: 0;
+      width: 100%;
+      top: spx(-11.7);
+      @include tablet-up {
+        top: ppx(-11.54);
+      }
+    }
+
+    &__img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
   }
 </style>
