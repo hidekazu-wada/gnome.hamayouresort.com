@@ -3,7 +3,9 @@ import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
 import Hero from "../../assets/components/pages/facility/hodohodo/1-hero.astro";
 import Items from "../../assets/components/pages/facility/hodohodo/2-items.astro";
 import Spec from "../../assets/components/pages/facility/hodohodo/3-spec.astro";
-import Contact from "../../assets/components/pages/facility/hodohodo/4-contact.astro";
+// お問い合わせセクションは一旦非表示（すぐ下のフッターと問い合わせ先が重複するため。
+// LP的に別の問い合わせ先を置く可能性があるので消さずに残す）
+// import Contact from "../../assets/components/pages/facility/hodohodo/4-contact.astro";
 ---
 
 <BaseLayout
@@ -19,5 +21,5 @@ import Contact from "../../assets/components/pages/facility/hodohodo/4-contact.a
   <Hero />
   <Items />
   <Spec />
-  <Contact />
+  {/* <Contact /> 一旦非表示（上のコメント参照） */}
 </BaseLayout>
