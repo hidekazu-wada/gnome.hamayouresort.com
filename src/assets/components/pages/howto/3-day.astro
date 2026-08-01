@@ -183,12 +183,14 @@ const { day } = Astro.props;
       }
     }
 
+    // SPは時間とタイトルが中央揃え（本文は左揃え）。PCは全部左揃え
     &__text {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
       gap: spx(20);
       @include tablet-up {
+        align-items: flex-start;
         height: ppx(558);
         gap: ppx(30);
       }
@@ -226,11 +228,13 @@ const { day } = Astro.props;
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 700;
       color: #c3925e;
+      text-align: center;
       line-height: 1.6;
       font-size: spx(43);
       letter-spacing: spx(4.3);
       margin-right: spx(-4.3);
       @include tablet-up {
+        text-align: left;
         font-size: ppx(65);
         letter-spacing: ppx(6.5);
         margin-right: ppx(-6.5);
