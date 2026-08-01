@@ -47,6 +47,10 @@ const REDIRECT_SECONDS = 10;
     padding-top: spx(60);
     padding-bottom: spx(130);
     @include tablet-up {
+      padding-top: ppx(150 * 1.2);
+      padding-bottom: ppx(220 * 1.2);
+    }
+    @include desktop-up {
       padding-top: ppx(150);
       padding-bottom: ppx(220);
     }
@@ -61,6 +65,9 @@ const REDIRECT_SECONDS = 10;
       mix-blend-mode: luminosity;
       pointer-events: none;
       @include tablet-up {
+        background-size: ppx(200 * 1.2);
+      }
+      @include desktop-up {
         background-size: ppx(200);
       }
     }
@@ -75,6 +82,9 @@ const REDIRECT_SECONDS = 10;
       gap: spx(25);
       @include tablet-up {
         width: auto;
+        gap: ppx(40 * 1.2);
+      }
+      @include desktop-up {
         gap: ppx(40);
       }
     }
@@ -89,6 +99,11 @@ const REDIRECT_SECONDS = 10;
       letter-spacing: spx(1.5);
       margin-right: spx(-1.5);
       @include tablet-up {
+        font-size: ppx(30 * 1.2);
+        letter-spacing: ppx(1.5 * 1.2);
+        margin-right: ppx(-1.5 * 1.2);
+      }
+      @include desktop-up {
         font-size: ppx(30);
         letter-spacing: ppx(1.5);
         margin-right: ppx(-1.5);

@@ -628,7 +628,8 @@ const policy = [
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #138185;
+      // 送信可能（チェック済み）になると緑に変わる（指示書）
+      background-color: #8aad61;
       border-style: solid;
       border-color: #fff;
       border-radius: 999px;
@@ -637,7 +638,9 @@ const policy = [
       color: #fff;
       white-space: nowrap;
       cursor: pointer;
-      transition: opacity 0.3s ease;
+      transition:
+        background-color 0.3s ease,
+        opacity 0.3s ease;
       width: spx(413);
       padding: spx(33) 0;
       border-width: spx(2);
@@ -661,8 +664,9 @@ const policy = [
         }
       }
 
+      // チェック前はカンプ通常状態のティール（ディゾルブで緑に変わる）
       &:disabled {
-        opacity: 0.5;
+        background-color: #138185;
         cursor: default;
       }
     }
