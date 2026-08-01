@@ -269,7 +269,9 @@ const { item, prevHref, nextHref } = Astro.props;
       color: #138185;
       text-align: center;
       white-space: nowrap;
-      transition: opacity 0.3s ease;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
       width: spx(205);
       padding: spx(23) 0;
       border-width: spx(2);
@@ -286,9 +288,11 @@ const { item, prevHref, nextHref } = Astro.props;
         letter-spacing: ppx(1.3);
       }
 
+      // ホバー: #138185背景＋クリーム文字にディゾルブ（指示書）
       @include hover {
         &:hover {
-          opacity: 0.7;
+          background-color: #138185;
+          color: #fffdf7;
         }
       }
 
