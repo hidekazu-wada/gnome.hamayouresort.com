@@ -3,6 +3,11 @@ import BaseLayout from "../../assets/components/common/layout/BaseLayout.astro";
 import PageHeader from "../../assets/components/common/pageHeader/PageHeader.astro";
 import Article from "../../assets/components/pages/news-detail/1-article.astro";
 import { newsItems } from "../../data/news";
+import type { NewsBlock } from "../../data/news";
+
+const isTextBlock = (
+  block: NewsBlock,
+): block is Extract<NewsBlock, { type: "text" }> => block.type === "text";
 
 export function getStaticPaths() {
   return newsItems.map((item, i) => ({
@@ -20,11 +25,24 @@ export function getStaticPaths() {
 }
 
 const { item, prevHref, nextHref } = Astro.props;
+
+// 本文の最初の段落を meta description にする。段落がなければタイトルで代用
+const firstText = item.body.find(isTextBlock);
+const excerpt = firstText?.text
+  .replace(/<[^>]+>/g, "")
+  .replace(/\s+/g, " ")
+  .trim();
+const description = excerpt
+  ? excerpt.length > 110
+    ? `${excerpt.slice(0, 110)}…`
+    : excerpt
+  : item.title;
 ---
 
 <BaseLayout
   title={`${item.title} | Gnome 湖のほとりのキャンプ場`}
-  description={item.title}
+  description={description}
+  ogType="article"
   flush
   breadcrumb={[
     { label: "TOP", href: "/" },

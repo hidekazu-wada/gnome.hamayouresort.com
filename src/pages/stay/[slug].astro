@@ -20,10 +20,13 @@ export function getStaticPaths() {
 
 const { stay } = Astro.props;
 const title = stay.titleLines.join("");
+// lead には改行用の <br> が含まれるため、meta 用にタグを落とす
+const lead = stay.lead.replace(/<[^>]+>/g, "");
 ---
 
 <BaseLayout
   title={`${title} | 泊まる | Gnome 湖のほとりのキャンプ場`}
+  description={`${lead}。Gnomeの宿泊「${title}」の設備・料金・ご注意事項をご紹介します。`}
   flush
   breadcrumb={[
     { label: "TOP", href: "/" },

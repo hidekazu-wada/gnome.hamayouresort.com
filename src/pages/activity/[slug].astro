@@ -19,10 +19,13 @@ export function getStaticPaths() {
 }
 
 const { activity } = Astro.props;
+// lead には改行用の <br> が含まれるため、meta 用にタグを落とす
+const lead = activity.lead.replace(/<[^>]+>/g, "");
 ---
 
 <BaseLayout
   title={`${activity.title} | アクティビティ | Gnome 湖のほとりのキャンプ場`}
+  description={`${lead}。Gnomeで楽しめる「${activity.title}」の料金・所要時間・当日の流れをご紹介します。`}
   flush
   breadcrumb={[
     { label: "TOP", href: "/" },
