@@ -20,17 +20,45 @@ import CaseFamily from "../../../images/top/7-howto/case-family.jpg";
 import IllustTrees from "../../../images/top/7-howto/illust-trees.svg";
 import IllustCampfire from "../../../images/top/7-howto/illust-campfire.svg";
 
-// 過ごし方ケース（英字名は仮。写真・説明文はダミー）
+// 過ごし方ケース（英字名は仮。写真はダミーで5枚とも同一）
+// 説明文は詳細ページへの「引き」。長さは103〜113字に揃え、PCで4行に収まるようにしている
 const cases = [
-  { ja: "ファミリー", en: "FAMILY", slug: "family", photo: CaseFamily },
-  { ja: "カップル", en: "COUPLE", slug: "couple", photo: CaseFamily },
-  { ja: "女子会", en: "GIRLS", slug: "girls", photo: CaseFamily },
-  { ja: "グルキャン", en: "GROUP", slug: "group", photo: CaseFamily },
-  { ja: "企業研修", en: "COMPANY", slug: "training", photo: CaseFamily },
+  {
+    ja: "ファミリー",
+    en: "FAMILY",
+    slug: "family",
+    photo: CaseFamily,
+    desc: "子どもは放っておいても遊びます。プレイパークでボールを蹴り、ツリーハウスによじ登り、湖でSUP。親はというと、足湯につかってひと休み。夜は焚き火を囲んで、今日いちばん楽しかったことを聞かせてもらいましょう。",
+  },
+  {
+    ja: "カップル",
+    en: "COUPLE",
+    slug: "couple",
+    photo: CaseFamily,
+    desc: "せっかくの休みなのに、予定を詰め込んで疲れて帰る。そんな旅はもう終わりにしませんか。朝は湖にカヤック、昼はハンモックでうたた寝。夕方は森のサウナ、そのまま歩いて数分の温泉へ。星が出るころには、言葉はいらなくなります。",
+  },
+  {
+    ja: "女子会",
+    en: "GIRLS",
+    slug: "girls",
+    photo: CaseFamily,
+    desc: "テントが張れなくても大丈夫。ゲルテントは、鍵を開けたらもう始まっています。Kokkoでピザを焼いて、森のサウナで整えて、温泉は歩いて数分。荷物は少なく、話す時間は長く。トイレのきれいさは、来た人がいちばん驚いていくところです。",
+  },
+  {
+    ja: "グルキャン",
+    en: "GROUP",
+    slug: "group",
+    photo: CaseFamily,
+    desc: "大人数ほど、場所選びで差がつきます。最大15名のグループサイトから、少人数向けのダブルサイトまで。KokkoでBBQを囲み、夜はキャンプファイヤーへ。片づけをするころには、もう次の約束をしているはずです。",
+  },
+  {
+    ja: "企業研修",
+    en: "COMPANY",
+    slug: "training",
+    photo: CaseFamily,
+    desc: "研修室では出てこない言葉があります。ほどほどの森やプレイパークは貸し切りにでき、周囲を気にせず一日使えます。テント設営やモルックでチームを動かし、夜はファイヤーピットを囲む。会議室では出ない話が、そこにあります。",
+  },
 ];
-
-const dummyDesc =
-  "ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。";
 ---
 
 <section class="howto">
@@ -122,7 +150,7 @@ const dummyDesc =
                         alt={c.ja}
                       />
                     </div>
-                    <p class="howto__case-desc">{dummyDesc}</p>
+                    <p class="howto__case-desc">{c.desc}</p>
                     <a class="howto__more" href={`/howto/${c.slug}/`}>
                       <span class="howto__more-text">MORE</span>
                       <span class="howto__more-arrowbox">
