@@ -1,6 +1,6 @@
 // 過ごし方ページのデータ。
-// Figmaにあるのは CASE01 ファミリーのみ。他の4件は同じ構成のダミーで、
-// 実データ確定時にここを差し替える。
+// 文章はケースごとに書き下ろす。未着手のケースはダミーのまま残してある。
+// 写真は実写が届くまで全ケース共通のダミー。
 
 import introPhoto from "../assets/images/howto/photos/intro-dummy.webp";
 import dayPhoto from "../assets/images/howto/photos/day-dummy.webp";
@@ -29,59 +29,172 @@ export type Howto = {
   days: { day: string; entries: HowtoEntry[] }[];
 };
 
-const body =
+/**
+ * ケースごとの本文。文字数と件数には以下の制約がある。
+ * - lead: PC 32字/行 × 4行 ＝ 120字が上限の目安
+ * - body: PC 23字/行、テキスト欄の高さから最大6行 ＝ 138字。110〜125字が安全
+ * - entries[].title: 本文幅 ppx(715) ÷ ppx(65) ＝ 11字。10字以内に収める
+ * - schedule[].items[].label: 1文字ずつ縦組みになるため12字以内
+ * - schedule の件数は Day1=7件 / Day2=4件 で固定。
+ *   2-schedule.astro の `gap: ppx(1143)` が「Day 2」見出しを8番目の真上に置く
+ *   ハードコードのため、件数を変えると見出しがズレる
+ * - days の件数は各日4件（Figmaどおり）。写真の手配枚数を抑えるため増やさず、
+ *   1日の流れが伝わるよう到着→遊ぶ→温泉→夜、の4点を選んでいる
+ */
+type CaseContent = Pick<Howto, "lead" | "schedule" | "days">;
+
+const withPhoto = (
+  entries: Omit<HowtoEntry, "photo">[],
+): HowtoEntry[] => entries.map((entry) => ({ ...entry, photo: dayPhoto }));
+
+// --- CASE01 ファミリー -------------------------------------------------------
+// 「子どもが飽きないか」「準備が大変そう」という不安に、実在の設備で答える。
+// プレイパーク・ほどほどの森は予約が埋まると使えないため本文で予約制に触れ、
+// いずみの湯は月・火が休館の月があるため休館日の代替（シャワールーム）も書く。
+const family: CaseContent = {
+  lead: "キャンプは大変そう、子どもが飽きたらどうしよう。そんな心配はいりません。Gnomeには遊びが20種類以上あり、道具は借りられ、温泉は歩いて数分。親の手が空く時間が、ちゃんとあります。1泊2日のモデルコースをご紹介します。",
+  schedule: [
+    {
+      day: "Day 1",
+      items: [
+        { time: "13:00", label: "チェックイン" },
+        { time: "14:00", label: "サイトの設営" },
+        { time: "15:00", label: "プレイパーク" },
+        { time: "16:30", label: "いずみの湯" },
+        { time: "17:30", label: "夕食の準備" },
+        { time: "19:00", label: "焚き火を囲む" },
+        { time: "20:30", label: "星空を見て就寝" },
+      ],
+    },
+    {
+      day: "Day 2",
+      items: [
+        { time: "7:00", label: "湖畔を散歩" },
+        { time: "8:00", label: "朝ごはん" },
+        { time: "10:00", label: "ほどほどの森" },
+        { time: "12:00", label: "チェックアウト" },
+      ],
+    },
+  ],
+  days: [
+    {
+      day: "Day 1",
+      entries: withPhoto([
+        {
+          time: "13:00",
+          title: "チェックイン",
+          body: "管理棟で受付を済ませたら、車でサイトへ。設営に自信がなくても大丈夫、テントも寝袋もイスもレンタルできます。足りないものは売店で揃うので、忘れ物に気づいても慌てずに。子どもは着いたそばから走り出すので、設営は大人の仕事です。",
+        },
+        {
+          time: "15:00",
+          title: "プレイパークで遊ぶ",
+          body: "サッカーゴールにストラックアウト、テントの設営体験やモルックまで。思いきり走り回れる広場です。ご利用には予約が必要なので、空き状況は早めにご確認ください。大人はイスを出して、子どもが遊びを見つけるのを眺めているだけでいい時間です。",
+        },
+        {
+          time: "16:30",
+          title: "いずみの湯へ",
+          body: "歩いて数分のところに、姉妹施設の温泉「いずみの湯」があります。子どもの砂と汗を流して、湯上がりに戻ってくれば、あとは夜を待つだけ。月・火が休館の月もあるので、営業日は事前にご確認ください。休館日はシャワールームが使えます。",
+        },
+        {
+          time: "19:00",
+          title: "焚き火と星空",
+          body: "夕食を終えたら、焚き火に火を入れます。薪も着火剤も売店にあるので、手ぶらでも始められます。火が落ち着いたころに見上げれば、街では見たことのない数の星。子どもが「あれ何？」と聞いてくる時間が、いちばん長く記憶に残ります。",
+        },
+      ]),
+    },
+    {
+      day: "Day 2",
+      entries: withPhoto([
+        {
+          time: "7:00",
+          title: "湖畔を散歩",
+          body: "朝は鳥の声で自然と目が覚めます。まだ誰も起きていない湖畔を、子どもと二人で歩いてみてください。風のない朝は水面が鏡のようになり、対岸の森がそのまま映ります。家では絶対に見られない景色が、目の前にあります。上着を一枚、忘れずに。",
+        },
+        {
+          time: "8:00",
+          title: "朝ごはん",
+          body: "炊事場でお湯を沸かして、パンを焼くだけの簡単な朝食で十分です。BBQグリルもダッチオーブンもレンタルできるので、張り切りたい日はスープを煮込んでみるのもいい。外で食べるというだけで、なぜか子どもはよく食べます。",
+        },
+        {
+          time: "10:00",
+          title: "ほどほどの森へ",
+          body: "チェックアウトまでのひと遊び。ツリーハウスによじ登り、森のブランコを漕ぎ、NINJA LINEでバランスを取る。こちらも予約制で、足湯と森のサウナは別料金です。大人が足湯で休んでいる間に、帰りたくないと言い出したら、それがいちばんの感想です。",
+        },
+        {
+          time: "12:00",
+          title: "チェックアウト",
+          body: "名残惜しいですが、12時までにチェックアウト。片づけは、来たときよりきれいに。ゴミステーションで分別して、忘れ物がないか最後にもう一度。帰りの車で子どもが寝てしまったなら、この旅は大成功です。次はどの季節に来ましょうか。",
+        },
+      ]),
+    },
+  ],
+};
+
+// --- 未着手のケース ----------------------------------------------------------
+// Figmaのダミーそのまま。ケースごとに書き下ろし次第、上の family と同じ形で差し替える。
+const dummyText =
   "ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。";
 
-const lead =
-  "ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。";
-
-// Figmaどおりの時間軸（全ケース共通のダミー）
-const schedule = [
-  {
-    day: "Day 1",
-    items: [
-      { time: "15:00", label: "チェックイン" },
-      { time: "15:30", label: "お部屋でひとやすみ" },
-      { time: "16:00", label: "周辺散策・買い出し" },
-      { time: "17:00", label: "ご夕食" },
-      { time: "19:00", label: "入浴" },
-      { time: "20:00", label: "ゆったりした時間を過ごす" },
-      { time: "21:00", label: "星空鑑賞・就寝" },
-    ],
-  },
-  {
-    day: "Day 2",
-    items: [
-      { time: "7:30", label: "湖畔を散歩" },
-      { time: "8:00", label: "朝食" },
-      { time: "10:00", label: "チェックアウト" },
-      { time: "11:00", label: "周辺観光" },
-    ],
-  },
-];
-
-// 本文はFigmaのダミーどおり4件ずつ
-const entries = (times: string[]): HowtoEntry[] =>
-  times.map((time) => ({ time, title: "チェックイン", body, photo: dayPhoto }));
-
-const days = [
-  { day: "Day 1", entries: entries(["15:00", "15:30", "16:00", "17:00"]) },
-  { day: "Day 2", entries: entries(["7:30", "8:00", "10:00", "11:00"]) },
-];
+const dummy: CaseContent = {
+  lead: dummyText,
+  schedule: [
+    {
+      day: "Day 1",
+      items: [
+        { time: "15:00", label: "チェックイン" },
+        { time: "15:30", label: "お部屋でひとやすみ" },
+        { time: "16:00", label: "周辺散策・買い出し" },
+        { time: "17:00", label: "ご夕食" },
+        { time: "19:00", label: "入浴" },
+        { time: "20:00", label: "ゆったりした時間を過ごす" },
+        { time: "21:00", label: "星空鑑賞・就寝" },
+      ],
+    },
+    {
+      day: "Day 2",
+      items: [
+        { time: "7:30", label: "湖畔を散歩" },
+        { time: "8:00", label: "朝食" },
+        { time: "10:00", label: "チェックアウト" },
+        { time: "11:00", label: "周辺観光" },
+      ],
+    },
+  ],
+  days: [
+    {
+      day: "Day 1",
+      entries: withPhoto(
+        ["15:00", "15:30", "16:00", "17:00"].map((time) => ({
+          time,
+          title: "チェックイン",
+          body: dummyText,
+        })),
+      ),
+    },
+    {
+      day: "Day 2",
+      entries: withPhoto(
+        ["7:30", "8:00", "10:00", "11:00"].map((time) => ({
+          time,
+          title: "チェックイン",
+          body: dummyText,
+        })),
+      ),
+    },
+  ],
+};
 
 const base = [
-  { slug: "family", label: "ファミリー", en: "FAMILY" },
-  { slug: "couple", label: "カップル", en: "COUPLE" },
-  { slug: "girls", label: "女子会", en: "GIRLS" },
-  { slug: "group", label: "グルキャン", en: "GROUP" },
-  { slug: "training", label: "企業研修", en: "TRAINING" },
+  { slug: "family", label: "ファミリー", en: "FAMILY", content: family },
+  { slug: "couple", label: "カップル", en: "COUPLE", content: dummy },
+  { slug: "girls", label: "女子会", en: "GIRLS", content: dummy },
+  { slug: "group", label: "グルキャン", en: "GROUP", content: dummy },
+  { slug: "training", label: "企業研修", en: "TRAINING", content: dummy },
 ];
 
-export const howtos: Howto[] = base.map((item, i) => ({
+export const howtos: Howto[] = base.map(({ content, ...item }, i) => ({
   ...item,
   caseNo: `CASE0${i + 1}`,
-  lead,
   photo: introPhoto,
-  schedule,
-  days,
+  ...content,
 }));
