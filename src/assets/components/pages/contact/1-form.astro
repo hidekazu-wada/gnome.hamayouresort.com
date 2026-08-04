@@ -749,16 +749,19 @@ const policy = [
         letter-spacing: ppx(1.45);
       }
 
+      // ホバー演出は送信できる状態のときだけ。disabledにも効くと「押せそう」に見える
       @include hover {
-        &:hover {
+        &:not(:disabled):hover {
           opacity: 0.8;
         }
       }
 
-      // チェック前はカンプ通常状態のティール（ディゾルブで緑に変わる）
+      // チェック前はカンプ通常状態のティール（ディゾルブで緑に変わる）。
+      // 色はFigmaの定義なので変えず、透明度を落として「まだ押せない」ことを示す
       &:disabled {
         background-color: #138185;
-        cursor: default;
+        opacity: 0.5;
+        cursor: not-allowed;
       }
     }
 
