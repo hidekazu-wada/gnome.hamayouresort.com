@@ -86,7 +86,15 @@ const photos = [site01, site02, site03, site04, site05, site06, site07, site08];
 const heroPhotos = [site01, site05, site04];
 const heroBody =
   "ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。ここに説明文が入ります。";
-const priceRows = [
+// 料金表。アーリーチェックイン／レイトチェックアウトの金額は「ゾーン」で違うので、
+// 金額だけ差し替えられるようにしている。出典はなっぷの料金案内欄
+// https://www.nap-camp.com/yamanashi/13592
+//
+// ※ なっぷが金額を公表しているのは R/F-zone（シングル・ワイド）と A-zone（湖畔）だけ。
+//   グループ・ダブル・ゲル・トレーラーは記載がなく、暫定でシングルの金額を出している。
+//   実際にいくらなのかは現場ヒアリングで要確認。
+// ※ ワイドサイト（4,950／2,200／4,950）はサイト上に種別が存在しないため未使用。
+const makePriceRows = (early9: string, early12: string, late16: string) => [
   { label: "料金", amount: "" },
   {
     label: "支払方法",
@@ -103,7 +111,7 @@ const priceRows = [
   },
   {
     label: "アーリー<br>チェックイン",
-    lines: ["9:00～　3,300円", "12:00～　1,650円"],
+    lines: [`9:00～　${early9}`, `12:00～　${early12}`],
     notesTightGap: true,
     notes: [
       "※当日受付",
@@ -114,7 +122,7 @@ const priceRows = [
   },
   {
     label: "レイト<br>チェックアウト",
-    lines: ["～16:00　3,300円"],
+    lines: [`～16:00　${late16}`],
     notes: ["※チェックイン時にお伝えください", "※受付時に現金でお支払いください"],
   },
   {
@@ -124,6 +132,11 @@ const priceRows = [
     linesInlinePc: true,
   },
 ];
+
+/** R/F-zone のシングルサイト基準。湖畔以外はすべてこれ */
+const priceRows = makePriceRows("3,300円", "1,650円", "3,300円");
+/** 湖畔サイト（A-zone）はアーリー／レイトが他より安い */
+const priceRowsKohan = makePriceRows("2,200円", "1,100円", "2,200円");
 
 // 注意事項（全サイト共通）
 const notes = [
@@ -224,6 +237,7 @@ const base = [
     badgeLines: ["人気", "No,1"],
     tags: ["区画サイト", "最大5名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"],
     price: "¥9,350〜",
+    priceAmount: "9,350〜9,900円（税込）/1泊",
     filters: {
       type: ["区画サイト"],
       capacity: ["〜4名", "5〜9名"],
@@ -243,6 +257,7 @@ const base = [
     badgeLines: ["湖畔沿い"],
     tags: ["フリーサイト", "最大5名", "湖畔沿い", "ACなし", "車両乗入△", "ペット◯", "キャンピングカー◯"],
     price: "¥7,700〜",
+    priceAmount: "7,700〜8,250円（税込）/1泊",
     filters: {
       type: ["フリーサイト"],
       capacity: ["〜4名", "5〜9名"],
@@ -360,6 +375,7 @@ const base = [
     badgeSize: "sm",
     tags: ["区画サイト", "最大5名", "林間", "ACなし", "車両乗入◯", "ペット◯", "キャンピングカー×"],
     price: "¥9,350〜",
+    priceAmount: "9,350〜9,900円（税込）/1泊",
     filters: {
       type: ["区画サイト"],
       capacity: ["〜4名", "5〜9名"],
@@ -382,12 +398,19 @@ const base = [
     | "priceAmount"
     | "priceRows"
     | "notes"
-  > & { key: string }
+  > & {
+    key: string;
+    /**
+     * 料金欄の上書き。なっぷが上限額を公表しているサイトだけ入れる。
+     * 未指定なら price（下限のみ）から自動生成する
+     */
+    priceAmount?: string;
+  }
 >;
 
 /** Figmaのダミー（8種 × 2周 = 16件）を再現した暫定データ */
 export const stays: Stay[] = Array.from({ length: 16 }, (_, i) => {
-  const { key, ...rest } = base[i % base.length];
+  const { key, priceAmount, ...rest } = base[i % base.length];
   const round = Math.floor(i / base.length);
   return {
     ...rest,
@@ -403,8 +426,10 @@ export const stays: Stay[] = Array.from({ length: 16 }, (_, i) => {
       width: 76,
       height: 134,
     },
-    priceAmount: `${rest.price.replace("¥", "").replace("〜", "")}円（税込）〜/1泊`,
-    priceRows,
+    priceAmount:
+      priceAmount ??
+      `${rest.price.replace("¥", "").replace("〜", "")}円（税込）〜/1泊`,
+    priceRows: key === "kohan" ? priceRowsKohan : priceRows,
     notes,
   };
 });
