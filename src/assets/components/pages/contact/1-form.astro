@@ -5,8 +5,13 @@ import "../../../../styles/main.scss";
 import PaperTexture from "../../../images/common/paper-texture.png";
 import IconArrowWhite from "../../../images/news/icon-circle-arrow-white.svg";
 
-// 送信先は未定。決まったらここを埋める
-const FORM_ACTION = "";
+// Formspree（アカウント HAMAYOU RESORT / プロジェクト GNOME / フォーム Inquiry）。
+// 送信先は gnome@hamayouresort.com。JSでfetch送信し、成功したら完了メッセージに差し替える。
+// JSが動かない環境では通常のPOSTとしてFormspreeの完了ページに遷移する（フォールバック）。
+const FORM_ACTION = "https://formspree.io/f/mbgrrlep";
+
+// 件名。他サイトのフォームと同じ受信箱に届いても見分けがつくようにする
+const MAIL_SUBJECT = "【GNOME】お問い合わせ";
 
 const fields: {
   name: string;
@@ -107,6 +112,17 @@ const policy = [
   </div>
 
   <form class="contact__form" action={FORM_ACTION} method="post" novalidate>
+    <input type="hidden" name="_subject" value={MAIL_SUBJECT} />
+    <!-- ハニーポット。人には見えないのでボットが埋めたらスパムと判定される -->
+    <input
+      class="contact__gotcha"
+      type="text"
+      name="_gotcha"
+      tabindex="-1"
+      autocomplete="off"
+      aria-hidden="true"
+    />
+
     <div class="contact__fields">
       {
         fields.map((field) => (
@@ -193,8 +209,18 @@ const policy = [
 
     <label class="contact__agree">
       <span class="contact__agree-text">個人情報の取り扱いに同意する</span>
-      <input class="contact__agree-input" type="checkbox" name="agree" />
+      <input
+        class="contact__agree-input"
+        type="checkbox"
+        name="agree"
+        value="同意する"
+      />
     </label>
+
+    <p class="contact__error" role="alert" hidden>
+      送信に失敗しました。通信環境をご確認のうえ、もう一度お試しください。<br
+      />解決しない場合はお電話（0555-82-2650）でお問い合わせください。
+    </p>
 
     <button class="contact__submit" type="submit" disabled>
       <span class="contact__submit-label">送　信</span>
@@ -206,6 +232,19 @@ const policy = [
       Terms of Service apply.
     </p>
   </form>
+
+  <!-- 送信完了。Figmaに完了画面のデザインがないため既存のトーンに合わせて作成 -->
+  <div class="contact__done" hidden>
+    <p class="contact__done-title">お問い合わせありがとうございます。</p>
+    <p class="contact__done-text">
+      内容を確認のうえ、担当者よりご連絡いたします。<br />
+      しばらくお待ちくださいませ。
+    </p>
+    <a class="contact__done-link" href="/">
+      <span class="contact__done-link-label">トップへ戻る</span>
+      <img class="contact__done-link-icon" src={IconArrowWhite.src} alt="" />
+    </a>
+  </div>
 </section>
 
 <script>
@@ -232,6 +271,47 @@ const policy = [
     });
     agree?.addEventListener("change", update);
     update();
+
+    // --- Formspreeへ送信 -----------------------------------------------
+    // ページ遷移するとFormspreeの完了ページに飛んでデザインが途切れるため、
+    // fetchで送ってその場で完了メッセージに差し替える。
+    const done = document.querySelector<HTMLElement>(".contact__done");
+    const error = form.querySelector<HTMLElement>(".contact__error");
+    const label = form.querySelector<HTMLElement>(".contact__submit-label");
+    // 「送　信」の全角スペースを壊さないよう、初期値をそのまま保持して戻す
+    const defaultLabel = label?.textContent ?? "";
+
+    form.addEventListener("submit", async (event) => {
+      if (!form.action) return;
+      event.preventDefault();
+      if (!submit || submit.disabled) return;
+
+      submit.disabled = true;
+      if (label) label.textContent = "送信中";
+      error?.setAttribute("hidden", "");
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { Accept: "application/json" },
+        });
+        if (!response.ok) throw new Error(`status ${response.status}`);
+
+        form.hidden = true;
+        done?.removeAttribute("hidden");
+        // 「下記のフォームにご記入いただき〜」がフォームより上に残ると矛盾するので消す。
+        // PageHeaderは別コンポーネントでscopedスタイルが届かないため直接styleを当てる
+        const pageLead = document.querySelector<HTMLElement>(".page-header__lead");
+        if (pageLead) pageLead.style.display = "none";
+        done?.scrollIntoView({ block: "center" });
+      } catch {
+        error?.removeAttribute("hidden");
+        if (label) label.textContent = defaultLabel;
+        // 入力内容は残したままなので、直して再送信できる
+        update();
+      }
+    });
   }
 </script>
 
@@ -278,6 +358,17 @@ const policy = [
       @include tablet-up {
         gap: ppx(70);
       }
+
+      // display:flex がブラウザ標準の [hidden]{display:none} に勝ってしまうため、
+      // 送信完了でフォームを隠すには明示的に打ち消す必要がある
+      &[hidden] {
+        display: none;
+      }
+    }
+
+    // ハニーポット。人には見せない
+    &__gotcha {
+      display: none;
     }
 
     &__fields {
@@ -703,6 +794,127 @@ const policy = [
         width: ppx(1107);
         font-size: ppx(24);
         letter-spacing: ppx(0.72);
+      }
+    }
+
+    // 送信失敗時のみ表示。gapぶんの余白は親のflexが持つ
+    &__error {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #c0392b;
+      text-align: center;
+      line-height: 1.8;
+      width: spx(600);
+      font-size: spx(25);
+      @include tablet-up {
+        width: ppx(1107);
+        font-size: ppx(27);
+      }
+
+      &[hidden] {
+        display: none;
+      }
+    }
+
+    // --- 送信完了 ---
+    &__done {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: spx(40);
+      padding: spx(60) 0;
+      @include tablet-up {
+        gap: ppx(60);
+        padding: ppx(140) 0;
+      }
+
+      &[hidden] {
+        display: none;
+      }
+    }
+
+    &__done-title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      line-height: 1.8;
+      font-size: spx(36);
+      letter-spacing: spx(1.8);
+      @include tablet-up {
+        font-size: ppx(40);
+        letter-spacing: ppx(2);
+      }
+    }
+
+    &__done-text {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.8;
+      font-size: spx(27);
+      @include tablet-up {
+        font-size: ppx(30);
+      }
+    }
+
+    // 送信ボタンと同じ形をそのまま流用する
+    &__done-link {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #138185;
+      border-style: solid;
+      border-color: #fff;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+      width: spx(413);
+      padding: spx(33) 0;
+      border-width: spx(2);
+      gap: spx(30);
+      font-size: spx(29);
+      line-height: spx(30);
+      letter-spacing: spx(1.45);
+      @include tablet-up {
+        width: ppx(413);
+        padding: ppx(33) 0;
+        border-width: ppx(2);
+        gap: ppx(30);
+        font-size: ppx(29);
+        line-height: ppx(30);
+        letter-spacing: ppx(1.45);
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    &__done-link-label {
+      margin-right: spx(-1.45);
+      @include tablet-up {
+        margin-right: ppx(-1.45);
+      }
+    }
+
+    &__done-link-icon {
+      display: block;
+      margin-top: spx(5);
+      width: spx(25);
+      height: spx(25);
+      @include tablet-up {
+        margin-top: ppx(5);
+        width: ppx(25);
+        height: ppx(25);
       }
     }
   }
