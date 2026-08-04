@@ -1,5 +1,14 @@
 // アクティビティのデータ。
-// 現状はFigmaのダミーをもとにした暫定データで、実データ確定時にこのファイルを差し替える。
+//
+// 実データがあるのは SUP の詳細ページのみ（supDetail）。
+// キャンプファイヤー・カヤック・樹海トレイルは dummyDetail を割り当てている。
+// 以前は supDetail を全アクティビティに流用していたため、たとえばキャンプファイヤーの
+// 詳細ページに「開催日：11月」「湖畔へ移動して漕ぎ方を説明」といった
+// もっともらしい嘘が出ていた。実データが来るまではダミーとわかる状態を保つこと。
+//
+// カードの durationLabel / priceLabel / tags / filters は4種ともFigmaのダミー値
+// （全て「約60分」「¥4,400〜」）。一覧の見た目が崩れるためそのままにしてあるが、
+// これも実データではない。
 
 import card01 from "../assets/images/activity/cards/card-01.jpg";
 import card02 from "../assets/images/activity/cards/card-02.jpg";
@@ -79,14 +88,19 @@ const description =
 
 // 詳細ページのメインビジュアル（実データ確定までは全アクティビティ共通のダミー）
 const heroPhotos = [hero01, card01, card05];
-const heroBody = [
+
+// ---------------------------------------------------------------------------
+// SUPの詳細ページ（実データ）
+// ---------------------------------------------------------------------------
+
+const supHeroBody = [
   "1日のうちで最もコンディションがよくなる確率が高いのが早朝と夕方です。",
   "1組限定のプライベートツアーで朝ならではの見どころをご案内いたします。",
   "約1時間半のツアーです。もちろんレクチャー付きなので初めてでも大丈夫です。",
 ];
 
 // lines: 1要素＝1段落。"" はSPだけの空行。SPだけの改行は <br class="detail-overview__br-sp">
-const overview = [
+const supOverview = [
   {
     label: "開催日",
     lines: [
@@ -123,7 +137,7 @@ const overview = [
   },
 ];
 
-const steps = [
+const supSteps = [
   {
     title: "受付",
     text: "キャンプビレッジＧＮＯＭＥ内のアクティビティ管理棟（赤いトレーラーハウス）にて受付を行います。",
@@ -144,7 +158,7 @@ const steps = [
   },
 ];
 
-const notes = [
+const supNotes = [
   ["基本はシングル艇でのご案内となります。"],
   [
     "景色を楽しむことに重点を置いたツアーですので落水防止のために基本的には座って乗っていただきます。",
@@ -165,7 +179,8 @@ const notes = [
   ["ペットの乗船はお断りしております。"],
 ];
 
-const price = [
+// ※カードの priceLabel「¥4,400〜」と金額が食い違っている。どちらが正か要確認
+const supPrice = [
   {
     label: "ツアー代金",
     amount: "5,500円（税込）/人",
@@ -183,6 +198,66 @@ const price = [
     ],
   },
 ];
+
+type ActivityDetail = Pick<
+  Activity,
+  "heroBody" | "overview" | "price" | "steps" | "notes"
+>;
+
+const supDetail: ActivityDetail = {
+  heroBody: supHeroBody,
+  overview: supOverview,
+  price: supPrice,
+  steps: supSteps,
+  notes: supNotes,
+};
+
+// ---------------------------------------------------------------------------
+// SUP以外の詳細ページ（実データ待ちのダミー）
+//
+// 開催日・受付場所・持ち物・料金・注意事項は現場に確認しないと書けないため、
+// 他のデータファイル（facilities.ts / hodohodo.ts / faq.ts）と同じ表記で
+// 「未確定」とわかる状態にしてある。項目数はレイアウト確認のため実データに近づけつつ、
+// 注意事項だけSUPの13項目から6項目に減らしてある。
+// ---------------------------------------------------------------------------
+
+const dummyLine = "ここに説明文が入ります。ここに説明文が入ります。";
+
+const dummyDetail: ActivityDetail = {
+  heroBody: [dummyLine, dummyLine, dummyLine],
+  overview: [
+    { label: "開催日", lines: ["◯◯月〜◯◯月", "※事前予約制になります。"] },
+    { label: "受付場所", lines: ["◯◯◯◯◯◯◯◯◯◯◯◯"] },
+    { label: "受付時間", lines: ["◯◯時◯◯分集合　◯◯時開始"] },
+    { label: "対象年齢", lines: ["◯◯◯◯以上", "", "※◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"] },
+    { label: "お子様の利用", lines: ["◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"] },
+  ],
+  price: [
+    {
+      label: "ツアー代金",
+      amount: "◯,◯◯◯円（税込）/人",
+      amountNote: "　◯名様より",
+      lines: ["※◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"],
+    },
+    { label: "キャンセル料", lines: ["当日　◯◯%　前日　◯◯%"] },
+  ],
+  steps: [
+    { title: "受付", text: dummyLine },
+    { title: "誓約書にサイン", text: dummyLine },
+    { title: "道具のお渡し", text: dummyLine },
+    { title: "レクチャー", text: dummyLine },
+    { title: "開始", text: dummyLine },
+    { title: "終了", text: dummyLine },
+  ],
+  notes: [
+    ["◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"],
+    ["◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"],
+    ["◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"],
+    ["◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"],
+    ["◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"],
+    ["◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯◯"],
+  ],
+};
 
 const base = [
   {
@@ -204,6 +279,7 @@ const base = [
       weather: ["晴れ"],
       reservation: ["要予約"],
     },
+    detail: supDetail,
   },
   {
     key: "campfire",
@@ -224,6 +300,7 @@ const base = [
       weather: ["晴れ", "雨天可"],
       reservation: ["要予約"],
     },
+    detail: dummyDetail,
   },
   {
     key: "kayak",
@@ -244,6 +321,7 @@ const base = [
       weather: ["晴れ"],
       reservation: ["要予約"],
     },
+    detail: dummyDetail,
   },
   {
     key: "trail",
@@ -264,6 +342,7 @@ const base = [
       weather: ["晴れ", "雨天可"],
       reservation: ["要予約"],
     },
+    detail: dummyDetail,
   },
 ] satisfies Array<
   Omit<
@@ -277,24 +356,20 @@ const base = [
     | "price"
     | "steps"
     | "notes"
-  > & { key: string }
+  > & { key: string; detail: ActivityDetail }
 >;
 
 /** Figmaのダミー（4種 × 3周 = 12件）を再現した暫定データ */
 export const activities: Activity[] = Array.from({ length: 12 }, (_, i) => {
-  const { key, ...rest } = base[i % base.length];
+  const { key, detail, ...rest } = base[i % base.length];
   const round = Math.floor(i / base.length);
   return {
     ...rest,
+    ...detail,
     slug: round === 0 ? key : `${key}-${round + 1}`,
     photo: photos[i % photos.length],
     description,
     heroPhotos,
-    heroBody,
-    overview,
-    price,
-    steps,
-    notes,
   };
 });
 
