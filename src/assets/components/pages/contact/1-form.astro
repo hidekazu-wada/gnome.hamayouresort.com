@@ -7,11 +7,18 @@ import IconArrowWhite from "../../../images/news/icon-circle-arrow-white.svg";
 
 // Formspree（アカウント HAMAYOU RESORT / プロジェクト GNOME / フォーム Inquiry）。
 // 送信先は gnome@hamayouresort.com。JSでfetch送信し、成功したら完了メッセージに差し替える。
-// JSが動かない環境では通常のPOSTとしてFormspreeの完了ページに遷移する（フォールバック）。
+// reCAPTCHA v3 のトークンが必須なので、JSが動かない環境では送信できない
+// （電話番号は常時表示しているのでそちらへ誘導される）。
 const FORM_ACTION = "https://formspree.io/f/mbgrrlep";
 
 // 件名。他サイトのフォームと同じ受信箱に届いても見分けがつくようにする
 const MAIL_SUBJECT = "【GNOME】お問い合わせ";
+
+// reCAPTCHA v3 のサイトキー。ブラウザのソースから誰でも読める公開情報なので、
+// ここに直接書いてコミットしてよい（秘匿が必要なのはシークレットキーのほうで、
+// そちらはFormspreeの設定画面にのみ入れる。コードには登場しない）。
+// ↓ の "" の中に Google Cloud で発行したサイトキーを貼る
+const RECAPTCHA_SITE_KEY = "6Le_lQ4aAAAAABd-UvFqrCw0De2awPx1gpF2tzxK";
 
 const fields: {
   name: string;
@@ -111,7 +118,15 @@ const policy = [
   >
   </div>
 
-  <form class="contact__form" action={FORM_ACTION} method="post" novalidate>
+  <!-- Astroのscriptブロックはフロントマターの変数を直接参照できないため、
+       サイトキーはdata属性経由で渡す -->
+  <form
+    class="contact__form"
+    action={FORM_ACTION}
+    method="post"
+    novalidate
+    data-sitekey={RECAPTCHA_SITE_KEY}
+  >
     <input type="hidden" name="_subject" value={MAIL_SUBJECT} />
     <!-- ハニーポット。人には見えないのでボットが埋めたらスパムと判定される -->
     <input
@@ -247,7 +262,27 @@ const policy = [
   </div>
 </section>
 
+<!-- reCAPTCHA v3。is:inline でAstroのバンドル対象から外す -->
+<script
+  is:inline
+  async
+  defer
+  src={`https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`}
+></script>
+
 <script>
+  declare global {
+    interface Window {
+      grecaptcha?: {
+        ready: (callback: () => void) => void;
+        execute: (
+          siteKey: string,
+          options: { action: string },
+        ) => Promise<string>;
+      };
+    }
+  }
+
   // ClientRouter未使用のため直接初期化する
   const form = document.querySelector<HTMLFormElement>(".contact__form");
 
@@ -281,6 +316,25 @@ const policy = [
     // 「送　信」の全角スペースを壊さないよう、初期値をそのまま保持して戻す
     const defaultLabel = label?.textContent ?? "";
 
+    // reCAPTCHA v3 のトークンを取る。Formspreeは "g-recaptcha-response" という
+    // 名前のフィールドしか見ないので、この名前は変えないこと。
+    // スクリプトが読めなかった場合はrejectしてcatchに落とし、
+    // エラーメッセージ（電話番号つき）を出す。黙って素通りさせない
+    const getRecaptchaToken = () =>
+      new Promise<string>((resolve, reject) => {
+        const siteKey = form.dataset.sitekey;
+        const grecaptcha = window.grecaptcha;
+        if (!siteKey || !grecaptcha) {
+          reject(new Error("reCAPTCHA is not available"));
+          return;
+        }
+        grecaptcha.ready(() => {
+          grecaptcha
+            .execute(siteKey, { action: "submit" })
+            .then(resolve, reject);
+        });
+      });
+
     form.addEventListener("submit", async (event) => {
       if (!form.action) return;
       event.preventDefault();
@@ -291,9 +345,12 @@ const policy = [
       error?.setAttribute("hidden", "");
 
       try {
+        const body = new FormData(form);
+        body.append("g-recaptcha-response", await getRecaptchaToken());
+
         const response = await fetch(form.action, {
           method: "POST",
-          body: new FormData(form),
+          body,
           headers: { Accept: "application/json" },
         });
         if (!response.ok) throw new Error(`status ${response.status}`);
@@ -302,7 +359,8 @@ const policy = [
         done?.removeAttribute("hidden");
         // 「下記のフォームにご記入いただき〜」がフォームより上に残ると矛盾するので消す。
         // PageHeaderは別コンポーネントでscopedスタイルが届かないため直接styleを当てる
-        const pageLead = document.querySelector<HTMLElement>(".page-header__lead");
+        const pageLead =
+          document.querySelector<HTMLElement>(".page-header__lead");
         if (pageLead) pageLead.style.display = "none";
         done?.scrollIntoView({ block: "center" });
       } catch {
@@ -320,6 +378,15 @@ const policy = [
   @import "../../../../styles/variables";
   @import "../../../../styles/functions";
   @import "../../../../styles/mixins";
+
+  // reCAPTCHA v3 が画面右下に固定表示するバッジを隠す。
+  // Googleはバッジを隠すこと自体は認めているが、代わりに
+  // 「This site is protected by reCAPTCHA〜」の注記の掲示を条件にしている。
+  // 送信ボタン下の .contact__recaptcha がそれなので、消さないこと。
+  // バッジはこのコンポーネントの外に生成されるので :global が要る
+  :global(.grecaptcha-badge) {
+    visibility: hidden;
+  }
 
   .contact {
     position: relative;
