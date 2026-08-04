@@ -38,8 +38,7 @@ export const facilities: Facility[] = [
   { title: "トイレ", lines: dummy, photo: toilet },
   { title: "炊事場", lines: dummy, photo: kitchen },
   { title: "体育館", lines: dummy },
-  // 遷移先は確定待ち
-  // いずみの湯は姉妹サイトへ（プレイパーク・KokkoはURL確定待ち）
+  // いずみの湯だけ姉妹サイトへ。残り3つはサイト内の詳細ページ
   { title: "温泉（いずみの湯）", lines: dummy, photo: onsen, href: "https://izuminoyu.hamayouresort.com/" },
   {
     title: "ほどほどの森",
@@ -47,12 +46,12 @@ export const facilities: Facility[] = [
     photo: hodohodo,
     href: "/facility/hodohodo/",
   },
-  { title: "プレイパーク", lines: dummy, href: "#" },
+  { title: "プレイパーク", lines: dummy, href: "/facility/playpark/" },
   {
     title: "Kokko",
     small: "BBQ and Activity",
     lines: dummy,
     photo: kokko,
-    href: "#",
+    href: "/facility/kokko/",
   },
 ];

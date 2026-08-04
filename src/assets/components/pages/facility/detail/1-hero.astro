@@ -2,66 +2,94 @@
 // メインSCSSファイルをインポート
 import "../../../../../styles/main.scss";
 
-import CampIllust from "../../../../images/facility/hodohodo/camp-illust.svg";
-import { hodohodoHeroPhotos } from "../../../../../data/hodohodo";
+import type { FacilityDetail } from "../../../../../data/facilityDetails";
+
+// ほどほどの森／プレイパーク／Kokko の3ページで共有する
+interface Props {
+  detail: FacilityDetail;
+}
+
+const { detail } = Astro.props;
+
+// 写真が未支給の施設はグレーの箱を出す。ドットは2枚以上のときだけ
+const hasPhotos = detail.heroPhotos.length > 0;
+const hasDots = detail.heroPhotos.length > 1;
 ---
 
 <section class="hodo-hero">
   <div class="hodo-hero__head">
-    <h1 class="hodo-hero__title">ほどほどの森</h1>
+    {detail.nameSub && <p class="hodo-hero__title-sub">{detail.nameSub}</p>}
+    <h1 class="hodo-hero__title">{detail.name}</h1>
     <div class="hodo-hero__title-line" aria-hidden="true"></div>
-    <p class="hodo-hero__badge">ご利用料：無料</p>
-    <p class="hodo-hero__note">
-      ※源泉、サウナ、貸切のご利用は有料となります。<br />
-      ※貸切利用中はご利用いただけません。また、ご利用はご宿泊されているお客様に限ります。
-    </p>
+    {detail.badge && <p class="hodo-hero__badge">{detail.badge}</p>}
+    {
+      detail.notes && (
+        <p class="hodo-hero__note">
+          {detail.notes.map((note, i) => (
+            <>
+              {i > 0 && <br />}
+              {note}
+            </>
+          ))}
+        </p>
+      )
+    }
   </div>
 
-  <div class="hodo-hero__card">
+  <div
+    class:list={["hodo-hero__card", { "is-no-illust": !detail.illustration }]}
+  >
     <div class="hodo-hero__visual">
       <!-- 写真は自動再生でディゾルブ切り替え -->
       <div class="hodo-hero__photos">
         {
-          hodohodoHeroPhotos.map((photo, i) => (
-            <img
-              class:list={["hodo-hero__photo", { "is-active": i === 0 }]}
-              src={photo.src}
-              width={photo.width}
-              height={photo.height}
-              alt=""
-              loading={i === 0 ? "eager" : "lazy"}
-            />
-          ))
+          hasPhotos ? (
+            detail.heroPhotos.map((photo, i) => (
+              <img
+                class:list={["hodo-hero__photo", { "is-active": i === 0 }]}
+                src={photo.src}
+                width={photo.width}
+                height={photo.height}
+                alt=""
+                loading={i === 0 ? "eager" : "lazy"}
+              />
+            ))
+          ) : (
+            <div class="hodo-hero__photo hodo-hero__photo--empty is-active" />
+          )
         }
       </div>
 
-      <ul class="hodo-hero__dots">
-        {
-          hodohodoHeroPhotos.map((_, i) => (
-            <li>
-              <button
-                class:list={["hodo-hero__dot", { "is-active": i === 0 }]}
-                type="button"
-                data-index={i}
-                aria-label={`${i + 1}枚目の写真を表示`}
-              />
-            </li>
-          ))
-        }
-      </ul>
+      {
+        hasDots && (
+          <ul class="hodo-hero__dots">
+            {detail.heroPhotos.map((_, i) => (
+              <li>
+                <button
+                  class:list={["hodo-hero__dot", { "is-active": i === 0 }]}
+                  type="button"
+                  data-index={i}
+                  aria-label={`${i + 1}枚目の写真を表示`}
+                />
+              </li>
+            ))}
+          </ul>
+        )
+      }
     </div>
 
     <!-- キャンプサイトのイラスト（SPは写真の下、PCは本文カラムの上に重ねる） -->
-    <img class="hodo-hero__illust" src={CampIllust.src} alt="" />
+    {
+      detail.illustration && (
+        <img class="hodo-hero__illust" src={detail.illustration.src} alt="" />
+      )
+    }
 
     <div class="hodo-hero__text">
       <p class="hodo-hero__lead">
-        <span>すべてがちょうどいい！</span>
-        <span>プライベートな森！</span>
+        {detail.lead.map((line) => <span>{line}</span>)}
       </p>
-      <p class="hodo-hero__body">
-        道路を渡ってすぐ隣に広がる1,000㎡のカラマツ林。ほどよい間隔で間伐してあり、夏は涼しい木陰に、秋は林が黄金色に輝き、冬は沢山の陽の光が差し込みます。西湖唯一の天然温泉をかけ流しにした足湯やサウナ小屋、キャンプ、アウトドア体験が楽しめます。
-      </p>
+      <p class="hodo-hero__body">{detail.body}</p>
     </div>
   </div>
 </section>
@@ -130,6 +158,26 @@ import { hodohodoHeroPhotos } from "../../../../../data/hodohodo";
       gap: spx(30);
       @include tablet-up {
         gap: ppx(30);
+      }
+    }
+
+    // 施設名の上に小さく乗る英字（Kokkoのみ）
+    &__title-sub {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      line-height: 1.6;
+      // 見出しとの間はgap(30)ではなく詰めたいので相殺する
+      margin-bottom: spx(-20);
+      font-size: spx(28);
+      letter-spacing: spx(2.8);
+      margin-right: spx(-2.8);
+      @include tablet-up {
+        margin-bottom: ppx(-20);
+        font-size: ppx(45);
+        letter-spacing: ppx(4.5);
+        margin-right: ppx(-4.5);
       }
     }
 
@@ -276,6 +324,11 @@ import { hodohodoHeroPhotos } from "../../../../../data/hodohodo";
       opacity: 1;
     }
 
+    // 写真が未支給の施設はグレーで置いておく（カードのアイテムと同じ扱い）
+    &__photo--empty {
+      background-color: #c4c4c4;
+    }
+
     &__dots {
       display: flex;
       align-items: center;
@@ -318,6 +371,8 @@ import { hodohodoHeroPhotos } from "../../../../../data/hodohodo";
       }
     }
 
+    // PCの padding-top はイラストを避けるための余白。
+    // イラストを持たない施設（プレイパーク／Kokko）では不要なので詰める
     &__text {
       display: flex;
       flex-direction: column;
@@ -326,6 +381,12 @@ import { hodohodoHeroPhotos } from "../../../../../data/hodohodo";
       @include tablet-up {
         padding-top: ppx(190);
         gap: ppx(30);
+      }
+    }
+
+    &__card.is-no-illust &__text {
+      @include tablet-up {
+        padding-top: 0;
       }
     }
 

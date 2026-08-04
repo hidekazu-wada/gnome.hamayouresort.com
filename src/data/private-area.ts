@@ -84,7 +84,7 @@ export const privateAreas: PrivateArea[] = [
     mainIllustration: mainPlaypark,
     bg: "plain",
     body: dummyBody,
-    detailHref: "/facility/",
+    detailHref: "/facility/playpark/",
     features: [
       { title: "サッカーゴール", note: dummyNote },
       { title: "ストラックアウト", note: dummyNote },
@@ -102,7 +102,7 @@ export const privateAreas: PrivateArea[] = [
     spIllustration: illustKokko,
     bg: "green",
     body: dummyBody,
-    detailHref: "/facility/",
+    detailHref: "/facility/kokko/",
     features: [
       { title: "BBQ", note: dummyNote },
       { title: "飯盒炊爨", note: dummyNote },

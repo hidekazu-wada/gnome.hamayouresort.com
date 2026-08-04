@@ -3,19 +3,26 @@
 import "../../../../../styles/main.scss";
 
 import IconArrow from "../../../../images/facility/icon-arrow.svg";
-import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
+import type { FacilityDetail } from "../../../../../data/facilityDetails";
+
+// ほどほどの森／プレイパーク／Kokko の3ページで共有する
+interface Props {
+  detail: FacilityDetail;
+}
+
+const { detail } = Astro.props;
 ---
 
 <section class="hodo-items">
   <div class="hodo-items__head">
     {/* SPは「で」のあとで折る */}
-    <h2 class="hodo-items__title">“<span class="hodo-items__title-em">ほどほどの森</span>”で<br class="hodo-items__br-sp" />できること</h2>
+    <h2 class="hodo-items__title">“<span class="hodo-items__title-em">{detail.name}</span>”で<br class="hodo-items__br-sp" />できること</h2>
     <div class="hodo-items__title-line" aria-hidden="true"></div>
   </div>
 
   <ul class="hodo-items__grid">
     {
-      hodohodoItems.map((item) => (
+      detail.items.map((item) => (
         <li class="hodo-items__card">
           {item.photo ? (
             <img
@@ -41,7 +48,7 @@ import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
             ))}
           </p>
 
-          {item.hasFee && (
+          {item.hasFee && detail.fee && (
             <button class="hodo-items__fee" type="button" data-fee-open>
               <span>利用料</span>
               <img class="hodo-items__fee-icon" src={IconArrow.src} alt="" />
@@ -55,23 +62,27 @@ import { hodohodoItems, hodohodoFee } from "../../../../../data/hodohodo";
   {/* SPだけの施設詳細ボタン（Figma SPにのみ存在。リンク先は確定待ち） */}
   <a class="hodo-items__detail" href="/facility/">施設詳細はこちら</a>
 
-  {/* 利用料モーダル（背景クリック・ESCで閉じる） */}
-  <dialog class="hodo-items__fee-modal" data-fee-modal aria-label="利用料">
-    <div class="hodo-items__fee-body">
-      <div class="hodo-items__fee-row">
-        <p class="hodo-items__fee-label">料金</p>
-        <p class="hodo-items__fee-value">{hodohodoFee.price}</p>
-      </div>
-      <div class="hodo-items__fee-row">
-        <p class="hodo-items__fee-label">注意事項</p>
-        <ul class="hodo-items__fee-notes">
-          {hodohodoFee.notes.map((note) => (
-            <li class="hodo-items__fee-note">・{note}</li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  </dialog>
+  {/* 利用料モーダル（背景クリック・ESCで閉じる）。fee を持つ施設だけ */}
+  {
+    detail.fee && (
+      <dialog class="hodo-items__fee-modal" data-fee-modal aria-label="利用料">
+        <div class="hodo-items__fee-body">
+          <div class="hodo-items__fee-row">
+            <p class="hodo-items__fee-label">料金</p>
+            <p class="hodo-items__fee-value">{detail.fee.price}</p>
+          </div>
+          <div class="hodo-items__fee-row">
+            <p class="hodo-items__fee-label">注意事項</p>
+            <ul class="hodo-items__fee-notes">
+              {detail.fee.notes.map((note) => (
+                <li class="hodo-items__fee-note">・{note}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </dialog>
+    )
+  }
 </section>
 
 <script>

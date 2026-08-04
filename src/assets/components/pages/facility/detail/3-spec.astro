@@ -2,7 +2,14 @@
 // メインSCSSファイルをインポート
 import "../../../../../styles/main.scss";
 
-import { hodohodoSpec } from "../../../../../data/hodohodo";
+import type { FacilityDetail } from "../../../../../data/facilityDetails";
+
+// ほどほどの森／プレイパーク／Kokko の3ページで共有する
+interface Props {
+  detail: FacilityDetail;
+}
+
+const { detail } = Astro.props;
 ---
 
 <section class="hodo-spec">
@@ -13,7 +20,7 @@ import { hodohodoSpec } from "../../../../../data/hodohodo";
 
   <dl class="hodo-spec__table">
     {
-      hodohodoSpec.map((row) => (
+      detail.spec.map((row) => (
         <div class="hodo-spec__row">
           <dt class="hodo-spec__label">{row.label}</dt>
           <dd class="hodo-spec__value">
