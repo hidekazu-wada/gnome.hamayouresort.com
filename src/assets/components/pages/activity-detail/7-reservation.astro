@@ -30,6 +30,10 @@ const WEB_RESERVE_URL = "https://www.nap-camp.com/yamanashi/13592";
 const webUrl = reservation?.url ?? WEB_RESERVE_URL;
 const webLabel = reservation?.label ?? "WEB予約はこちら";
 const webNote = reservation?.note ?? "（ 受付時間 24時間 ）";
+
+// 遷移先が外部サイトのときだけ別タブで開く。
+// せのうみツアーは自サイトの /contact/ に飛ばすので同じタブのまま
+const isExternal = webUrl.startsWith("http");
 ---
 
 <!-- 注意事項 → 予約方法 の繋ぎ -->
@@ -64,7 +68,12 @@ const webNote = reservation?.note ?? "（ 受付時間 24時間 ）";
       </span>
       <span class="detail-reservation__card-note">（ 受付時間 9:00~17:00 ）</span>
     </a>
-    <a class="detail-reservation__card" href={webUrl} target="_blank" rel="noopener noreferrer">
+    <a
+      class="detail-reservation__card"
+      href={webUrl}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
+    >
       <span class="detail-reservation__card-main detail-reservation__card-main--web">
         {webLabel}
       </span>
