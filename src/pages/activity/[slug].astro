@@ -53,6 +53,6 @@ const lead = activity.lead.replace(/<[^>]+>/g, "");
   <Price activity={activity} />
   <Flow activity={activity} />
   <Notes activity={activity} />
-  <Reservation />
+  <Reservation reservation={activity.reservation} />
   <Related activity={activity} />
 </BaseLayout>

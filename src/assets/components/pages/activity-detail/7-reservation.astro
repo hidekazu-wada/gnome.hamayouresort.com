@@ -8,9 +8,28 @@ import PaperTexturePlain from "../../../images/common/paper-texture-plain.png";
 import WavePc from "../../../images/activity/detail/wave-to-reservation.webp";
 import WaveSp from "../../../images/activity/detail/wave-to-reservation-sp.webp";
 
+interface Props {
+  /**
+   * アクティビティ個別の予約先。省略するとノーム共通（TEL＋なっぷ）になる。
+   * 主催が外部のアクティビティ（Hobie / カヤック）はここで上書きする。
+   */
+  reservation?: {
+    url: string;
+    label?: string;
+    note?: string;
+    operatorNote?: string;
+  };
+}
+
+const { reservation } = Astro.props;
+
 // 予約先はサイト共通（URL確定後に差し替え）
 const TEL = "0555-82-2650";
 const WEB_RESERVE_URL = "https://www.nap-camp.com/yamanashi/13592";
+
+const webUrl = reservation?.url ?? WEB_RESERVE_URL;
+const webLabel = reservation?.label ?? "WEB予約はこちら";
+const webNote = reservation?.note ?? "（ 受付時間 24時間 ）";
 ---
 
 <!-- 注意事項 → 予約方法 の繋ぎ -->
@@ -45,18 +64,19 @@ const WEB_RESERVE_URL = "https://www.nap-camp.com/yamanashi/13592";
       </span>
       <span class="detail-reservation__card-note">（ 受付時間 9:00~17:00 ）</span>
     </a>
-    <a
-      class="detail-reservation__card"
-      href={WEB_RESERVE_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
+    <a class="detail-reservation__card" href={webUrl} target="_blank" rel="noopener noreferrer">
       <span class="detail-reservation__card-main detail-reservation__card-main--web">
-        WEB予約はこちら
+        {webLabel}
       </span>
-      <span class="detail-reservation__card-note">（ 受付時間 24時間 ）</span>
+      <span class="detail-reservation__card-note">{webNote}</span>
     </a>
   </div>
+
+  {
+    reservation?.operatorNote && (
+      <p class="detail-reservation__operator">{reservation.operatorNote}</p>
+    )
+  }
 </section>
 
 <style lang="scss">
@@ -255,6 +275,27 @@ const WEB_RESERVE_URL = "https://www.nap-camp.com/yamanashi/13592";
       font-size: spx(33);
       @include tablet-up {
         font-size: ppx(41);
+      }
+    }
+
+    // 主催が外部のアクティビティに出す注記
+    &__operator {
+      position: relative;
+      z-index: 1;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 400;
+      color: #7c6351;
+      text-align: center;
+      line-height: 1.8;
+      width: spx(600);
+      font-size: spx(24);
+      letter-spacing: spx(1.2);
+      margin-right: spx(-1.2);
+      @include tablet-up {
+        width: ppx(1600);
+        font-size: ppx(28);
+        letter-spacing: ppx(1.4);
+        margin-right: ppx(-1.4);
       }
     }
 
