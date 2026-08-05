@@ -10,25 +10,30 @@ import TreeTl from "../../../images/top/3-activity/tree-tl.svg";
 import TreeBr from "../../../images/top/3-activity/tree-br.svg";
 import Sunburst from "../../../images/top/3-activity/sunburst.png";
 import Arrow from "../../../images/top/3-activity/arrow.svg";
-import CardSup from "../../../images/top/3-activity/card-sup.jpg";
-import CardFire from "../../../images/top/3-activity/card-fire.jpg";
-import CardKayak from "../../../images/top/3-activity/card-kayak.jpg";
-import CardForest from "../../../images/top/3-activity/card-forest.jpg";
 import MoreArrow from "../../../images/top/3-activity/more-arrow.svg";
+import { activities } from "../../../../data/activities";
 
-// アクティビティカード（後半はダミー：画像を使い回し）
-const cards = [
-  { label: "SUPツアー", vertical: "水の上を歩く", img: CardSup },
-  { label: "キャンプファイヤー", vertical: "火と向き合う", img: CardFire },
-  { label: "Hobie 足漕ぎカヤック", vertical: "自然から共生を学ぶ", img: CardKayak },
-  { label: "樹海トレイル", vertical: "森に触れる", img: CardForest },
-  { label: "カヌー体験", vertical: "湖を旅する", img: CardSup },
-  { label: "星空観察", vertical: "夜空を見上げる", img: CardFire },
-  { label: "フォレストヨガ", vertical: "森で整える", img: CardForest },
-  { label: "湖畔サイクリング", vertical: "風を感じる", img: CardKayak },
-  { label: "BBQ体験", vertical: "囲んで味わう", img: CardFire },
-  { label: "早朝カヤック", vertical: "静寂を漕ぐ", img: CardKayak },
-];
+// カードは activities.ts の10種をそのまま出す。写真も各アクティビティのものを使う。
+// 縦書きのキャッチだけスライダー用にここで持つ（一覧ページには出ない文言のため）
+const verticals: Record<string, string> = {
+  "sup-tour": "朝いちばんの湖へ",
+  "sup-rental": "水の上を歩く",
+  "pedal-boards": "両手を空けて進む",
+  kayak: "二人で漕ぎ出す",
+  "jukai-tour": "森に触れる",
+  "jukai-morning": "光の美しい時間に",
+  "senoumi-saiko": "すべて人力で巡る",
+  "senoumi-motosu": "古の路をたどる",
+  "senoumi-shoji": "地下と地上を旅する",
+  "private-sauna": "火と水に整えられる",
+};
+
+const cards = activities.map((activity) => ({
+  label: activity.title,
+  vertical: verticals[activity.slug] ?? "",
+  img: activity.photo,
+  href: `/activity/${activity.slug}/`,
+}));
 ---
 
 <section class="activity">
@@ -68,7 +73,7 @@ const cards = [
           {
             cards.map((card) => (
               <div class="swiper-slide activity__slide">
-                <div class="activity__card">
+                <a class="activity__card" href={card.href}>
                   <p class="activity__card-label">{card.label}</p>
                   <div class="activity__card-box">
                     <img
@@ -79,7 +84,7 @@ const cards = [
                     <p class="activity__card-vertical">{card.vertical}</p>
                     <img class="activity__card-arrow" src={Arrow.src} alt="" />
                   </div>
-                </div>
+                </a>
               </div>
             ))
           }
