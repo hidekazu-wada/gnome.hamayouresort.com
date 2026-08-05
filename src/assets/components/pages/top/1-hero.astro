@@ -13,15 +13,31 @@ import Tent from "../../../images/top/1-hero/tent.svg";
 <section class="hero">
   <!-- 背景動画 -->
   <div class="hero__movie">
+    <!--
+      SP（〜743px）はheroが縦長で横版動画の中央25%しか映らないため、
+      縦クロップ版 hero-sp.mp4（486x1080・約10MB）に切り替えて通信量を減らす。
+      744px以上（TB・PC）は横版 hero.mp4（1600x900・約29MB）。
+      src を書かずに直後のインラインスクリプトで即時セットすることで、
+      不要な方の動画をダウンロードさせない。切り替えは読み込み時の1回だけ
+      （リサイズ追従はしない。途中で差し替わると再生位置がリセットされるため）
+    -->
     <video
       class="hero__movie-video"
-      src="/movie/hero.mp4"
+      data-src-sp="/movie/hero-sp.mp4"
+      data-src-pc="/movie/hero.mp4"
       poster="/movie/hero-poster.jpg"
       autoplay
       muted
       loop
       playsinline
     ></video>
+    <script is:inline>
+      {
+        const video = document.currentScript.previousElementSibling;
+        const isSp = window.matchMedia("(max-width: 743px)").matches;
+        video.src = isSp ? video.dataset.srcSp : video.dataset.srcPc;
+      }
+    </script>
   </div>
 
   <!-- ロゴ（SP=ワードマーク / TB・PC=バッジ） -->
