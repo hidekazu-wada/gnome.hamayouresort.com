@@ -10,9 +10,13 @@ import Sunburst from "../../../images/top/3-activity/sunburst.png";
 import MoreArrow from "../../../images/top/3-activity/more-arrow.svg";
 import WinterMain from "../../../images/top/4-season/winter-main.jpg";
 import WinterSub from "../../../images/top/4-season/winter-sub.jpg";
-import EnjoyWinter from "../../../images/top/4-season/enjoy-winter.svg";
+// イラストは四季ページ（/season/）と同じものを流用する
+import IllustSpring from "../../../images/season/illust-spring.svg";
+import IllustSummer from "../../../images/season/illust-summer.svg";
+import IllustAutumn from "../../../images/season/illust-autumn.svg";
+import IllustWinter from "../../../images/season/illust-winter.svg";
 
-// 季節データ（冬のみ実素材、春夏秋はダミー）
+// 季節データ（写真は冬のみ実素材、春夏秋はダミー）
 const seasons = [
   {
     key: "spring",
@@ -20,6 +24,7 @@ const seasons = [
     en: "Spring",
     big: "Spring",
     caption: "芽吹きの季節、鮮やかな新緑",
+    illust: IllustSpring.src,
   },
   {
     key: "summer",
@@ -27,6 +32,7 @@ const seasons = [
     en: "Summer",
     big: "Summer",
     caption: "湖畔で過ごす、爽やかな夏",
+    illust: IllustSummer.src,
   },
   {
     key: "autumn",
@@ -34,6 +40,7 @@ const seasons = [
     en: "Autumn",
     big: "Autumn",
     caption: "紅葉に染まる、実りの秋",
+    illust: IllustAutumn.src,
   },
   {
     key: "winter",
@@ -41,8 +48,12 @@ const seasons = [
     en: "Winter",
     big: "Winter",
     caption: "凛とした空気で、際立つ景色",
+    illust: IllustWinter.src,
   },
 ];
+
+// 初期表示の季節。ボタンの is-active と揃える
+const INITIAL = "winter";
 ---
 
 <section class="season">
@@ -74,17 +85,26 @@ const seasons = [
           </div>
         </div>
 
-        <!-- サブ画像＋Enjoy Winterイラスト（SPは横並び / PCは絶対配置） -->
+        <!-- サブ画像＋季節イラスト（SPは横並び / PCは絶対配置） -->
         <div class="season__row">
-          <div class="season__sub">
+          <!-- 写真から選択中の季節のセクションへ飛ばす。hrefはボタン切替時に差し替える -->
+          <a class="season__sub" href={`/season/#${INITIAL}`} data-season-link>
             <img class="season__sub-img" src={WinterSub.src} alt="" />
-          </div>
+          </a>
           <div class="season__illust">
-            <img
-              class="season__illust-img"
-              src={EnjoyWinter.src}
-              alt="Enjoy Winter"
-            />
+            {
+              seasons.map((s) => (
+                <img
+                  class:list={[
+                    "season__illust-img",
+                    { "is-active": s.key === INITIAL },
+                  ]}
+                  src={s.illust}
+                  alt={s.key === INITIAL ? `Enjoy ${s.en}` : ""}
+                  data-season-illust={s.key}
+                />
+              ))
+            }
           </div>
         </div>
 
@@ -429,12 +449,22 @@ const seasons = [
     }
 
     // サブ画像
+    // 選択中の季節のセクションへのリンク。写真がリンクだと気づきにくいので
+    // ホバーでわずかに明るくして手がかりを出す
     &__sub {
       position: relative;
+      display: block;
       flex-shrink: 0;
       width: spx(315);
       aspect-ratio: 1 / 1;
       overflow: hidden;
+      transition: opacity 0.3s ease;
+
+      @include hover {
+        &:hover {
+          opacity: 0.8;
+        }
+      }
       @include tablet-up {
         position: absolute;
         left: ppx(1677);
@@ -453,9 +483,14 @@ const seasons = [
     }
 
     // Enjoy Winter イラスト
+    // 4季節ぶんのイラストを重ねてディゾルブで切り替える。
+    // 縦横比が季節ごとにかなり違う（冬1.12 / 春1.61 / 秋1.63 / 夏1.98）ので、
+    // 幅をそろえて下端を基準に重ね、枠の高さはいちばん背の高い冬に合わせる
     &__illust {
+      position: relative;
       flex-shrink: 0;
       width: spx(305);
+      aspect-ratio: 480 / 430;
       // タブレットは0.9掛けで右上へ（下の画像とPC同等の間隔を確保）
       @include tablet-up {
         position: absolute;
@@ -472,9 +507,18 @@ const seasons = [
     }
 
     &__illust-img {
+      position: absolute;
+      left: 0;
+      bottom: 0;
       display: block;
       width: 100%;
       height: auto;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+
+      &.is-active {
+        opacity: 1;
+      }
     }
 
     // MORE ボタン（ACTIVITYセクションと同じ体裁）
@@ -633,20 +677,35 @@ const seasons = [
 </style>
 
 <script>
-  // 季節ボタンで大きな季節名・キャプション・アクティブ状態を切り替え
-  // ※画像は現状すべて冬のダミー（春夏秋の実素材は後で差し替え）
+  // 季節ボタンで大きな季節名・キャプション・イラスト・写真のリンク先を切り替え
+  // ※写真は現状すべて冬のダミー（春夏秋の実素材は後で差し替え）
   const buttons =
     document.querySelectorAll<HTMLButtonElement>(".season__btn");
   const bigEl = document.querySelector<HTMLElement>("[data-season-big]");
   const captionEl =
     document.querySelector<HTMLElement>("[data-season-caption]");
+  const illusts =
+    document.querySelectorAll<HTMLImageElement>("[data-season-illust]");
+  const subLink = document.querySelector<HTMLAnchorElement>("[data-season-link]");
 
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
+      const key = btn.dataset.season || "";
       buttons.forEach((b) => b.classList.remove("is-active"));
       btn.classList.add("is-active");
       if (bigEl) bigEl.textContent = btn.dataset.big || "";
       if (captionEl) captionEl.textContent = btn.dataset.caption || "";
+
+      // イラストはCSSのopacityでディゾルブする
+      illusts.forEach((img) => {
+        const on = img.dataset.seasonIllust === key;
+        img.classList.toggle("is-active", on);
+        // 読み上げ対象は表示中の1枚だけにする
+        img.alt = on ? `Enjoy ${btn.dataset.big || ""}` : "";
+      });
+
+      // 写真のリンク先も選択中の季節に合わせる
+      if (subLink) subLink.href = `/season/#${key}`;
     });
   });
 </script>
