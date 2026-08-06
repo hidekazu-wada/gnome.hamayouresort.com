@@ -89,7 +89,10 @@ const notes = [
       }
     }
 
+    // 3-price と同じ。波の下端の行が境目に線として出るので1px上へ逃がす
     &__img {
+      position: relative;
+      top: -1px;
       display: block;
       width: 100%;
       height: auto;
