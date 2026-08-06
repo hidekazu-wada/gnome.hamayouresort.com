@@ -92,7 +92,10 @@ const { stay } = Astro.props;
       }
     }
 
+    // 3-price と同じ理由。波の上端の薄い行が境目に出るので1px上へ逃がす
     &__img {
+      position: relative;
+      top: -1px;
       display: block;
       width: 100%;
       height: auto;

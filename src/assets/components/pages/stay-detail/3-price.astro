@@ -167,7 +167,13 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
       }
     }
 
+    // 波の絵はかすれたブラシで描かれていて、下端の1行だけ塗りが薄い。
+    // 枠の境目とその行が重なると、下地が透けて細い明るい線に見える。
+    // ここは薄い行が画像の下端側にあるので、1px下へずらして料金セクションの
+    // ベタ塗りに被せて隠す（上へずらすと逆に線が濃くなる）
     &__img {
+      position: relative;
+      top: 1px;
       display: block;
       width: 100%;
       height: auto;
