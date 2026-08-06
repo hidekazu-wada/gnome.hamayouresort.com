@@ -151,6 +151,11 @@ const { groups } = Astro.props;
 
   .filter-bar {
     position: relative;
+    // プルダウンの z-index:2 は __pills(z-index:1) の中に閉じ込められるため、
+    // ルート階層ではリストの __items(z-index:1) と同値になり、DOM順で後ろのリストが勝つ。
+    // 結果、開いたプルダウンの上にカードのリンクが乗って誤タップの原因になっていた。
+    // ここで絞り込み全体をリストより前面に置く（ヘッダー110・メニュー100より下）
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
