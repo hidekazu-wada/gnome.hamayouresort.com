@@ -106,7 +106,9 @@ const opt = (value: string | null | undefined): string | undefined => value ?? u
 const CATEGORY_COLORS: Record<CategoryId, string> = {
   onsen: "#C86B4A", // Figmaに無いので指示書の指定色
   restaurant: "#CC5D5D",
-  sightseeing: "#BEE0E1",
+  // Figmaのピンは #BEE0E1 だが、セクションの背景色と同じで地図でもチップでも
+  // 埋もれて見えないため、指示書の配色から未使用の紺を持ってきた
+  sightseeing: "#3E6E9E",
   convenience: "#D6B156",
   supermarket: "#9D8B7C",
   gas_station: "#6B6B7A", // Figmaに無いので指示書の指定色
