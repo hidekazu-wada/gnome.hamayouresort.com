@@ -16,7 +16,12 @@ if (!url) {
   process.exit(1);
 }
 
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+// BROWSER=edge で Microsoft Edge に切り替える（Chromium系なので同じCDPで動く）
+const BROWSERS = {
+  chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+};
+const CHROME = BROWSERS[process.env.BROWSER ?? "chrome"] ?? BROWSERS.chrome;
 // 連続で走らせたときに前のChromeと衝突しないよう、実行ごとに変える
 const PORT = 9300 + (process.pid % 600);
 const PROFILE = `/tmp/chrome-inspect-${process.pid}`;
@@ -29,7 +34,8 @@ const chrome = spawn(CHROME, [
   "--headless=new",
   `--remote-debugging-port=${PORT}`,
   "--disable-gpu",
-  "--hide-scrollbars",
+  // SHOW_SCROLLBARS=1 で実機同様のスクロールバーを出す（vw とのズレを見るとき用）
+  ...(process.env.SHOW_SCROLLBARS === "1" ? [] : ["--hide-scrollbars"]),
   "--no-first-run",
   `--user-data-dir=${PROFILE}`,
   `--window-size=${width},${height}`,
