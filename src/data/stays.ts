@@ -110,7 +110,7 @@ const makePriceRows = (early9: string, early12: string, late16: string) => [
     ],
   },
   {
-    label: "アーリー<br>チェックイン",
+    label: 'アーリー<br class="stay-price__br-pc">チェックイン',
     lines: [`9:00～　${early9}`, `12:00～　${early12}`],
     notesTightGap: true,
     notes: [
@@ -121,7 +121,7 @@ const makePriceRows = (early9: string, early12: string, late16: string) => [
     ],
   },
   {
-    label: "レイト<br>チェックアウト",
+    label: 'レイト<br class="stay-price__br-pc">チェックアウト',
     lines: [`～16:00　${late16}`],
     notes: ["※チェックイン時にお伝えください", "※受付時に現金でお支払いください"],
   },
