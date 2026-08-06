@@ -372,7 +372,8 @@ const { detail } = Astro.props;
       }
 
       &::backdrop {
-        background: rgba(0, 0, 0, 0.6);
+        // 0.6 だと背景の見出しや写真が読めてしまい、モーダルの中身が見づらかった
+        background: rgba(0, 0, 0, 0.8);
       }
     }
 
