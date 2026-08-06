@@ -115,7 +115,9 @@ const news = [
       background-size: spx(140);
       mix-blend-mode: luminosity;
       pointer-events: none;
-      @include desktop-up {
+      // 他のセクションと同じく tablet-up で上書きする。desktop-up にすると
+      // TB縦（744〜1023px）だけSPの値が残り、テクスチャの粒が2.5倍になる
+      @include tablet-up {
         background-size: ppx(200);
       }
     }
