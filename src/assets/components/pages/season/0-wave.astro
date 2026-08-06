@@ -14,6 +14,7 @@ import toWinterPc from "../../../images/season/wave-to-winter.svg";
 import toWinterSp from "../../../images/season/wave-to-winter-sp.svg";
 import toFooterPc from "../../../images/season/wave-to-footer.svg";
 import toFooterSp from "../../../images/season/wave-to-footer-sp.svg";
+import { seasons } from "../../../../data/seasons";
 
 interface Props {
   /** どのセクションへの繋ぎか */
@@ -42,6 +43,10 @@ const bgColors: Record<string, string | null> = {
 const bgColor = bgColors[to];
 const texture = bgColor ? PaperTexture : PaperTexturePlain;
 
+// テクスチャの濃さは季節データに合わせる（春のピンクだけ明度合成で沈むため薄める）。
+// ここで独自に持つとセクション本体と食い違うので seasons.ts を参照する
+const textureOpacity = seasons.find((s) => s.key === to)?.textureOpacity ?? 1;
+
 // Figmaでは波の矩形にもテクスチャがluminosity合成で上掛けされている。
 // SVG書き出しでは再現されないため、波の形でマスクしたテクスチャをCSSで重ねる。
 // フッター繋ぎだけは波の塗り自体がテクスチャ画像なので不要
@@ -50,7 +55,7 @@ const needsWaveTexture = to !== "footer";
 
 <div
   class:list={["season-wave", { "is-plain": !bgColor }]}
-  style={bgColor ? `background-color: ${bgColor};` : undefined}
+  style={`${bgColor ? `background-color: ${bgColor};` : ""} --texture-opacity: ${textureOpacity};`}
 >
   <div
     class="season-wave__texture"
@@ -95,6 +100,7 @@ const needsWaveTexture = to !== "footer";
       background-position: top left;
       background-size: spx(140);
       mix-blend-mode: luminosity;
+      opacity: var(--texture-opacity, 1);
       pointer-events: none;
       @include tablet-up {
         background-size: ppx(200);
