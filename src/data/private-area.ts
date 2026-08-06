@@ -22,8 +22,8 @@ export type AreaFeature = {
   title: string;
   note: string;
   photo?: ImageMetadata;
-  /** 利用料ボタンを出すカードだけ持つ。遷移先は未定 */
-  feeHref?: string;
+  /** 利用料ボタンを出すカードだけ持つ。中身は facilityDetails の fee を共用する */
+  hasFee?: boolean;
 };
 
 export type PrivateArea = {
@@ -63,9 +63,9 @@ export const privateAreas: PrivateArea[] = [
     body: dummyBody,
     detailHref: "/facility/hodohodo/",
     features: [
-      { title: "足湯", note: dummyNote, photo: ashiyu, feeHref: "#" },
-      { title: "森のサウナ", note: dummyNote, photo: sauna, feeHref: "#" },
-      { title: "貸切利用", note: dummyNote, feeHref: "#" },
+      { title: "足湯", note: dummyNote, photo: ashiyu, hasFee: true },
+      { title: "森のサウナ", note: dummyNote, photo: sauna, hasFee: true },
+      { title: "貸切利用", note: dummyNote, hasFee: true },
       { title: "森のブランコ", note: dummyNote, photo: swing },
       { title: "NINJA LINE", note: dummyNote, photo: ninjaLine },
       { title: "ツリーハウス", note: dummyNote, photo: treehouse },

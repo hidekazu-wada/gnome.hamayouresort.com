@@ -10,7 +10,13 @@ import BadgeMapHover from "../../../images/private-area/badge-map-hover.svg";
 import AreaMapAnnotated from "../../../images/private-area/area-map-annotated.webp";
 import IconArrowWhite from "../../../images/news/icon-circle-arrow-white.svg";
 import Transition from "./Transition.astro";
+import FeeModal from "../../common/feeModal/FeeModal.astro";
 import { privateAreas } from "../../../../data/private-area";
+import { facilityDetails } from "../../../../data/facilityDetails";
+
+// 利用料の中身は共有施設詳細と同じものを出す（二重管理を避けて1箇所で持つ）
+const feeOf = (slug: string) =>
+  facilityDetails[slug as keyof typeof facilityDetails]?.fee;
 ---
 
 {
@@ -83,15 +89,19 @@ import { privateAreas } from "../../../../data/private-area";
             )}
             <p class="area-detail__card-title">{feature.title}</p>
             <p class="area-detail__card-note">{feature.note}</p>
-            {feature.feeHref && (
-              <a class="area-detail__fee" href={feature.feeHref}>
+            {feature.hasFee && feeOf(area.slug) && (
+              <button
+                class="area-detail__fee"
+                type="button"
+                data-fee-open={area.slug}
+              >
                 <span class="area-detail__fee-label">利用料</span>
                 <img
                   class="area-detail__fee-icon"
                   src={IconArrowWhite.src}
                   alt=""
                 />
-              </a>
+              </button>
             )}
           </li>
         ))}
@@ -105,6 +115,9 @@ import { privateAreas } from "../../../../data/private-area";
           alt=""
         />
       </a>
+
+      {/* 利用料モーダル（共有施設詳細と同じもの）。利用料のあるエリアだけ */}
+      {feeOf(area.slug) && <FeeModal id={area.slug} fee={feeOf(area.slug)!} />}
     </section>
     </Fragment>
   ))
@@ -517,6 +530,7 @@ import { privateAreas } from "../../../../data/private-area";
       font-weight: 700;
       color: #fff;
       white-space: nowrap;
+      cursor: pointer;
       transition: background-color 0.3s ease;
       margin-top: auto;
       width: spx(186);
