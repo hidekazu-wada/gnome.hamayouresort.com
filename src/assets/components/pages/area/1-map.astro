@@ -24,7 +24,7 @@ const groupedCategories = groupOrder.map((id) => {
   class="area-map"
   data-origin-lat={origin.lat}
   data-origin-lng={origin.lng}
-  data-origin-name="湖のほとりのキャンプ場"
+  data-origin-name="キャンプビレッジノーム"
 >
   <!-- 背景の紙テクスチャ -->
   <div
@@ -43,57 +43,62 @@ const groupedCategories = groupOrder.map((id) => {
     />
 
 
-    <div class="area-map__filters">
-      {
-        groupedCategories.map((group) => (
-          <div class="area-map__filter-group">
-            <p class="area-map__filter-label">{group.label}</p>
-            <ul class="area-map__chips">
-              {group.items.map((category) => (
-                <li>
-                  <button
-                    class="area-map__chip"
-                    type="button"
-                    data-cat={category.id}
-                    aria-pressed="true"
-                  >
-                    <span
-                      class="area-map__chip-dot"
-                      aria-hidden="true"
-                      style={`background-color: ${category.color};`}
-                    />
-                    {category.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      }
-
-    </div>
-
-    <!-- SPでは絞り込みだけを画面に貼り付けたいので、この2つはsticky領域の外に出す -->
-    <div class="area-map__filter-actions">
-      <button class="area-map__text-button" type="button" data-select-all>
-        すべて選択
-      </button>
-      <button class="area-map__text-button" type="button" data-clear-all>
-        すべて解除
-      </button>
-    </div>
-
     <div class="area-map__body">
-      <div class="area-map__map-col">
-        <div class="area-map__frame">
-          <div class="area-map__canvas" data-map-canvas>
-            <!-- 地図はここに後から乗る。JSが動かない環境ではリスト側だけで完結する -->
-            <p class="area-map__fallback">
-              地図を読み込んでいます。表示されない場合は下の一覧をご覧ください。
-            </p>
+      <!--
+        SPでは地図とチップをひとまとめにして画面上部に貼り付ける。
+        カードをタップしたときに、いちいち地図までスクロールして戻らずに済むようにするため。
+        PCでは __panel を display:contents にして、中身をそのままグリッドに並べ直す。
+      -->
+      <div class="area-map__panel">
+        <div class="area-map__map-col">
+          <div class="area-map__frame">
+            <div class="area-map__canvas" data-map-canvas>
+              <!-- 地図はここに後から乗る。JSが動かない環境ではリスト側だけで完結する -->
+              <p class="area-map__fallback">
+                地図を読み込んでいます。表示されない場合は下の一覧をご覧ください。
+              </p>
+            </div>
           </div>
         </div>
-        <p class="area-map__credit">出典: 国土地理院</p>
+
+        <div class="area-map__filters">
+          {
+            groupedCategories.map((group) => (
+              <div class="area-map__filter-group">
+                <p class="area-map__filter-label">{group.label}</p>
+                <ul class="area-map__chips">
+                  {group.items.map((category) => (
+                    <li>
+                      <button
+                        class="area-map__chip"
+                        type="button"
+                        data-cat={category.id}
+                        aria-pressed="true"
+                      >
+                        <span
+                          class="area-map__chip-dot"
+                          aria-hidden="true"
+                          style={`background-color: ${category.color};`}
+                        />
+                        {category.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- 使用頻度が低いので、貼り付ける領域には入れず流れるままにする -->
+      <div class="area-map__filter-actions">
+        <button class="area-map__text-button" type="button" data-select-all>
+          すべて選択
+        </button>
+        <button class="area-map__text-button" type="button" data-clear-all>
+          すべて解除
+        </button>
       </div>
 
       <div class="area-map__list-col">
@@ -274,13 +279,22 @@ const groupedCategories = groupOrder.map((id) => {
           return `<svg width="${w}" height="${h}" viewBox="0 0 59 71" xmlns="http://www.w3.org/2000/svg"><path d="M56.5 29.5C56.5 50.5 29.5 68.5 29.5 68.5C29.5 68.5 2.5 50.5 2.5 29.5C2.5 22.3392 5.34463 15.4716 10.4081 10.4081C15.4716 5.34463 22.3392 2.5 29.5 2.5C36.6608 2.5 43.5284 5.34463 48.5919 10.4081C53.6554 15.4716 56.5 22.3392 56.5 29.5Z" fill="${color}" stroke="black" stroke-width="5" stroke-linejoin="round"/><path d="M29.5 38.5C34.47 38.5 38.5 34.47 38.5 29.5C38.5 24.53 34.47 20.5 29.5 20.5C24.53 20.5 20.5 24.53 20.5 29.5C20.5 34.47 24.53 38.5 29.5 38.5Z" fill="white" stroke="black" stroke-width="5" stroke-linejoin="round"/></svg>`;
         };
 
-        const makeIcon = (color: string, active: boolean) =>
-          L.divIcon({
-            className: `area-pin${active ? " area-pin--active" : ""}`,
-            html: pinSvg(color, active ? 1.35 : 1),
-            iconSize: active ? [46, 55] : [34, 41],
-            iconAnchor: active ? [23, 55] : [17, 41],
+        // 選択中はカードとの対応が一目で分かる必要があるので、
+        // 拡大だけでなく足元に輪を敷いて影を落とし、名前も出す（ラベルは setActive 側で付ける）
+        const makeIcon = (color: string, mode: "normal" | "hover" | "active") => {
+          const scale = mode === "active" ? 1.6 : mode === "hover" ? 1.25 : 1;
+          const w = Math.round(34 * scale);
+          const h = Math.round(41 * scale);
+          const ring = mode === "active" ? '<span class="area-pin__ring"></span>' : "";
+          return L.divIcon({
+            className: `area-pin area-pin--${mode}`,
+            html: `${ring}${pinSvg(color, scale)}`,
+            iconSize: [w, h],
+            iconAnchor: [Math.round(w / 2), h],
+            // 既定だとラベルが足元（＝ピンの上）に出て絵に被るので、頭の上を基準にする
+            tooltipAnchor: [0, -h],
           });
+        };
 
         // 起点。カテゴリで消えない・他のどれとも違う見た目・ラベル常時表示。
         // 押しても何も起きないので、ボタンとして読み上げさせない（ラベルは常時見えている）
@@ -324,14 +338,21 @@ const groupedCategories = groupOrder.map((id) => {
           const color = card.dataset.color ?? "#138185";
           const label = `${card.dataset.name}, 車で${card.dataset.minutes}分`;
           const marker = L.marker([Number(card.dataset.lat), Number(card.dataset.lng)], {
-            icon: makeIcon(color, false),
+            icon: makeIcon(color, "normal"),
             keyboard: true,
             title: card.dataset.name,
           });
           // divIcon には alt が付かないので、DOMに乗るたびに読み上げ用のラベルを当て直す
           // （クラスタリングで要素が作り直されるため on("add") で毎回セットする）
           marker.on("add", () => marker.getElement()?.setAttribute("aria-label", label));
-          return { card, item: items[index], marker, color, id: card.dataset.poiId! };
+          return {
+            card,
+            item: items[index],
+            marker,
+            color,
+            id: card.dataset.poiId!,
+            name: card.dataset.name ?? "",
+          };
         });
 
         const setActive = (id: string | null, { scroll = false } = {}) => {
@@ -339,9 +360,18 @@ const groupedCategories = groupOrder.map((id) => {
           entries.forEach((entry) => {
             const on = entry.id === id;
             entry.card.classList.toggle("is-active", on);
-            entry.marker.setIcon(makeIcon(entry.color, on));
-            if (on) entry.marker.setZIndexOffset(500);
-            else entry.marker.setZIndexOffset(0);
+            entry.marker.setIcon(makeIcon(entry.color, on ? "active" : "normal"));
+            entry.marker.setZIndexOffset(on ? 800 : 0);
+            // 選択中だけ名前を出す。どのピンがカードに対応するのかを言葉で示す
+            entry.marker.unbindTooltip();
+            if (on) {
+              entry.marker.bindTooltip(entry.name, {
+                permanent: true,
+                direction: "top",
+                offset: [0, -4],
+                className: "area-pin__label",
+              });
+            }
           });
           if (!scroll || !id) return;
           const target = entries.find((entry) => entry.id === id);
@@ -354,12 +384,12 @@ const groupedCategories = groupOrder.map((id) => {
 
           const focus = () => {
             if (activeId === entry.id) return;
-            entry.marker.setIcon(makeIcon(entry.color, true));
+            entry.marker.setIcon(makeIcon(entry.color, "hover"));
             entry.marker.setZIndexOffset(400);
           };
           const blur = () => {
             if (activeId === entry.id) return;
-            entry.marker.setIcon(makeIcon(entry.color, false));
+            entry.marker.setIcon(makeIcon(entry.color, "normal"));
             entry.marker.setZIndexOffset(0);
           };
           entry.card.addEventListener("mouseenter", focus);
@@ -367,10 +397,12 @@ const groupedCategories = groupOrder.map((id) => {
           entry.card.addEventListener("focus", focus);
           entry.card.addEventListener("blur", blur);
 
-          // カードをクリック/Enterで、地図をそのマーカーへ寄せる
+          // カードをクリック/Enterで、地図をそのマーカーへ寄せる。
+          // クラスタリングは zoom 15 で解除されるので、そこまで寄せないと
+          // 選んだピンが束に畳まれたままで「どれなのか」が分からない
           const fly = () => {
             setActive(entry.id);
-            const zoom = Math.max(map.getZoom(), 14);
+            const zoom = Math.max(map.getZoom(), 15);
             const latlng = entry.marker.getLatLng();
             if (reduceMotion) map.setView(latlng, zoom);
             else map.flyTo(latlng, zoom, { duration: 0.6 });
@@ -486,26 +518,44 @@ const groupedCategories = groupOrder.map((id) => {
       }
     }
 
-    // SPでは絞り込みを画面に貼り付けて、リストを追いながら切り替えられるようにする。
-    // ヘッダーが右上に spx(15)〜spx(185) で固定表示されているので、その下に逃がす
-    &__filters {
+    // SPは地図とチップを1行に詰めて画面上部に貼り付ける。
+    // ヘッダー（右上の小さなタブ）は地図の隅に重なるが、地図の隅なら実害がない。
+    // 逆にヘッダーを避けて途中の高さに貼り付けると、画面の真ん中に帯が浮いて見づらくなる
+    &__panel {
       position: sticky;
-      top: spx(190);
+      top: 0;
       z-index: 3;
-      display: flex;
-      flex-direction: column;
       background-color: #bee0e1;
-      padding: spx(14) 0;
-      gap: spx(12);
+      padding-bottom: spx(12);
       @include tablet-up {
-        position: static;
-        padding: 0;
+        // 中身（地図・チップ）を親のグリッドへそのまま並べ直す
+        display: contents;
+      }
+    }
+
+    &__filters {
+      display: flex;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      padding-top: spx(12);
+      gap: spx(24);
+      @include tablet-up {
+        grid-area: filters;
+        flex-direction: column;
+        overflow-x: visible;
+        padding-top: 0;
         gap: ppx(16);
+      }
+
+      &::-webkit-scrollbar {
+        display: none;
       }
     }
 
     &__filter-group {
       display: flex;
+      flex-shrink: 0;
       align-items: center;
       gap: spx(14);
       @include tablet-up {
@@ -528,25 +578,14 @@ const groupedCategories = groupOrder.map((id) => {
       }
     }
 
-    // SPは折り返さずに横スクロール。10個を折り返すとsticky領域が画面を食い潰す
+    // SPは10個を1行に並べて横スクロールさせる。折り返すと貼り付けた領域が画面を食い潰す
     &__chips {
       display: flex;
       flex-wrap: nowrap;
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
       gap: spx(10);
-      padding-bottom: spx(4);
       @include tablet-up {
         flex-wrap: wrap;
-        overflow-x: visible;
         gap: ppx(14);
-        padding-bottom: 0;
-      }
-
-      &::-webkit-scrollbar {
-        display: none;
       }
 
       // flexアイテムはボタンではなく li なので、潰れないようにするのはこちら
@@ -618,6 +657,7 @@ const groupedCategories = groupOrder.map((id) => {
       margin-top: spx(12);
       margin-bottom: spx(24);
       @include tablet-up {
+        grid-area: actions;
         gap: ppx(24);
         margin-top: ppx(14);
         margin-bottom: ppx(36);
@@ -642,38 +682,50 @@ const groupedCategories = groupOrder.map((id) => {
       }
     }
 
-    // PCは地図を左に固定してリストだけスクロールさせる（3:2）
+    // PCは絞り込みを全幅で上に置き、地図を左に固定してリストだけスクロールさせる（3:2）。
+    // SPは縦積みで、地図とチップだけが __panel として上に貼り付く
     &__body {
       display: flex;
       flex-direction: column;
-      gap: spx(30);
       @include tablet-up {
-        flex-direction: row;
-        align-items: flex-start;
-        gap: ppx(50);
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        grid-template-areas:
+          "filters filters"
+          "actions actions"
+          "map     list";
+        column-gap: ppx(50);
       }
     }
 
     &__map-col {
       @include tablet-up {
+        grid-area: map;
+        // グリッドの行いっぱいに伸びると sticky が動く余地を失うので、内容の高さに縮める
+        align-self: start;
         position: sticky;
         top: ppx(40);
-        flex: 3;
       }
     }
 
     &__list-col {
       @include tablet-up {
-        flex: 2;
+        grid-area: list;
       }
     }
 
+    // Leaflet の内部ペインは z-index 400〜700 だが、.leaflet-container 自身は
+    // スタッキングコンテキストを作らないので、そのままだと親の階層に漏れて
+    // sticky なフィルタ（z-index 3）より前に出てしまう。ここで閉じ込める
     &__frame {
       position: relative;
+      z-index: 0;
+      isolation: isolate;
       overflow: clip;
       background-color: #eef2ef;
       border-radius: spx(30);
-      height: 45dvh;
+      // 貼り付けた領域が画面の半分を超えるとカードが読めなくなるので、チップのぶんを見て抑える
+      height: 33dvh;
       @include tablet-up {
         border-radius: ppx(40);
         height: min(80vh, ppx(1600));
@@ -698,18 +750,6 @@ const groupedCategories = groupOrder.map((id) => {
       @include tablet-up {
         padding: ppx(30);
         font-size: ppx(26);
-      }
-    }
-
-    &__credit {
-      font-family: "Noto Sans JP", sans-serif;
-      color: #3f5a5b;
-      text-align: right;
-      font-size: spx(20);
-      margin-top: spx(8);
-      @include tablet-up {
-        font-size: ppx(22);
-        margin-top: ppx(10);
       }
     }
 
@@ -795,7 +835,43 @@ const groupedCategories = groupOrder.map((id) => {
   :global(.area-pin) {
     background: none;
     border: none;
-    transition: transform 0.2s ease;
+  }
+
+  // 選択中のピン。拡大だけだと他のピンに紛れるので、影を落として足元に輪を敷く
+  :global(.area-pin--active) {
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.45));
+  }
+
+  :global(.area-pin__ring) {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-sizing: border-box;
+    width: 34px;
+    height: 14px;
+    border: 3px solid #138185;
+    border-radius: 50%;
+    background-color: rgba(19, 129, 133, 0.25);
+  }
+
+  // 選択中のピンにだけ出る名前。どのピンがカードに対応するかを言葉でも示す。
+  // 起点のラベル（teal）と紛れないよう黒地にする
+  :global(.area-pin__label) {
+    background-color: #000;
+    border: none;
+    border-radius: 999px;
+    color: #fff;
+    font-family: "Noto Sans JP", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 12px;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+
+    &::before {
+      display: none;
+    }
   }
 
   :global(.area-origin__dot) {

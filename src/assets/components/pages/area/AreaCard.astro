@@ -163,7 +163,10 @@ const telHref = poi.phone ? `tel:${poi.phone.replace(/[^0-9+]/g, "")}` : null;
     overflow: clip;
     font-family: "Noto Sans JP", sans-serif;
     color: #000;
-    scroll-margin: spx(20);
+    // SPは地図とチップが画面上部に貼り付いているので、
+    // マーカーから scrollIntoView したときにその裏へ隠れないよう逃がす
+    scroll-margin-top: calc(33dvh + #{spx(120)});
+    scroll-margin-bottom: spx(20);
     transition:
       background-color 0.3s ease,
       box-shadow 0.3s ease;
@@ -171,7 +174,8 @@ const telHref = poi.phone ? `tel:${poi.phone.replace(/[^0-9+]/g, "")}` : null;
     border-radius: spx(20);
     box-shadow: 0 spx(4) spx(10) rgba(0, 0, 0, 0.08);
     @include tablet-up {
-      scroll-margin: ppx(20);
+      scroll-margin-top: ppx(20);
+      scroll-margin-bottom: ppx(20);
       padding: ppx(30) ppx(30) ppx(30) ppx(44);
       border-radius: ppx(20);
       box-shadow: 0 ppx(4) ppx(10) rgba(0, 0, 0, 0.08);
