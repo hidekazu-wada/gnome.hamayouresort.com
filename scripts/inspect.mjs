@@ -4,6 +4,8 @@
 //   node scripts/inspect.mjs <URL> <幅> <高さ> <評価するJSのファイル> [出力するPNG]
 //
 // 評価するJSは async 即時関数の中身として実行され、返した値が JSON で出力される。
+// 返り値に clip: {x, y, width, height} を含めると、その範囲だけを切り出して保存する。
+// 修正前後を同じ位置・同じ倍率で撮って並べるときに使う。
 
 import { spawn } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
@@ -92,6 +94,8 @@ await send("Page.navigate", { url });
 // 地図タイルとフォントの読み込みを待つ
 await sleep(6000);
 
+let clip = null;
+
 if (scriptPath) {
   const body = await readFile(scriptPath, "utf8");
   const { result, exceptionDetails } = await send("Runtime.evaluate", {
@@ -100,11 +104,20 @@ if (scriptPath) {
     returnByValue: true,
   });
   if (exceptionDetails) console.error("評価でエラー:", JSON.stringify(exceptionDetails, null, 2));
-  else console.log(JSON.stringify(result.value, null, 2));
+  else {
+    if (result.value && result.value.clip) clip = { ...result.value.clip, scale: 1 };
+    console.log(JSON.stringify(result.value, null, 2));
+  }
 }
 
 if (shotPath) {
-  const { data } = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+  // clip はビューポートではなくドキュメント基準の座標なので、
+  // 画面外も撮れるように captureBeyondViewport を立てる
+  const { data } = await send("Page.captureScreenshot", {
+    format: "png",
+    captureBeyondViewport: Boolean(clip),
+    ...(clip ? { clip } : {}),
+  });
   await writeFile(shotPath, Buffer.from(data, "base64"));
   console.error(`saved ${shotPath}`);
 }
