@@ -25,9 +25,9 @@ const { howto } = Astro.props;
   </div>
 
   <h2 class="howto-activity__title">
-    <span class="howto-activity__title-case">{howto.label}</span>に<span
-      class="howto-activity__title-em">おすすめ</span
-    >のアクティビティ
+    <span class="howto-activity__title-case">{howto.label}</span>に<br
+      class="howto-activity__br-sp"
+    /><span class="howto-activity__title-em">おすすめ</span>のアクティビティ
   </h2>
 
   <div class="howto-activity__slider swiper">
@@ -125,6 +125,13 @@ const { howto } = Astro.props;
         font-size: ppx(47);
         letter-spacing: ppx(2.35);
         margin-right: ppx(-2.35);
+      }
+    }
+
+    // 「に」の後の改行（SPのみ）
+    &__br-sp {
+      @include tablet-up {
+        display: none;
       }
     }
 
