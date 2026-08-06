@@ -225,15 +225,23 @@ const cases = [
     }
 
     // 上端の繋ぎ（本体の上に絶対配置）
+    //
+    // 引き上げ量は「SVGの上端から波の描画が始まるまでの透明部分」より大きくすること。
+    // 足りないと透明部分から本体の背景が覗き、上のセクションとの間に筋として見える。
+    //   SP join-sp.svg viewBox 720x79   波の開始 y=11.7012 → 1.63vw 必要
+    //   PC join-pc.svg viewBox 2560x209 波の開始 y=11.54   → 0.45vw 必要（-1vw で足りている）
     &__join {
       position: absolute;
-      top: -1vw;
+      top: -1.7vw;
       left: 0;
       z-index: 2;
       width: 100%;
       line-height: 0;
       font-size: 0;
       pointer-events: none;
+      @include tablet-up {
+        top: -1vw;
+      }
     }
 
     &__join-picture {
