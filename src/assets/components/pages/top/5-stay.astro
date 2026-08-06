@@ -2,6 +2,7 @@
 // メインSCSSファイルをインポート
 import "../../../../styles/main.scss";
 
+import { getImage } from "astro:assets";
 import JoinPc from "../../../images/top/5-stay/join-pc.svg";
 import JoinSp from "../../../images/top/5-stay/join-sp.svg";
 import Sunburst from "../../../images/top/3-activity/sunburst.png";
@@ -19,6 +20,18 @@ import Card5 from "../../../images/top/5-stay/card5.jpg";
 import Card6 from "../../../images/top/5-stay/card6.jpg";
 import Card7 from "../../../images/top/5-stay/card7.jpg";
 import Card8 from "../../../images/top/5-stay/card8.jpg";
+
+// 最下部の大きな写真（TB・PC用）を astro:assets で WebP 化する。
+// 元画像は Figma に置かれている最大サイズ（1931x4096）。それより大きい幅を作っても
+// 引き伸ばすだけで画質は上がらないので、srcset の上限は元画像の幅に合わせる。
+// 画面いっぱいに敷く写真なので sizes は 100vw。
+const bottomPhoto = await getImage({
+  src: BottomPhoto,
+  format: "webp",
+  quality: 85,
+  widths: [1024, 1440, 1931],
+  sizes: "100vw",
+});
 
 // 宿泊サイトカード（写真は Figma ダミー）
 const cards = [
@@ -124,7 +137,12 @@ const cards = [
     <!-- 最下部の大きな写真（全幅・SP/PCで出し分け） -->
     <div class="stay__bottom">
       <picture class="stay__bottom-picture">
-        <source srcset={BottomPhoto.src} media="(min-width: 744px)" />
+        <source
+          type="image/webp"
+          srcset={bottomPhoto.srcSet.attribute}
+          sizes="100vw"
+          media="(min-width: 744px)"
+        />
         <img class="stay__bottom-img" src={BottomPhotoSp.src} alt="" />
       </picture>
     </div>
