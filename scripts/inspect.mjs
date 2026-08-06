@@ -17,15 +17,21 @@ if (!url) {
 }
 
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-const PORT = 9333;
+// 連続で走らせたときに前のChromeと衝突しないよう、実行ごとに変える
+const PORT = 9300 + (process.pid % 600);
+const PROFILE = `/tmp/chrome-inspect-${process.pid}`;
+
+// 追加のChromeフラグを渡したいとき用（CHROME_FLAGS="--foo --bar"）
+const extraFlags = (process.env.CHROME_FLAGS ?? "").split(" ").filter(Boolean);
 
 const chrome = spawn(CHROME, [
+  ...extraFlags,
   "--headless=new",
   `--remote-debugging-port=${PORT}`,
   "--disable-gpu",
   "--hide-scrollbars",
   "--no-first-run",
-  "--user-data-dir=/tmp/chrome-inspect-profile",
+  `--user-data-dir=${PROFILE}`,
   `--window-size=${width},${height}`,
   "about:blank",
 ]);
@@ -89,6 +95,14 @@ await send("Emulation.setDeviceMetricsOverride", {
   deviceScaleFactor: 1,
   mobile: Number(width) < 744,
 });
+
+// REDUCED_MOTION=1 で「視差効果を減らす」設定の利用者を再現する。
+// Chromeの --force-prefers-reduced-motion は効かないので CDP 側で指定する
+if (process.env.REDUCED_MOTION === "1") {
+  await send("Emulation.setEmulatedMedia", {
+    features: [{ name: "prefers-reduced-motion", value: "reduce" }],
+  });
+}
 
 await send("Page.navigate", { url });
 // 地図タイルとフォントの読み込みを待つ

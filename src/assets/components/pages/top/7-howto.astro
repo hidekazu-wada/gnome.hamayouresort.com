@@ -867,14 +867,22 @@ const cases = [
 
 <script>
   import Swiper from "swiper";
-  import { Navigation } from "swiper/modules";
+  import { Navigation, Autoplay } from "swiper/modules";
   import "swiper/css";
   import "swiper/css/navigation";
+
+  // 自動で動くカルーセルは負担になる人がいるので、視差効果を減らす設定の人には流さない
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const el = document.querySelector<HTMLElement>(".howto__slider");
   if (el) {
     const swiper = new Swiper(el, {
-      modules: [Navigation],
+      modules: [Navigation, Autoplay],
+      // 写真＋文章で読む量が多いので、カード送りの4秒より長めにしている。
+      // disableOnInteraction: false は、一度操作したあとも自動再生を続けるため
+      autoplay: reduceMotion
+        ? false
+        : { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true },
       slidesPerView: 1,
       loop: true,
       speed: 500,

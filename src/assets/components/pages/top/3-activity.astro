@@ -616,14 +616,22 @@ const cards = activities.map((activity) => ({
 
 <script>
   import Swiper from "swiper";
-  import { Pagination } from "swiper/modules";
+  import { Pagination, Autoplay } from "swiper/modules";
   import "swiper/css";
   import "swiper/css/pagination";
+
+  // 自動で動くカルーセルは負担になる人がいるので、視差効果を減らす設定の人には流さない
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const el = document.querySelector<HTMLElement>(".activity__slider");
   if (el) {
     const swiper = new Swiper(el, {
-      modules: [Pagination],
+      modules: [Pagination, Autoplay],
+      // disableOnInteraction を既定の true にすると、一度スワイプした時点で
+      // 自動再生が二度と再開しなくなるので false にしている
+      autoplay: reduceMotion
+        ? false
+        : { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true },
       // デザイン同様、中央カードの左右に前後カードがのぞくようループさせる
       loop: true,
       // 設計値どおりのカード幅にするため slidesPerView は auto + CSS固定幅
