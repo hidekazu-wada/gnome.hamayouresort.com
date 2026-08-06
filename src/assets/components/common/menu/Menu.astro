@@ -134,6 +134,12 @@ const navItems = [
     // 上部（ロゴ＋ナビ＋企業研修リンク）
     &__head {
       position: relative;
+      // テクスチャの mix-blend-mode: luminosity は「下に敷かれた色」と合成するので、
+      // 合成相手の背景色は必ずテクスチャの直親に持たせる（他セクションと同じ形）。
+      // .menu は fixed + overflow-y:auto + opacity アニメでレイヤー昇格しやすく、
+      // 昇格すると合成相手を見失って上半分がグレーになる（Safari・モバイルChrome）
+      background-color: #bee0e1;
+      isolation: isolate;
       height: spx(930);
       @include tablet-up {
         height: auto;
