@@ -36,18 +36,23 @@ import PageTopHoverImg from "../../../images/common/pagetop/page-top-hover.svg";
     display: block;
     transition: opacity 0.3s ease;
     right: spx(30);
-    bottom: spx(410);
+    // fixed なので、この値がそのまま「最下部まで送ったときのページ下端からの距離」になる。
+    // フッター下端から見て 白線=spx(266) / コピーライト下端=spx(196) の位置にあるので、
+    // SPはコピーライトより下の余白に収まるところへ置く
+    bottom: spx(90);
     width: spx(150);
     height: spx(150);
     @include tablet-up {
       right: ppx(60 * 1.2);
-      bottom: ppx(250 * 1.2);
+      // フッターの寸法はTBもPCと同じppx値（白線=154）なので、TBもPCと同じ値で揃える
+      bottom: ppx(175);
       width: ppx(200 * 1.2);
       height: ppx(200 * 1.2);
     }
     @include desktop-up {
       right: ppx(60);
-      bottom: ppx(250);
+      // 白線 ppx(154) のすこし上に収まる位置
+      bottom: ppx(175);
       width: ppx(200);
       height: ppx(200);
     }
