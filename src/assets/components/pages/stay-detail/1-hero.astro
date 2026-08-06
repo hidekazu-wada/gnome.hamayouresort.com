@@ -338,8 +338,11 @@ const { stay } = Astro.props;
       text-align: center;
       white-space: nowrap;
       line-height: 1.2;
-      // FigmaのSPは固定幅187×高さ54・文字27
-      width: spx(187);
+      // FigmaのSPは固定幅187×高さ54・文字27。ただし固定幅だと
+      // 「キャンピングカー×」が入りきらず背景から文字がはみ出すので下限にする
+      // （タブレット以上は元からこの書き方）
+      width: auto;
+      min-width: spx(187);
       padding: spx(11) spx(10);
       border-radius: spx(10);
       font-size: spx(27);
