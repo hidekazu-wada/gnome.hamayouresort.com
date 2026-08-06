@@ -128,11 +128,11 @@ const priceNotes = [
       transform: scaleY(-1);
     }
 
-    // 波の下端の1行が周囲より暗く、境目に細い線として見える。
-    // 1px上へ逃がして、その行を料金セクションのベタ塗りに被せて隠す
+    // 波の端の行が境目に細い線として出る。ここは下へ2pxずらす向きで消える
+    // （上へずらすと消えない。ずらす向きは波ごとに逆になる）
     &__img {
       position: relative;
-      top: -1px;
+      top: 2px;
       display: block;
       width: 100%;
       height: auto;

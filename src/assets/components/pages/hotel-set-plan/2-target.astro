@@ -71,7 +71,10 @@ const list = [
       width: 100%;
     }
 
+    // 波の端の行が境目に細い線として出るので、2px上へ逃がして隣のベタ塗りに被せる
     &__img {
+      position: relative;
+      top: -2px;
       display: block;
       width: 100%;
       height: auto;
@@ -80,6 +83,8 @@ const list = [
 
   .hsp-target {
     position: relative;
+    // 上の波との境目に線が出るので、セクションを2px持ち上げて被せる
+    margin-top: -2px;
     display: flex;
     flex-direction: column;
     align-items: center;
