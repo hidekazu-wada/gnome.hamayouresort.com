@@ -314,15 +314,17 @@ const { season } = Astro.props;
       color: var(--accent);
       text-align: center;
       line-height: 0.95;
+      // 丸は150×150。Figmaは文字枠130を上寄せ（下に20の余白）で置いていて中心より
+      // 5.5px上に見えるため、上下を均等にして中央に乗せる。丸の大きさは変わらない
       width: spx(130);
       height: spx(130);
-      padding: 0 spx(10) spx(20);
+      padding: spx(10);
       letter-spacing: spx(6.5);
       margin-right: spx(-6.5);
       @include tablet-up {
         width: ppx(130);
         height: ppx(130);
-        padding: 0 ppx(10) ppx(20);
+        padding: ppx(10);
         letter-spacing: ppx(6.5);
         margin-right: ppx(-6.5);
       }
