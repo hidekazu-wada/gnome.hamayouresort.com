@@ -195,19 +195,30 @@ const items = howto.schedule.flatMap((day) => day.items);
       }
     }
 
-    // 1文字ずつ折り返して縦組みに見せる
+    // 縦組み。1文字幅の箱に折り返させる作りにすると、禁則処理で「チェ」「ック」が
+    // 分かれずに横に並んでしまう（Firefox・Edge）ので、本物の縦書きで組む。
+    // 長音符が縦向きになり、SUP のような欧文も1文字ずつ縦に積める。
+    // 字間はFigmaの行送り36px（font-size 30 × 1.2）に合わせて letter-spacing で作る。
     &__label {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 400;
       color: #000;
-      line-height: 1.2;
-      width: spx(30);
+      line-height: 1;
       font-size: spx(30);
-      letter-spacing: spx(1.5);
+      // 縦書きの字送りは「文字幅＋letter-spacing」なので、行送り36pxぶんを letter-spacing で作る。
+      // letter-spacing は文字の後ろにしか入らず全体が上にずれるため、
+      // 折り返しで組んでいたとき（行ボックスの中央に文字が乗る）と同じ位置になるよう
+      // 半分を先頭に足し、そのぶん末尾を詰めて高さを元のままにする
+      letter-spacing: spx(6);
+      padding-top: spx(3);
+      margin-bottom: spx(-3);
       @include tablet-up {
-        width: ppx(30);
         font-size: ppx(30);
-        letter-spacing: ppx(1.5);
+        letter-spacing: ppx(6);
+        padding-top: ppx(3);
+        margin-bottom: ppx(-3);
       }
     }
   }
