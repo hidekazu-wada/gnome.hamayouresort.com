@@ -1,0 +1,432 @@
+---
+// 周辺情報マップのリスト1件ぶん。
+// 地図が読み込まれなくても、JSが無効でも、ここだけで施設情報が完結して読めるようにしてある
+// （検索流入を取りにいくページなので、情報を地図の中に閉じ込めない）。
+
+import {
+  categoryMap,
+  directionsUrl,
+  isThirdPartyReviewSite,
+  type AreaPoi,
+} from "../../../../data/areaPois";
+
+interface Props {
+  poi: AreaPoi;
+}
+
+const { poi } = Astro.props;
+const category = categoryMap.get(poi.category)!;
+
+// tel: のURLは数字だけにする（ハイフンは表示専用）
+const telHref = poi.phone ? `tel:${poi.phone.replace(/[^0-9+]/g, "")}` : null;
+---
+
+<article
+  class="area-card"
+  data-poi-id={poi.id}
+  data-categories={[poi.category, ...poi.also].join(" ")}
+  data-tier={poi.tier}
+  data-always-visible={poi.alwaysVisible ? "true" : "false"}
+  data-lat={poi.lat}
+  data-lng={poi.lng}
+  data-name={poi.name}
+  data-minutes={poi.driveMinutes}
+  data-color={category.color}
+  tabindex="0"
+  aria-label={`${poi.name}, 車で${poi.driveMinutes}分`}
+>
+  <span
+    class="area-card__bar"
+    aria-hidden="true"
+    style={`background-color: ${category.color};`}></span>
+
+  <div class="area-card__head">
+    <span class="area-card__category">
+      <span
+        class="area-card__dot"
+        aria-hidden="true"
+        style={`background-color: ${category.color};`}></span>
+      {category.label}
+    </span>
+    <span class="area-card__time">車で{poi.driveMinutes}分</span>
+  </div>
+
+  <h3 class="area-card__name">{poi.name}</h3>
+
+  {
+    (poi.emergency || poi.rainyDay || poi.ownFacility || poi.genre) && (
+      <p class="area-card__badges">
+        {poi.emergency && <span class="area-card__badge area-card__badge--emergency">救急</span>}
+        {poi.rainyDay && <span class="area-card__badge">雨でも楽しめる</span>}
+        {poi.ownFacility && <span class="area-card__badge">系列施設</span>}
+        {poi.genre && <span class="area-card__badge area-card__badge--plain">{poi.genre}</span>}
+      </p>
+    )
+  }
+
+  <p class="area-card__note">{poi.note}</p>
+
+  <dl class="area-card__meta">
+    {
+      poi.hours && (
+        <div class="area-card__meta-row">
+          <dt>営業</dt>
+          <dd>{poi.hours}</dd>
+        </div>
+      )
+    }
+    {
+      poi.hoursUnconfirmed && (
+        <div class="area-card__meta-row">
+          <dt>営業</dt>
+          <dd>お出かけ前にお電話でご確認ください</dd>
+        </div>
+      )
+    }
+    {
+      poi.closed && (
+        <div class="area-card__meta-row">
+          <dt>定休</dt>
+          <dd>{poi.closed}</dd>
+        </div>
+      )
+    }
+    {
+      poi.price && (
+        <div class="area-card__meta-row">
+          <dt>料金</dt>
+          <dd>{poi.price}</dd>
+        </div>
+      )
+    }
+    {
+      poi.reservation && (
+        <div class="area-card__meta-row">
+          <dt>予約</dt>
+          <dd>{poi.reservation}{poi.duration && `／所要 ${poi.duration}`}</dd>
+        </div>
+      )
+    }
+    {
+      !poi.reservation && poi.duration && (
+        <div class="area-card__meta-row">
+          <dt>所要</dt>
+          <dd>{poi.duration}</dd>
+        </div>
+      )
+    }
+  </dl>
+
+  <div class="area-card__actions">
+    <a
+      class="area-card__cta"
+      href={directionsUrl(poi)}
+      target="_blank"
+      rel="noopener"
+    >
+      ルートを見る
+    </a>
+    {
+      telHref && (
+        <a class="area-card__cta area-card__cta--sub" href={telHref}>
+          {poi.phone}
+        </a>
+      )
+    }
+  </div>
+
+  {
+    poi.url && (
+      <p class="area-card__link">
+        <a
+          href={poi.url}
+          target="_blank"
+          rel={isThirdPartyReviewSite(poi.url) ? "noopener nofollow" : "noopener"}
+        >
+          {isThirdPartyReviewSite(poi.url) ? "クチコミを見る" : "公式サイト"}
+        </a>
+      </p>
+    )
+  }
+</article>
+
+<style lang="scss">
+  @import "../../../../styles/variables";
+  @import "../../../../styles/functions";
+  @import "../../../../styles/mixins";
+
+  .area-card {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    background-color: #fffdf7;
+    overflow: clip;
+    font-family: "Noto Sans JP", sans-serif;
+    color: #000;
+    scroll-margin: spx(20);
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+    padding: spx(30) spx(30) spx(30) spx(40);
+    border-radius: spx(20);
+    box-shadow: 0 spx(4) spx(10) rgba(0, 0, 0, 0.08);
+    @include tablet-up {
+      scroll-margin: ppx(20);
+      padding: ppx(30) ppx(30) ppx(30) ppx(44);
+      border-radius: ppx(20);
+      box-shadow: 0 ppx(4) ppx(10) rgba(0, 0, 0, 0.08);
+    }
+
+    // 地図のマーカーから選ばれたとき
+    &.is-active {
+      background-color: #e6f2f2;
+      box-shadow: 0 spx(6) spx(16) rgba(0, 0, 0, 0.18);
+      @include tablet-up {
+        box-shadow: 0 ppx(6) ppx(16) rgba(0, 0, 0, 0.18);
+      }
+    }
+
+    &:focus-visible {
+      outline: spx(4) solid #138185;
+      outline-offset: spx(3);
+      @include tablet-up {
+        outline-width: ppx(4);
+        outline-offset: ppx(3);
+      }
+    }
+
+    // 左端のカテゴリ色のバー
+    &__bar {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      display: block;
+      width: spx(12);
+      @include tablet-up {
+        width: ppx(14);
+      }
+    }
+
+    &__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: spx(10);
+      @include tablet-up {
+        gap: ppx(10);
+      }
+    }
+
+    &__category {
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: spx(23);
+      gap: spx(8);
+      @include tablet-up {
+        font-size: ppx(24);
+        gap: ppx(8);
+      }
+    }
+
+    // カテゴリ色は薄い色もあるので、ピンと同じく黒で縁取って輪郭を保つ
+    &__dot {
+      display: block;
+      border-style: solid;
+      border-color: #000;
+      border-radius: 50%;
+      width: spx(18);
+      height: spx(18);
+      border-width: spx(2);
+      @include tablet-up {
+        width: ppx(18);
+        height: ppx(18);
+        border-width: ppx(2);
+      }
+    }
+
+    &__time {
+      flex-shrink: 0;
+      font-weight: 700;
+      color: #138185;
+      white-space: nowrap;
+      font-size: spx(24);
+      @include tablet-up {
+        font-size: ppx(25);
+      }
+    }
+
+    &__name {
+      font-weight: 700;
+      line-height: 1.5;
+      font-size: spx(30);
+      margin-top: spx(10);
+      @include tablet-up {
+        font-size: ppx(32);
+        margin-top: ppx(10);
+      }
+    }
+
+    &__badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: spx(8);
+      margin-top: spx(12);
+      @include tablet-up {
+        gap: ppx(8);
+        margin-top: ppx(12);
+      }
+    }
+
+    &__badge {
+      display: inline-block;
+      background-color: #e6f2f2;
+      color: #138185;
+      font-weight: 700;
+      white-space: nowrap;
+      font-size: spx(21);
+      padding: spx(5) spx(14);
+      border-radius: 999px;
+      @include tablet-up {
+        font-size: ppx(22);
+        padding: ppx(5) ppx(14);
+      }
+
+      // 救急は色で急かさず、太字と枠だけで序列を出す
+      &--emergency {
+        background-color: #fff;
+        border: spx(2) solid #a34a4a;
+        color: #a34a4a;
+        @include tablet-up {
+          border-width: ppx(2);
+        }
+      }
+
+      &--plain {
+        background-color: #f0ece3;
+        color: #5b5347;
+      }
+    }
+
+    // 施設名や営業時間はどこにでもある情報で、
+    // 「キャンプ場から見てどうなのか」を書いたこの行だけがこのページにしかない価値
+    &__note {
+      line-height: 1.7;
+      font-size: spx(26);
+      margin-top: spx(14);
+      @include tablet-up {
+        font-size: ppx(27);
+        margin-top: ppx(14);
+      }
+    }
+
+    &__meta {
+      color: #5b5347;
+      line-height: 1.6;
+      font-size: spx(23);
+      margin-top: spx(16);
+      @include tablet-up {
+        font-size: ppx(24);
+        margin-top: ppx(16);
+      }
+    }
+
+    &__meta-row {
+      display: flex;
+      gap: spx(12);
+      @include tablet-up {
+        gap: ppx(12);
+      }
+
+      dt {
+        flex-shrink: 0;
+        font-weight: 700;
+        width: spx(60);
+        @include tablet-up {
+          width: ppx(62);
+        }
+      }
+
+      dd {
+        flex: 1;
+      }
+    }
+
+    &__actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: spx(12);
+      margin-top: spx(22);
+      @include tablet-up {
+        gap: ppx(12);
+        margin-top: ppx(22);
+      }
+    }
+
+    // 滞在中の人が一番押すのがこの2つなので、指で押せる大きさを確保する
+    &__cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #138185;
+      color: #fff;
+      font-weight: 700;
+      text-align: center;
+      white-space: nowrap;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      font-size: spx(25);
+      padding: spx(16) spx(28);
+      border-radius: 999px;
+      @include tablet-up {
+        font-size: ppx(25);
+        padding: ppx(15) ppx(28);
+      }
+
+      @include hover {
+        &:hover {
+          background-color: #0e6467;
+        }
+      }
+
+      &--sub {
+        background-color: transparent;
+        border: spx(3) solid #138185;
+        color: #138185;
+        @include tablet-up {
+          border-width: ppx(3);
+        }
+
+        @include hover {
+          &:hover {
+            background-color: #138185;
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    &__link {
+      font-size: spx(23);
+      margin-top: spx(14);
+      @include tablet-up {
+        font-size: ppx(24);
+        margin-top: ppx(14);
+      }
+
+      a {
+        color: #5b5347;
+        text-decoration: underline;
+
+        @include hover {
+          &:hover {
+            color: #138185;
+          }
+        }
+      }
+    }
+  }
+</style>

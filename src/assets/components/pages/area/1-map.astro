@@ -1,33 +1,31 @@
 ---
 // メインSCSSファイルをインポート
 import "../../../../styles/main.scss";
+// 地図の描画に必要。JS本体は遅延ロードするが、CSSは軽いので先に読ませる
+import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
 
 import PaperTexture from "../../../images/common/paper-texture.png";
-import PinHospital from "../../../images/area/pin-hospital.svg";
-import PinConvenience from "../../../images/area/pin-convenience.svg";
-import PinSupermarket from "../../../images/area/pin-supermarket.svg";
-import PinRestaurant from "../../../images/area/pin-restaurant.svg";
-import PinLaundry from "../../../images/area/pin-laundry.svg";
-import PinCampShop from "../../../images/area/pin-camp-shop.svg";
-import PinSightseeing from "../../../images/area/pin-sightseeing.svg";
+import AreaCard from "./AreaCard.astro";
+import { categories, groups, origin, pois, farCount } from "../../../../data/areaPois";
 
-// 先方支給のGoogleマイマップの埋め込みURL待ち。暫定でキャンプ場周辺を表示している
-const MAP_EMBED_URL =
-  "https://maps.google.com/maps?q=%E5%B1%B1%E6%A2%A8%E7%9C%8C%E5%8D%97%E9%83%BD%E7%95%99%E9%83%A1%E5%AF%8C%E5%A3%AB%E6%B2%B3%E5%8F%A3%E6%B9%96%E7%94%BA%E8%A5%BF%E6%B9%961030&z=13&output=embed";
-
-const legend: { label: string; label2?: string; icon: ImageMetadata }[] = [
-  { label: "病院", icon: PinHospital },
-  { label: "コンビニ", icon: PinConvenience },
-  { label: "スーパー", icon: PinSupermarket },
-  { label: "飲食店", icon: PinRestaurant },
-  { label: "ランドリー", icon: PinLaundry },
-  // SPだけ2行に折る
-  { label: "キャンプ", label2: "用品店", icon: PinCampShop },
-  { label: "観光", icon: PinSightseeing },
-];
+// 「楽しむ」を先に出す（滞在の予定を決める人が多数で、困りごとは後から探されるため）
+const groupOrder = ["enjoy", "essentials"] as const;
+const groupedCategories = groupOrder.map((id) => {
+  const group = groups.find((g) => g.id === id)!;
+  return {
+    ...group,
+    items: group.categories.map((c) => categories.find((x) => x.id === c)!).filter(Boolean),
+  };
+});
 ---
 
-<section class="area-map">
+<section
+  class="area-map"
+  data-origin-lat={origin.lat}
+  data-origin-lng={origin.lng}
+  data-origin-name="湖のほとりのキャンプ場"
+>
   <!-- 背景の紙テクスチャ -->
   <div
     class="area-map__texture"
@@ -36,27 +34,394 @@ const legend: { label: string; label2?: string; icon: ImageMetadata }[] = [
   >
   </div>
 
-  <ul class="area-map__legend">
-    {
-      legend.map((item) => (
-        <li class="area-map__legend-item">
-          <img class="area-map__pin" src={item.icon.src} alt="" />
-          {/* 改行やスペースが入らないよう1行で書く */}
-          <p class="area-map__legend-label">{item.label}{item.label2 && <br class="area-map__br-sp" />}{item.label2}</p>
-        </li>
-      ))
-    }
-  </ul>
+  <div class="area-map__inner">
+    <!-- 「近くに何でもある」と見せかけないための一文。ここを隠すと現地で失望が起きる -->
+    <!-- 改行以外の空白が入らないよう set:html で流す（PCでは br が消えて1行になる） -->
+    <p
+      class="area-map__notice"
+      set:html={'西湖のまわりにコンビニ・スーパーはありません。<br class="area-map__br-sp">最寄りのコンビニで車11分、スーパーは13分。<br class="area-map__br-sp">買い出しは到着前に済ませておくと快適です。'}
+    />
 
-  <div class="area-map__frame">
-    <iframe
-      class="area-map__iframe"
-      src={MAP_EMBED_URL}
-      title="Gnome 周辺のマップ"
-      loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+    <div class="area-map__filters">
+      {
+        groupedCategories.map((group) => (
+          <div class="area-map__filter-group">
+            <p class="area-map__filter-label">{group.label}</p>
+            <ul class="area-map__chips">
+              {group.items.map((category) => (
+                <li>
+                  <button
+                    class="area-map__chip"
+                    type="button"
+                    data-cat={category.id}
+                    aria-pressed="true"
+                  >
+                    <span
+                      class="area-map__chip-dot"
+                      aria-hidden="true"
+                      style={`background-color: ${category.color};`}
+                    />
+                    {category.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+
+    </div>
+
+    <!-- SPでは絞り込みだけを画面に貼り付けたいので、この2つはsticky領域の外に出す -->
+    <div class="area-map__filter-actions">
+      <button class="area-map__text-button" type="button" data-select-all>
+        すべて選択
+      </button>
+      <button class="area-map__text-button" type="button" data-clear-all>
+        すべて解除
+      </button>
+    </div>
+
+    <div class="area-map__body">
+      <div class="area-map__map-col">
+        <div class="area-map__frame">
+          <div class="area-map__canvas" data-map-canvas>
+            <!-- 地図はここに後から乗る。JSが動かない環境ではリスト側だけで完結する -->
+            <p class="area-map__fallback">
+              地図を読み込んでいます。表示されない場合は下の一覧をご覧ください。
+            </p>
+          </div>
+        </div>
+        <p class="area-map__credit">出典: 国土地理院</p>
+      </div>
+
+      <div class="area-map__list-col">
+        <p class="area-map__count">
+          <span data-visible-count>{pois.filter((p) => p.tier !== 3 || p.alwaysVisible).length}</span
+          >件を表示中
+        </p>
+
+        <ul class="area-map__list" data-poi-list>
+          {
+            pois.map((poi) => (
+              <li class="area-map__list-item">
+                <AreaCard poi={poi} />
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="area-map__empty" data-empty hidden>
+          条件に合う場所がありません。
+          <button class="area-map__text-button" type="button" data-select-all>
+            フィルタをリセット
+          </button>
+        </p>
+
+        <button class="area-map__more" type="button" data-show-far>
+          車で20分より遠いところも見る（{farCount}件）
+        </button>
+      </div>
+    </div>
   </div>
 </section>
+
+<script>
+  const section = document.querySelector<HTMLElement>(".area-map");
+
+  if (section) {
+    const cards = Array.from(section.querySelectorAll<HTMLElement>(".area-card"));
+    const items = Array.from(section.querySelectorAll<HTMLElement>(".area-map__list-item"));
+    const chips = Array.from(section.querySelectorAll<HTMLButtonElement>("[data-cat]"));
+    const canvas = section.querySelector<HTMLElement>("[data-map-canvas]");
+    const moreButton = section.querySelector<HTMLButtonElement>("[data-show-far]");
+    const emptyEl = section.querySelector<HTMLElement>("[data-empty]");
+    const countEl = section.querySelector<HTMLElement>("[data-visible-count]");
+
+    const origin = {
+      lat: Number(section.dataset.originLat),
+      lng: Number(section.dataset.originLng),
+      name: section.dataset.originName ?? "",
+    };
+
+    const allCategories = chips.map((chip) => chip.dataset.cat!);
+    let selected = new Set(allCategories);
+    let showFar = false;
+
+    // --- URLクエリから状態を復元 -------------------------------------------
+    // 滞在中の人が家族にURLを送るので、絞り込みが共有とリロードで保てること
+    const params = new URLSearchParams(location.search);
+    const catParam = params.get("cat");
+    if (catParam) {
+      const restored = catParam.split(",").filter((c) => allCategories.includes(c));
+      if (restored.length > 0) selected = new Set(restored);
+    }
+    if (params.get("far") === "1") showFar = true;
+
+    const isVisible = (card: HTMLElement) => {
+      const cats = (card.dataset.categories ?? "").split(" ");
+      if (!cats.some((c) => selected.has(c))) return false;
+      // 買い出し先と救急は全部20分超なので、距離で隠すと「1軒もない」ように見えてしまう
+      if (card.dataset.alwaysVisible === "true") return true;
+      return showFar || card.dataset.tier !== "3";
+    };
+
+    const syncUrl = () => {
+      const next = new URLSearchParams(location.search);
+      if (selected.size === allCategories.length) next.delete("cat");
+      else next.set("cat", allCategories.filter((c) => selected.has(c)).join(","));
+      if (showFar) next.set("far", "1");
+      else next.delete("far");
+      const query = next.toString();
+      history.replaceState(null, "", query ? `?${query}${location.hash}` : location.pathname + location.hash);
+    };
+
+    // 地図側から差し込まれる更新関数。地図が未ロードのうちは何もしない
+    let onFilterChange: (() => void) | null = null;
+
+    const apply = () => {
+      let visible = 0;
+      items.forEach((item, index) => {
+        const show = isVisible(cards[index]);
+        item.hidden = !show;
+        if (show) visible += 1;
+      });
+
+      chips.forEach((chip) => {
+        const on = selected.has(chip.dataset.cat!);
+        chip.setAttribute("aria-pressed", String(on));
+        chip.classList.toggle("is-on", on);
+      });
+
+      if (countEl) countEl.textContent = String(visible);
+      if (emptyEl) emptyEl.hidden = visible > 0;
+
+      // tier3 が1件も該当しないなら「もっと見る」自体を出さない
+      if (moreButton) {
+        const hiddenFar = cards.filter(
+          (card) =>
+            card.dataset.tier === "3" &&
+            card.dataset.alwaysVisible !== "true" &&
+            (card.dataset.categories ?? "").split(" ").some((c) => selected.has(c))
+        ).length;
+        moreButton.hidden = showFar || hiddenFar === 0;
+        moreButton.textContent = `車で20分より遠いところも見る（${hiddenFar}件）`;
+      }
+
+      syncUrl();
+      onFilterChange?.();
+    };
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const id = chip.dataset.cat!;
+        if (selected.has(id)) selected.delete(id);
+        else selected.add(id);
+        apply();
+      });
+    });
+
+    section.querySelectorAll<HTMLButtonElement>("[data-select-all]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selected = new Set(allCategories);
+        apply();
+      });
+    });
+
+    section.querySelectorAll<HTMLButtonElement>("[data-clear-all]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selected = new Set();
+        apply();
+      });
+    });
+
+    moreButton?.addEventListener("click", () => {
+      showFar = true;
+      apply();
+    });
+
+    apply();
+
+    // --- 地図（progressive enhancement）-------------------------------------
+    // リストだけで情報は完結しているので、地図は見えるところまで来てから読み込む
+    if (canvas) {
+      const loadMap = async () => {
+        const L = (await import("leaflet")).default;
+        await import("leaflet.markercluster");
+
+        canvas.textContent = "";
+
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const map = L.map(canvas, {
+          center: [origin.lat, origin.lng],
+          zoom: 12,
+          scrollWheelZoom: false, // ページを縦スクロール中に地図に持っていかれないように
+        });
+
+        // 国土地理院の淡色地図。キー不要・商用可（出典表示が条件）
+        L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
+          attribution:
+            '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">国土地理院</a>',
+          maxZoom: 18,
+        }).addTo(map);
+
+        /** Figmaのピンと同じ形。カテゴリ色だけ差し替える */
+        const pinSvg = (color: string, scale = 1) => {
+          const w = Math.round(34 * scale);
+          const h = Math.round(41 * scale);
+          return `<svg width="${w}" height="${h}" viewBox="0 0 59 71" xmlns="http://www.w3.org/2000/svg"><path d="M56.5 29.5C56.5 50.5 29.5 68.5 29.5 68.5C29.5 68.5 2.5 50.5 2.5 29.5C2.5 22.3392 5.34463 15.4716 10.4081 10.4081C15.4716 5.34463 22.3392 2.5 29.5 2.5C36.6608 2.5 43.5284 5.34463 48.5919 10.4081C53.6554 15.4716 56.5 22.3392 56.5 29.5Z" fill="${color}" stroke="black" stroke-width="5" stroke-linejoin="round"/><path d="M29.5 38.5C34.47 38.5 38.5 34.47 38.5 29.5C38.5 24.53 34.47 20.5 29.5 20.5C24.53 20.5 20.5 24.53 20.5 29.5C20.5 34.47 24.53 38.5 29.5 38.5Z" fill="white" stroke="black" stroke-width="5" stroke-linejoin="round"/></svg>`;
+        };
+
+        const makeIcon = (color: string, active: boolean) =>
+          L.divIcon({
+            className: `area-pin${active ? " area-pin--active" : ""}`,
+            html: pinSvg(color, active ? 1.35 : 1),
+            iconSize: active ? [46, 55] : [34, 41],
+            iconAnchor: active ? [23, 55] : [17, 41],
+          });
+
+        // 起点。カテゴリで消えない・他のどれとも違う見た目・ラベル常時表示。
+        // 押しても何も起きないので、ボタンとして読み上げさせない（ラベルは常時見えている）
+        L.marker([origin.lat, origin.lng], {
+          zIndexOffset: 1000,
+          interactive: false,
+          keyboard: false,
+          icon: L.divIcon({
+            className: "area-origin",
+            html: `<span class="area-origin__dot"></span>`,
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
+          }),
+        })
+          .addTo(map)
+          .bindTooltip(origin.name, {
+            permanent: true,
+            direction: "top",
+            offset: [0, -14],
+            className: "area-origin__label",
+          });
+
+        const cluster = (L as any).markerClusterGroup({
+          // すぐ団子になると探せないので、重なっている点だけまとめる程度に緩めておく
+          maxClusterRadius: 45,
+          disableClusteringAtZoom: 15,
+          showCoverageOnHover: false,
+          spiderfyOnMaxZoom: true,
+          iconCreateFunction: (c: any) =>
+            L.divIcon({
+              className: "area-cluster",
+              html: `<span>${c.getChildCount()}</span><span class="area-sr-only">件のスポット</span>`,
+              iconSize: [46, 46],
+            }),
+        });
+        map.addLayer(cluster);
+
+        let activeId: string | null = null;
+
+        const entries = cards.map((card, index) => {
+          const color = card.dataset.color ?? "#138185";
+          const label = `${card.dataset.name}, 車で${card.dataset.minutes}分`;
+          const marker = L.marker([Number(card.dataset.lat), Number(card.dataset.lng)], {
+            icon: makeIcon(color, false),
+            keyboard: true,
+            title: card.dataset.name,
+          });
+          // divIcon には alt が付かないので、DOMに乗るたびに読み上げ用のラベルを当て直す
+          // （クラスタリングで要素が作り直されるため on("add") で毎回セットする）
+          marker.on("add", () => marker.getElement()?.setAttribute("aria-label", label));
+          return { card, item: items[index], marker, color, id: card.dataset.poiId! };
+        });
+
+        const setActive = (id: string | null, { scroll = false } = {}) => {
+          activeId = id;
+          entries.forEach((entry) => {
+            const on = entry.id === id;
+            entry.card.classList.toggle("is-active", on);
+            entry.marker.setIcon(makeIcon(entry.color, on));
+            if (on) entry.marker.setZIndexOffset(500);
+            else entry.marker.setZIndexOffset(0);
+          });
+          if (!scroll || !id) return;
+          const target = entries.find((entry) => entry.id === id);
+          target?.card.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+        };
+
+        entries.forEach((entry) => {
+          // マーカーをクリックしたらカードへ寄せる。ポップアップは出さず情報はカードに一本化する
+          entry.marker.on("click", () => setActive(entry.id, { scroll: true }));
+
+          const focus = () => {
+            if (activeId === entry.id) return;
+            entry.marker.setIcon(makeIcon(entry.color, true));
+            entry.marker.setZIndexOffset(400);
+          };
+          const blur = () => {
+            if (activeId === entry.id) return;
+            entry.marker.setIcon(makeIcon(entry.color, false));
+            entry.marker.setZIndexOffset(0);
+          };
+          entry.card.addEventListener("mouseenter", focus);
+          entry.card.addEventListener("mouseleave", blur);
+          entry.card.addEventListener("focus", focus);
+          entry.card.addEventListener("blur", blur);
+
+          // カードをクリック/Enterで、地図をそのマーカーへ寄せる
+          const fly = () => {
+            setActive(entry.id);
+            const zoom = Math.max(map.getZoom(), 14);
+            const latlng = entry.marker.getLatLng();
+            if (reduceMotion) map.setView(latlng, zoom);
+            else map.flyTo(latlng, zoom, { duration: 0.6 });
+          };
+          entry.card.addEventListener("click", (event) => {
+            // カード内のリンク（ルート・電話・公式サイト）を潰さない
+            if ((event.target as HTMLElement).closest("a")) return;
+            fly();
+          });
+          entry.card.addEventListener("keydown", (event) => {
+            if (event.key !== "Enter") return;
+            if ((event.target as HTMLElement).closest("a")) return;
+            event.preventDefault();
+            fly();
+          });
+        });
+
+        const render = () => {
+          cluster.clearLayers();
+          const shown = entries.filter((entry) => !entry.item.hidden);
+          cluster.addLayers(shown.map((entry) => entry.marker));
+
+          if (activeId && !shown.some((entry) => entry.id === activeId)) setActive(null);
+
+          // 表示中の全部＋起点が収まるように。0件なら起点だけ映す
+          const points: [number, number][] = shown.map((entry) => {
+            const { lat, lng } = entry.marker.getLatLng();
+            return [lat, lng];
+          });
+          points.push([origin.lat, origin.lng]);
+          if (points.length === 1) map.setView([origin.lat, origin.lng], 13);
+          else map.fitBounds(L.latLngBounds(points), { padding: [40, 40] });
+        };
+
+        onFilterChange = render;
+        render();
+      };
+
+      // 地図コンテナが見えるまでライブラリを読み込まない
+      const observer = new IntersectionObserver(
+        (records) => {
+          if (!records.some((record) => record.isIntersecting)) return;
+          observer.disconnect();
+          loadMap();
+        },
+        { rootMargin: "200px" }
+      );
+      observer.observe(canvas);
+    }
+  }
+</script>
 
 <style lang="scss">
   // 必要なmixin/functionをインポート
@@ -66,17 +431,12 @@ const legend: { label: string; label2?: string; icon: ImageMetadata }[] = [
 
   .area-map {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     background-color: #bee0e1;
-    padding-top: spx(70);
-    padding-bottom: spx(50);
-    gap: spx(10);
+    padding-top: spx(50);
+    padding-bottom: spx(90);
     @include tablet-up {
-      padding-top: ppx(140);
-      padding-bottom: 0;
-      gap: ppx(10);
+      padding-top: ppx(80);
+      padding-bottom: ppx(120);
     }
 
     &__texture {
@@ -93,90 +453,404 @@ const legend: { label: string; label2?: string; icon: ImageMetadata }[] = [
       }
     }
 
-    // SPは2段（115×4＋間隔30×3＝550）、PCは7つ横並び（250×7＝1750）
-    &__legend {
+    &__inner {
       position: relative;
       z-index: 1;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      justify-content: center;
-      width: spx(550);
-      padding-bottom: spx(30);
-      gap: spx(15) spx(30);
+      margin: 0 auto;
+      width: spx(660);
       @include tablet-up {
-        flex-wrap: nowrap;
-        width: ppx(1750);
-        padding-bottom: ppx(30);
-        gap: 0;
+        width: ppx(2120);
       }
     }
 
-    &__legend-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: spx(115);
-      gap: spx(9);
-      @include tablet-up {
-        width: ppx(250);
-        gap: ppx(10);
-      }
-    }
-
-    // 書き出しSVGは黒線のはみ出しぶん59×71ある。負のmarginで枠を54×66に戻す
-    &__pin {
-      display: block;
-      width: spx(59);
-      height: spx(71);
-      margin: spx(-2.5);
-      @include tablet-up {
-        width: ppx(59);
-        height: ppx(71);
-        margin: ppx(-2.5);
-      }
-    }
-
-    &__legend-label {
+    &__notice {
       font-family: "Noto Sans JP", sans-serif;
-      font-weight: 400;
+      font-weight: 700;
       color: #000;
       text-align: center;
-      line-height: 1.4;
-      font-size: spx(23);
+      line-height: 1.7;
+      font-size: spx(25);
+      margin-bottom: spx(30);
       @include tablet-up {
-        line-height: 1.6;
         font-size: ppx(28);
-        letter-spacing: ppx(1.4);
-        margin-right: ppx(-1.4);
+        margin-bottom: ppx(40);
       }
     }
 
-    &__br-sp {
+    // set:html で流し込んだ br にはスコープ属性が付かないので :global で当てる
+    // （PageHeader の __br-sp と同じ扱い）
+    :global(.area-map__br-sp) {
+      display: inline;
       @include tablet-up {
         display: none;
       }
     }
 
-    &__frame {
-      position: relative;
-      z-index: 1;
-      overflow: clip;
-      width: spx(660);
-      height: spx(709);
-      border-radius: spx(40);
+    // SPでは絞り込みを画面に貼り付けて、リストを追いながら切り替えられるようにする。
+    // ヘッダーが右上に spx(15)〜spx(185) で固定表示されているので、その下に逃がす
+    &__filters {
+      position: sticky;
+      top: spx(190);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      background-color: #bee0e1;
+      padding: spx(14) 0;
+      gap: spx(12);
       @include tablet-up {
-        width: ppx(2120);
-        height: ppx(800);
-        border-radius: ppx(40);
+        position: static;
+        padding: 0;
+        gap: ppx(16);
       }
     }
 
-    &__iframe {
+    &__filter-group {
+      display: flex;
+      align-items: center;
+      gap: spx(14);
+      @include tablet-up {
+        align-items: baseline;
+        gap: ppx(20);
+      }
+    }
+
+    &__filter-label {
+      flex-shrink: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      white-space: nowrap;
+      font-size: spx(23);
+      width: spx(110);
+      @include tablet-up {
+        font-size: ppx(26);
+        width: ppx(150);
+      }
+    }
+
+    // SPは折り返さずに横スクロール。10個を折り返すとsticky領域が画面を食い潰す
+    &__chips {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: spx(10);
+      padding-bottom: spx(4);
+      @include tablet-up {
+        flex-wrap: wrap;
+        overflow-x: visible;
+        gap: ppx(14);
+        padding-bottom: 0;
+      }
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      // flexアイテムはボタンではなく li なので、潰れないようにするのはこちら
+      > li {
+        flex-shrink: 0;
+      }
+    }
+
+    &__chip {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      background-color: transparent;
+      border-style: solid;
+      border-color: #000;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #000;
+      white-space: nowrap;
+      transition:
+        background-color 0.3s ease,
+        opacity 0.3s ease;
+      opacity: 0.45;
+      padding: spx(10) spx(20);
+      border-width: spx(3);
+      gap: spx(8);
+      font-size: spx(23);
+      @include tablet-up {
+        padding: ppx(11) ppx(24);
+        border-width: ppx(3);
+        gap: ppx(10);
+        font-size: ppx(25);
+      }
+
+      // 選択中は塗り、非選択は枠線のみ。色は薄いものもあるので文字は常に黒のまま
+      &.is-on {
+        background-color: #fffdf7;
+        opacity: 1;
+      }
+
+      @include hover {
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    &__chip-dot {
       display: block;
+      border-style: solid;
+      border-color: #000;
+      border-radius: 50%;
+      width: spx(18);
+      height: spx(18);
+      border-width: spx(2);
+      @include tablet-up {
+        width: ppx(20);
+        height: ppx(20);
+        border-width: ppx(2);
+      }
+    }
+
+    &__filter-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: spx(20);
+      margin-top: spx(12);
+      margin-bottom: spx(24);
+      @include tablet-up {
+        gap: ppx(24);
+        margin-top: ppx(14);
+        margin-bottom: ppx(36);
+      }
+    }
+
+    &__text-button {
+      background: none;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-decoration: underline;
+      font-size: spx(23);
+      @include tablet-up {
+        font-size: ppx(24);
+      }
+
+      @include hover {
+        &:hover {
+          color: #0e6467;
+        }
+      }
+    }
+
+    // PCは地図を左に固定してリストだけスクロールさせる（3:2）
+    &__body {
+      display: flex;
+      flex-direction: column;
+      gap: spx(30);
+      @include tablet-up {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: ppx(50);
+      }
+    }
+
+    &__map-col {
+      @include tablet-up {
+        position: sticky;
+        top: ppx(40);
+        flex: 3;
+      }
+    }
+
+    &__list-col {
+      @include tablet-up {
+        flex: 2;
+      }
+    }
+
+    &__frame {
+      position: relative;
+      overflow: clip;
+      background-color: #eef2ef;
+      border-radius: spx(30);
+      height: 45dvh;
+      @include tablet-up {
+        border-radius: ppx(40);
+        height: min(80vh, ppx(1600));
+      }
+    }
+
+    &__canvas {
       width: 100%;
       height: 100%;
-      border: 0;
     }
+
+    &__fallback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: spx(30);
+      font-family: "Noto Sans JP", sans-serif;
+      color: #5b5347;
+      text-align: center;
+      font-size: spx(24);
+      @include tablet-up {
+        padding: ppx(30);
+        font-size: ppx(26);
+      }
+    }
+
+    &__credit {
+      font-family: "Noto Sans JP", sans-serif;
+      color: #3f5a5b;
+      text-align: right;
+      font-size: spx(20);
+      margin-top: spx(8);
+      @include tablet-up {
+        font-size: ppx(22);
+        margin-top: ppx(10);
+      }
+    }
+
+    &__count {
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #3f5a5b;
+      font-size: spx(23);
+      margin-bottom: spx(14);
+      @include tablet-up {
+        font-size: ppx(24);
+        margin-bottom: ppx(16);
+      }
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: spx(20);
+      @include tablet-up {
+        gap: ppx(22);
+      }
+    }
+
+    &__list-item[hidden] {
+      display: none;
+    }
+
+    &__empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      gap: spx(16);
+      padding: spx(50) 0;
+      font-size: spx(28);
+      @include tablet-up {
+        gap: ppx(16);
+        padding: ppx(60) 0;
+        font-size: ppx(30);
+      }
+    }
+
+    &__more {
+      display: block;
+      box-sizing: border-box;
+      width: 100%;
+      background-color: transparent;
+      border-style: solid;
+      border-color: #138185;
+      border-radius: 999px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #138185;
+      text-align: center;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      margin-top: spx(30);
+      padding: spx(22) spx(20);
+      border-width: spx(3);
+      font-size: spx(26);
+      @include tablet-up {
+        margin-top: ppx(32);
+        padding: ppx(22) ppx(20);
+        border-width: ppx(3);
+        font-size: ppx(27);
+      }
+
+      @include hover {
+        &:hover {
+          background-color: #138185;
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  // --- Leafletが生成するDOMなのでスコープを外して当てる ---------------------
+  :global(.area-pin) {
+    background: none;
+    border: none;
+    transition: transform 0.2s ease;
+  }
+
+  :global(.area-origin__dot) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: #138185;
+    border: 5px solid #fffdf7;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px #000;
+  }
+
+  :global(.area-origin__label) {
+    background-color: #138185;
+    border: 2px solid #000;
+    border-radius: 999px;
+    color: #fff;
+    font-family: "Noto Sans JP", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 3px 10px;
+    white-space: nowrap;
+    box-shadow: none;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  // 読み上げにだけ効かせる補助テキスト
+  :global(.area-sr-only) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  :global(.area-cluster) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fffdf7;
+    border: 3px solid #000;
+    border-radius: 50%;
+    color: #000;
+    font-family: "Noto Sans JP", sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  // 帰属表示は「出典: 国土地理院」を別に出しているので、地図内は控えめでよい
+  :global(.area-map .leaflet-control-attribution) {
+    font-size: 10px;
   }
 </style>
