@@ -150,15 +150,24 @@ const cards = [
     overflow: clip;
 
     // 上端の繋ぎ波（本体の上に絶対配置）
+    //
+    // 引き上げ量は「SVGの上端から波の描画が始まるまでの透明部分」より大きくすること。
+    // 足りないと透明部分から本体の背景が覗き、上のセクションとの間に筋として見える。
+    //   SP join-sp.svg viewBox 720x115  波の開始 y=23.578 → 3.28vw 必要
+    //   PC join-pc.svg viewBox 2560x348 波の開始 y=49.453 → 1.93vw 必要だが、
+    //      上下の背景色が近く実測で筋が出ていないため現状維持
     &__join {
       position: absolute;
-      top: -1vw;
+      top: -3.4vw;
       left: 0;
       z-index: 2;
       width: 100%;
       line-height: 0;
       font-size: 0;
       pointer-events: none;
+      @include tablet-up {
+        top: -1vw;
+      }
     }
 
     &__join-picture {
