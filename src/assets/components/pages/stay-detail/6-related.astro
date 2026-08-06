@@ -98,6 +98,9 @@ import { activities } from "../../../../data/activities";
     position: relative;
     z-index: 1;
     background-color: #bee0e1;
+    // 波は左右に意図的にはみ出しているので、そのぶんが body の横幅を広げないよう切る。
+    // 上方向（top: spx(-11.536)）へのはみ出しは残したいので overflow-x だけにする
+    overflow-x: clip;
     height: spx(96);
     @include tablet-up {
       height: ppx(200);
