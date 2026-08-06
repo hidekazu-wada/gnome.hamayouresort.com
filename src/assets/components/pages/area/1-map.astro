@@ -25,14 +25,10 @@ const groupedCategories = groupOrder.map((id) => {
   data-origin-lat={origin.lat}
   data-origin-lng={origin.lng}
   data-origin-name="キャンプビレッジノーム"
+  style={`--area-paper: url(${PaperTexture.src});`}
 >
-  <!-- 背景の紙テクスチャ -->
-  <div
-    class="area-map__texture"
-    aria-hidden="true"
-    style={`background-image: url(${PaperTexture.src});`}
-  >
-  </div>
+  <!-- 背景の紙テクスチャ。SPで貼り付けるパネルにも同じものを敷くので変数で持つ -->
+  <div class="area-map__texture" aria-hidden="true"></div>
 
   <div class="area-map__inner">
     <!-- 「近くに何でもある」と見せかけないための一文。ここを隠すと現地で失望が起きる -->
@@ -475,6 +471,7 @@ const groupedCategories = groupOrder.map((id) => {
       position: absolute;
       inset: 0;
       z-index: 0;
+      background-image: var(--area-paper);
       background-repeat: repeat;
       background-position: top left;
       background-size: spx(140);
@@ -526,10 +523,30 @@ const groupedCategories = groupOrder.map((id) => {
       top: 0;
       z-index: 3;
       background-color: #bee0e1;
-      padding-bottom: spx(12);
+      // 地図の上に少し余白を残して貼り付ける
+      padding-top: spx(26);
+      padding-bottom: spx(28);
       @include tablet-up {
         // 中身（地図・チップ）を親のグリッドへそのまま並べ直す
         display: contents;
+      }
+
+      // ベタ塗りのままだと、紙テクスチャがかかった周囲から浮いて見える。
+      // セクションと同じテクスチャを同じ重ね方で敷いて質感をそろえる
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-image: var(--area-paper);
+        background-repeat: repeat;
+        background-position: top left;
+        background-size: spx(140);
+        mix-blend-mode: luminosity;
+        pointer-events: none;
+        @include tablet-up {
+          content: none;
+        }
       }
     }
 
@@ -538,13 +555,16 @@ const groupedCategories = groupOrder.map((id) => {
       overflow-x: auto;
       overscroll-behavior-x: contain;
       scrollbar-width: none;
-      padding-top: spx(12);
+      // 地図とチップがくっついていると押しにくいので上下に余裕を取る
+      padding-top: spx(28);
+      padding-bottom: spx(6);
       gap: spx(24);
       @include tablet-up {
         grid-area: filters;
         flex-direction: column;
         overflow-x: visible;
         padding-top: 0;
+        padding-bottom: 0;
         gap: ppx(16);
       }
 
@@ -723,10 +743,15 @@ const groupedCategories = groupOrder.map((id) => {
       isolation: isolate;
       overflow: clip;
       background-color: #eef2ef;
+      border-style: solid;
+      border-color: #fff;
+      box-sizing: border-box;
+      border-width: spx(8);
       border-radius: spx(30);
       // 貼り付けた領域が画面の半分を超えるとカードが読めなくなるので、チップのぶんを見て抑える
-      height: 33dvh;
+      height: 30dvh;
       @include tablet-up {
+        border-width: ppx(10);
         border-radius: ppx(40);
         height: min(80vh, ppx(1600));
       }

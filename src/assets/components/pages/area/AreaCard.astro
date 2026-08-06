@@ -165,7 +165,7 @@ const telHref = poi.phone ? `tel:${poi.phone.replace(/[^0-9+]/g, "")}` : null;
     color: #000;
     // SPは地図とチップが画面上部に貼り付いているので、
     // マーカーから scrollIntoView したときにその裏へ隠れないよう逃がす
-    scroll-margin-top: calc(33dvh + #{spx(120)});
+    scroll-margin-top: calc(30dvh + #{spx(150)});
     scroll-margin-bottom: spx(20);
     transition:
       background-color 0.3s ease,
