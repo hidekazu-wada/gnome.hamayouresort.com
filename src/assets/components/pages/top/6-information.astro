@@ -7,13 +7,16 @@ import PaperTexture from "../../../images/common/paper-texture.png";
 import Sunburst from "../../../images/top/3-activity/sunburst.png";
 import ArrowWhite from "../../../images/top/6-information/arrow-white.svg";
 import ArrowGreen from "../../../images/top/6-information/arrow-green.svg";
+import { newsCategories } from "../../../../data/news";
 
-// カテゴリフィルタボタン
+// カテゴリフィルタ。押すとお知らせ一覧を該当カテゴリで絞った状態で開く。
+// カテゴリ名はここで持たず newsCategories を参照する（一覧側と文字列がずれると絞り込みが効かないため）
 const filters = [
-  { label: "すべて", active: true },
-  { label: "お知らせ", active: false },
-  { label: "イベント・キャンペーン", active: false },
-  { label: "スタッフブログ", active: false },
+  { label: "すべて", href: "/news/" },
+  ...newsCategories.map((label) => ({
+    label,
+    href: `/news/?category=${encodeURIComponent(label)}`,
+  })),
 ];
 
 // お知らせ（ダミー。CMS導入後に差し替え）
@@ -47,10 +50,10 @@ const news = [
     <!-- カテゴリフィルタ -->
     <div class="information__filters">
       {
-        filters.map((f) => (
-          <button
-            type="button"
-            class:list={["information__filter", { "is-active": f.active }]}
+        filters.map((f, i) => (
+          <a
+            class:list={["information__filter", { "is-active": i === 0 }]}
+            href={f.href}
           >
             <span class="information__filter-text">{f.label}</span>
             <span class="information__filter-arrowbox">
@@ -65,7 +68,7 @@ const news = [
                 alt=""
               />
             </span>
-          </button>
+          </a>
         ))
       }
     </div>

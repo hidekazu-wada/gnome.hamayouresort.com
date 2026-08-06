@@ -96,7 +96,13 @@ const PAGE_SIZE = 12;
     const moreWrap = section.querySelector<HTMLElement>(".news-list__more-wrap");
     const more = section.querySelector<HTMLButtonElement>("[data-news-more]");
 
-    let current = "すべて";
+    // トップのカテゴリボタンから ?category=... で来たら、その絞り込みを当てた状態で開く
+    const requested = new URLSearchParams(location.search).get("category");
+    const matchedPill = requested
+      ? pills.find((p) => p.dataset.filter === requested)
+      : undefined;
+
+    let current = matchedPill?.dataset.filter ?? "すべて";
     let shown = PAGE_SIZE;
 
     const render = () => {
@@ -129,6 +135,15 @@ const PAGE_SIZE = 12;
       shown += PAGE_SIZE;
       render();
     });
+
+    // URLで指定されたカテゴリのピルを選択状態にしてから描画する
+    if (matchedPill) {
+      pills.forEach((p) => {
+        const active = p === matchedPill;
+        p.classList.toggle("is-active", active);
+        p.setAttribute("aria-pressed", String(active));
+      });
+    }
 
     render();
   }
