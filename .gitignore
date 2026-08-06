@@ -23,3 +23,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# 修正前後の検証用スクショ（コミットしない）
+verify/

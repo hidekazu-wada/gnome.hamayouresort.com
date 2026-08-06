@@ -136,15 +136,25 @@ const seasons = [
     overflow: clip;
 
     // 上端の繋ぎ波（本体グレーの上に絶対配置）
+    //
+    // 引き上げ量は「SVGの上端から波の描画が始まるまでの透明部分」より大きくすること。
+    // 足りないとその透明部分から本体のグレー(#f2f2f2)が覗き、ACTIVITYのクリームとの間に
+    // 明るい筋＝白線として見える。
+    //   SP  join-sp.svg  viewBox 720x79   path開始 y=11.7012 → 1.63vw 必要
+    //   PC  join-pc.svg  viewBox 2560x212 path開始 y=11.54   → 0.45vw 必要
     &__join {
       position: absolute;
-      top: -1vw;
+      top: -1.7vw;
       left: 0;
       z-index: 2;
       width: 100%;
       line-height: 0;
       font-size: 0;
       pointer-events: none;
+      // PCは透明部分が少ないので従来どおり。SPと同じだけ上げると波が浮いて見える
+      @include tablet-up {
+        top: -1vw;
+      }
     }
 
     &__join-picture {
