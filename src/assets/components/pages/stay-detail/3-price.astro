@@ -93,7 +93,14 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
         src={HotelPlanCircles.src}
         alt=""
       />
-      <span class="stay-price__banner-catch-text">雨の日でも安心</span>
+      {/* 白丸は7つの等分なので、文字も7等分のセルに入れて確実に中心へ乗せる */}
+      <span class="stay-price__banner-catch-text">
+        {
+          [..."雨の日でも安心"].map((ch) => (
+            <span class="stay-price__banner-catch-char">{ch}</span>
+          ))
+        }
+      </span>
     </span>
 
     <span class="stay-price__banner-texts">
@@ -245,6 +252,15 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
       }
     }
 
+    // アーリー／レイトの改行はPC・TB用。SPはラベル欄が広いので1行に収める。
+    // set:html で流し込むためスコープ属性が付かず :global で当てる
+    :global(.stay-price__br-pc) {
+      display: none;
+      @include tablet-up {
+        display: inline;
+      }
+    }
+
     &__label-text {
       display: block;
       font-family: "Noto Sans JP", sans-serif;
@@ -370,25 +386,27 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
       height: 100%;
     }
 
+    // letter-spacing で字間を作ると、文字送りと丸の間隔のわずかな差が後ろの文字ほど
+    // 積み上がってズレる（PCで最大9.4px）。7等分のセルに1文字ずつ入れて中心に乗せる
     &__banner-catch-text {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
-      justify-content: center;
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 700;
       color: #000;
       line-height: 1;
       white-space: nowrap;
       font-size: spx(28.9);
-      letter-spacing: spx(17.36);
-      margin-right: spx(-17.36); // 字間の末尾分を打ち消して中央に
       @include tablet-up {
         font-size: ppx(47);
-        letter-spacing: ppx(28.2);
-        margin-right: ppx(-28.2);
       }
+    }
+
+    &__banner-catch-char {
+      flex: 1 1 0;
+      text-align: center;
     }
 
     &__banner-texts {
