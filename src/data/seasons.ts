@@ -30,6 +30,13 @@ export type Season = {
   catch: string;
   /** セクションの地色。冬は色を敷かずテクスチャのみ */
   bg: string | null;
+  /**
+   * 紙テクスチャの濃さ。既定は 1。
+   * テクスチャは mix-blend-mode: luminosity（明度で塗り替える合成）なので、
+   * テクスチャより明るい地色は暗く沈む。春のピンクだけ飛び抜けて明るく、
+   * そのままだとFigmaより14暗くなるため薄める。
+   */
+  textureOpacity?: number;
   /** 見出しや文字に使う季節のアクセント色 */
   accent: string;
   /** 「おすすめ01」バッジの地色 */
@@ -56,6 +63,8 @@ export const seasons: Season[] = [
     enLarge: "SPRING",
     catch: "芽吹く新緑と桜の競演",
     bg: "#fff7fa",
+    // この値でFigmaの (246,238,241) に一致する
+    textureOpacity: 0.39,
     accent: "#ef6f6f",
     badgeBg: "#fce8e6",
     mainPhoto: springMain,

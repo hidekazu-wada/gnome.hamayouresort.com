@@ -20,7 +20,7 @@ const texture = season.bg ? PaperTexture : PaperTexturePlain;
 
 <section
   class:list={["season-activity", { "is-plain": !season.bg }]}
-  style={`${season.bg ? `--bg: ${season.bg};` : ""} --accent: ${season.accent};`}
+  style={`${season.bg ? `--bg: ${season.bg};` : ""} --accent: ${season.accent}; --texture-opacity: ${season.textureOpacity ?? 1};`}
   data-season={season.key}
 >
   <!-- 背景の紙テクスチャ -->
@@ -106,6 +106,9 @@ const texture = season.bg ? PaperTexture : PaperTexturePlain;
       background-position: top left;
       background-size: spx(140);
       mix-blend-mode: luminosity;
+      // 明度合成なので、テクスチャより明るい地色（春のピンク）は暗く沈む。
+      // 季節ごとに濃さを調整できるようにする（既定は1）
+      opacity: var(--texture-opacity, 1);
       pointer-events: none;
       @include tablet-up {
         background-size: ppx(200);

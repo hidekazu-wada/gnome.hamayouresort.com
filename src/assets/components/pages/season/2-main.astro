@@ -21,6 +21,7 @@ const texture = season.bg ? PaperTexture : PaperTexturePlain;
   id={season.key}
   style={`
     ${season.bg ? `--bg: ${season.bg};` : ""}
+    --texture-opacity: ${season.textureOpacity ?? 1};
     --illust-left: ${season.illustPc.left};
     --illust-top: ${season.illustPc.top};
     --illust-width: ${season.illustPc.width};
@@ -88,6 +89,9 @@ const texture = season.bg ? PaperTexture : PaperTexturePlain;
       background-position: top left;
       background-size: spx(140);
       mix-blend-mode: luminosity;
+      // 明度合成なので、テクスチャより明るい地色（春のピンク）は暗く沈む。
+      // 季節ごとに濃さを調整できるようにする（既定は1）
+      opacity: var(--texture-opacity, 1);
       pointer-events: none;
       @include tablet-up {
         background-size: ppx(200);
