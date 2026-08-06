@@ -294,6 +294,10 @@ const { titleEn, titleJa, lead, leadVariant = "default", tallSp = false } = Astr
         letter-spacing: spx(1.3);
         margin-right: spx(-1.3);
         @include tablet-up {
+          // 「お知らせ」との間隔は __title-body の gap: ppx(50) だが、
+          // これは全ページのリード文共通なので触らず、日付だけここで下げる
+          // （Figmaの設計位置に対して89px上にあった）
+          margin-top: ppx(89);
           line-height: #{ppx(26)};
           font-size: ppx(36);
           letter-spacing: ppx(1.8);
