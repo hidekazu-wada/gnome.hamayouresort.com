@@ -298,8 +298,10 @@ const navItems = [
       top: spx(869);
       left: spx(105);
       gap: spx(10);
+      // TB縦だけヘッダーのInstagramの文字より6.5px高い位置にあったので下げる
+      // （PCは3px以内で揃っているので触らない）
       @include tablet-up {
-        top: tpx(103);
+        top: tpx(119);
         left: tpx(1070);
         gap: tpx(10);
       }
