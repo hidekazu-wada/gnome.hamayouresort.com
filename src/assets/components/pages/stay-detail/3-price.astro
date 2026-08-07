@@ -387,12 +387,11 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
     }
 
     // letter-spacing で字間を作ると、文字送りと丸の間隔のわずかな差が後ろの文字ほど
-    // 積み上がってズレる（PCで最大9.4px）。7等分のセルに1文字ずつ入れて中心に乗せる
+    // 積み上がってズレる（PCで最大9.4px）ので、1文字ずつ丸の中心に置く
     &__banner-catch-text {
       position: absolute;
       inset: 0;
-      display: flex;
-      align-items: center;
+      display: block;
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 700;
       color: #000;
@@ -404,9 +403,19 @@ const HOTEL_PLAN_URL = "/hotel-set-plan/";
       }
     }
 
+    // 丸は7等分ではない（hotel-plan-circles.svg は viewBox 520×70 で
+    // cx = 35 + 75i、半径35）。等分で置くと最大 ±0.41%＝PC2560で2.14px ずれるので、
+    // SVGの実座標をそのまま％にして中心に乗せる
     &__banner-catch-char {
-      flex: 1 1 0;
-      text-align: center;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+
+      @for $i from 0 through 6 {
+        &:nth-child(#{$i + 1}) {
+          left: percentage((35 + 75 * $i) / 520);
+        }
+      }
     }
 
     &__banner-texts {
