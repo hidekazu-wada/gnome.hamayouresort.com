@@ -861,6 +861,11 @@ const groupedCategories = groupOrder.map((id) => {
         scroll-margin-top: calc(var(--area-panel-h, 0px) + #{ppx(20)});
         scroll-margin-bottom: ppx(20);
       }
+      // 2列に並ぶタブレット縦だけ、左右で高さが違うとき短い方のカードを
+      // 行の高さに合わせて伸ばす（中身は上詰めのまま、余白が下に付く）
+      @include tablet-only {
+        display: flex;
+      }
     }
 
     &__list-item[hidden] {
