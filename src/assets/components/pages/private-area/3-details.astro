@@ -507,7 +507,9 @@ const feeOf = (slug: string) =>
       font-weight: 400;
       color: #000;
       text-align: center;
+      // Firefox は break-all だけだと「◯」の連続を折り返さず枠からはみ出す
       word-break: break-all;
+      overflow-wrap: break-word;
       line-height: 1.6;
       width: spx(270);
       font-size: spx(24);

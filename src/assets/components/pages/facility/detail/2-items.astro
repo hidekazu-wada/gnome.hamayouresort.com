@@ -225,7 +225,9 @@ const { detail } = Astro.props;
       color: #000;
       text-align: center;
       line-height: 1.6;
-      word-break: break-all; // ダミーの◯連続を折り返す
+      // Firefox は break-all だけだと「◯」の連続を折り返さず枠からはみ出す
+      word-break: break-all;
+      overflow-wrap: break-word;
       width: spx(270);
       font-size: spx(24);
       @include tablet-up {
