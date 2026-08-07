@@ -530,6 +530,11 @@ const groupedCategories = groupOrder.map((id) => {
         // 中身（地図・チップ）を親のグリッドへそのまま並べ直す
         display: contents;
       }
+      @include tablet-only {
+        display: block;
+        padding-top: ppx(26 * 1.2);
+        padding-bottom: ppx(28 * 1.2);
+      }
 
       // ベタ塗りのままだと、紙テクスチャがかかった周囲から浮いて見える。
       // セクションと同じテクスチャを同じ重ね方で敷いて質感をそろえる
@@ -546,6 +551,10 @@ const groupedCategories = groupOrder.map((id) => {
         pointer-events: none;
         @include tablet-up {
           content: none;
+        }
+        @include tablet-only {
+          content: "";
+          background-size: ppx(200);
         }
       }
     }
@@ -716,6 +725,11 @@ const groupedCategories = groupOrder.map((id) => {
           "map     list";
         column-gap: ppx(50);
       }
+      // タブレット縦はSPと同じ縦積み（地図が全幅になり fitBounds の倍率が上がる）
+      @include tablet-only {
+        display: flex;
+        flex-direction: column;
+      }
     }
 
     &__map-col {
@@ -725,6 +739,9 @@ const groupedCategories = groupOrder.map((id) => {
         align-self: start;
         position: sticky;
         top: ppx(40);
+      }
+      @include tablet-only {
+        position: static;
       }
     }
 
@@ -754,6 +771,10 @@ const groupedCategories = groupOrder.map((id) => {
         border-width: ppx(10);
         border-radius: ppx(40);
         height: min(80vh, ppx(1600));
+      }
+      // 全幅になるぶん、貼り付けたときに画面を占有しすぎない高さにする
+      @include tablet-only {
+        height: 42dvh;
       }
     }
 
@@ -796,6 +817,12 @@ const groupedCategories = groupOrder.map((id) => {
       gap: spx(20);
       @include tablet-up {
         gap: ppx(22);
+      }
+      // 全幅の1列だとカードが間延びするので2列にする
+      @include tablet-only {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: ppx(22 * 1.2);
       }
     }
 
