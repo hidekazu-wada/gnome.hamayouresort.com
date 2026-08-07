@@ -16,6 +16,12 @@ interface Props {
 
 const { poi } = Astro.props;
 const category = categoryMap.get(poi.category)!;
+// 道の駅のように2つの顔を持つ施設は、絞り込みで両方にヒットする。
+// ラベルも両方出さないと「観光・遊び」で絞ったときに「買い出し」とだけ出て
+// なぜ出てきたのか分からなくなる
+const categories = [poi.category, ...poi.also]
+  .map((id) => categoryMap.get(id))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
 
 // tel: のURLは数字だけにする（ハイフンは表示専用）
 const telHref = poi.phone ? `tel:${poi.phone.replace(/[^0-9+]/g, "")}` : null;
@@ -41,12 +47,19 @@ const telHref = poi.phone ? `tel:${poi.phone.replace(/[^0-9+]/g, "")}` : null;
     style={`background-color: ${category.color};`}></span>
 
   <div class="area-card__head">
-    <span class="area-card__category">
-      <span
-        class="area-card__dot"
-        aria-hidden="true"
-        style={`background-color: ${category.color};`}></span>
-      {category.label}
+    <span class="area-card__categories">
+      {
+        categories.map((c) => (
+          <span class="area-card__category">
+            <span
+              class="area-card__dot"
+              aria-hidden="true"
+              style={`background-color: ${c.color};`}
+            />
+            {c.label}
+          </span>
+        ))
+      }
     </span>
     <span class="area-card__time">車で{poi.driveMinutes}分</span>
   </div>
@@ -221,6 +234,17 @@ const telHref = poi.phone ? `tel:${poi.phone.replace(/[^0-9+]/g, "")}` : null;
       gap: spx(10);
       @include tablet-up {
         gap: ppx(10);
+      }
+    }
+
+    // 2つの顔を持つ施設はラベルが2つ並ぶ。幅が足りなければ折り返す
+    &__categories {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: spx(6) spx(18);
+      @include tablet-up {
+        gap: ppx(6) ppx(18);
       }
     }
 
