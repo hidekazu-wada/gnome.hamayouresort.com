@@ -10,7 +10,12 @@ import Map from "../assets/components/pages/area/1-map.astro";
   flush
   breadcrumb={[{ label: "TOP", href: "/" }, { label: "周辺情報" }]}
 >
-  {/* 使い方の説明は置かない。カテゴリを選べば動きが分かるため */}
-  <PageHeader titleEn="INFORMATION" titleJa="周辺情報" />
+  {/* 使い方の説明は置かない（選べば動きが分かる）。
+      西湖のまわりに店がないことだけは行動が変わるのでここで伝える */}
+  <PageHeader
+    titleEn="INFORMATION"
+    titleJa="周辺情報"
+    lead={'買い出しは<br class="page-header__br-sp">到着前に済ませておくと快適です'}
+  />
   <Map />
 </BaseLayout>

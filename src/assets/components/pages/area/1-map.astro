@@ -31,11 +31,6 @@ const groupedCategories = groupOrder.map((id) => {
   <div class="area-map__texture" aria-hidden="true"></div>
 
   <div class="area-map__inner">
-    <!-- 西湖のまわりに店がないことは現地で効いてくるので、行動が変わる一文だけ残す。
-         コンビニ11分・スーパー13分という距離は各カードの「車で◯分」で分かる -->
-    <p class="area-map__notice">買い出しは到着前に済ませておくと快適です</p>
-
-
     <div class="area-map__body">
       <!--
         SP・タブレット縦では地図を画面上部に貼り付ける。カードをタップしたときに、
@@ -531,20 +526,6 @@ const groupedCategories = groupOrder.map((id) => {
       width: spx(660);
       @include tablet-up {
         width: ppx(2120);
-      }
-    }
-
-    &__notice {
-      font-family: "Noto Sans JP", sans-serif;
-      font-weight: 700;
-      color: #000;
-      text-align: center;
-      line-height: 1.7;
-      font-size: spx(25);
-      margin-bottom: spx(30);
-      @include tablet-up {
-        font-size: ppx(28);
-        margin-bottom: ppx(40);
       }
     }
 
