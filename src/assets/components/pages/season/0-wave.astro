@@ -47,10 +47,9 @@ const texture = bgColor ? PaperTexture : PaperTexturePlain;
 // ここで独自に持つとセクション本体と食い違うので seasons.ts を参照する
 const textureOpacity = seasons.find((s) => s.key === to)?.textureOpacity ?? 1;
 
-// Figmaでは波の矩形にもテクスチャがluminosity合成で上掛けされている。
-// SVG書き出しでは再現されないため、波の形でマスクしたテクスチャをCSSで重ねる。
-// フッター繋ぎだけは波の塗り自体がテクスチャ画像なので不要
-const needsWaveTexture = to !== "footer";
+// 波のSVGにはテクスチャがすでに焼き込まれている（path を2枚重ね、2枚目が
+// pattern塗り＋mix-blend-mode:luminosity）。以前はこれが再現されないと誤認して
+// CSSでもう1枚重ねており、テクスチャが二重掛けになって波の中だけ沈んでいた。
 ---
 
 <div
@@ -67,15 +66,6 @@ const needsWaveTexture = to !== "footer";
     <source srcset={waves[to].pc.src} media="(min-width: 744px)" />
     <img class="season-wave__img" src={waves[to].sp.src} alt="" />
   </picture>
-  {
-    needsWaveTexture && (
-      <div
-        class="season-wave__wave-texture"
-        aria-hidden="true"
-        style={`background-image: url(${PaperTexture.src}); --mask-pc: url(${waves[to].pc.src}); --mask-sp: url(${waves[to].sp.src});`}
-      />
-    )
-  }
 </div>
 
 <style lang="scss">
@@ -132,32 +122,5 @@ const needsWaveTexture = to !== "footer";
       height: auto;
     }
 
-    // 波の形でマスクしたテクスチャ（Figmaの波矩形のIMAGE:LUMINOSITY塗りを再現）
-    &__wave-texture {
-      position: absolute;
-      z-index: 2;
-      left: 0;
-      width: 100%;
-      pointer-events: none;
-      background-repeat: repeat;
-      background-position: top left;
-      mix-blend-mode: luminosity;
-      mask-image: var(--mask-sp);
-      mask-size: 100% auto;
-      mask-repeat: no-repeat;
-      -webkit-mask-image: var(--mask-sp);
-      -webkit-mask-size: 100% auto;
-      -webkit-mask-repeat: no-repeat;
-      top: calc(#{spx(-11.7)} - 1px);
-      aspect-ratio: 720 / 79;
-      background-size: spx(140);
-      @include tablet-up {
-        mask-image: var(--mask-pc);
-        -webkit-mask-image: var(--mask-pc);
-        top: calc(#{ppx(-11.54)} - 1px);
-        aspect-ratio: 2560 / 212;
-        background-size: ppx(200);
-      }
-    }
   }
 </style>
