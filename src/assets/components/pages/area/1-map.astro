@@ -140,6 +140,21 @@ const groupedCategories = groupOrder.map((id) => {
     const emptyEl = section.querySelector<HTMLElement>("[data-empty]");
     const countEl = section.querySelector<HTMLElement>("[data-visible-count]");
 
+    // 地図＋チップのパネルは画面上部に貼り付くので、カードへスクロールするときは
+    // その高さぶん手前で止めないと、カードがパネルの裏に入って見えなくなる。
+    // PCではパネルが display: contents で箱を持たない（高さ0）ため自動的に無効になる
+    const panel = section.querySelector<HTMLElement>(".area-map__panel");
+    const syncPanelHeight = () => {
+      const h = panel?.getBoundingClientRect().height ?? 0;
+      section.style.setProperty("--area-panel-h", `${Math.round(h)}px`);
+    };
+    syncPanelHeight();
+    window.addEventListener("resize", syncPanelHeight);
+    // チップの折り返しや dvh の変化（アドレスバーの伸縮）にも追従させる
+    if (panel && "ResizeObserver" in window) {
+      new ResizeObserver(syncPanelHeight).observe(panel);
+    }
+
     const origin = {
       lat: Number(section.dataset.originLat),
       lng: Number(section.dataset.originLng),
@@ -371,7 +386,14 @@ const groupedCategories = groupOrder.map((id) => {
           });
           if (!scroll || !id) return;
           const target = entries.find((entry) => entry.id === id);
-          target?.card.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+          // 直前に測り直す。パネルの高さはチップの折り返しやアドレスバーで変わるので、
+          // 読み込み時の値のままだと止まる位置がずれる
+          syncPanelHeight();
+          // scroll-margin-top は li 側に持たせてあるので、カード本体ではなく li を寄せる
+          // （カードを対象にすると余白が効かず、貼り付いた地図の裏で止まる）
+          const scrollTarget =
+            target?.card.closest<HTMLElement>(".area-map__list-item") ?? target?.card;
+          scrollTarget?.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
         };
 
         entries.forEach((entry) => {
@@ -823,6 +845,17 @@ const groupedCategories = groupOrder.map((id) => {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: ppx(22 * 1.2);
+      }
+    }
+
+    // ピンから飛んできたときに、貼り付いた地図パネルの裏で止まらないようにする。
+    // --area-panel-h はパネルの実高さ（PCは箱を持たないので0）
+    &__list-item {
+      scroll-margin-top: calc(var(--area-panel-h, 0px) + #{spx(20)});
+      scroll-margin-bottom: spx(20);
+      @include tablet-up {
+        scroll-margin-top: calc(var(--area-panel-h, 0px) + #{ppx(20)});
+        scroll-margin-bottom: ppx(20);
       }
     }
 
