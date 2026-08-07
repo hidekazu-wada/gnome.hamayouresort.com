@@ -318,7 +318,9 @@ const news = [
       position: relative;
       display: block;
       width: spx(23);
-      aspect-ratio: 25 / 14;
+      // 矢印は丸付きの正方形SVG（28×28）。25/14 だと箱だけが横長になり、
+      // 画像が下にはみ出して文字より低く見える
+      aspect-ratio: 1 / 1;
       @include tablet-up {
         width: ppx(25 * 1.2);
       }
