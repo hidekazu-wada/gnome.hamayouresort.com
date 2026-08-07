@@ -41,8 +41,9 @@ const groupedCategories = groupOrder.map((id) => {
 
     <div class="area-map__body">
       <!--
-        SPでは地図とチップをひとまとめにして画面上部に貼り付ける。
-        カードをタップしたときに、いちいち地図までスクロールして戻らずに済むようにするため。
+        SP・タブレット縦では地図を画面上部に貼り付ける。カードをタップしたときに、
+        いちいち地図までスクロールして戻らずに済むようにするため。
+        チップは最初に1回選ぶものなので貼り付けず、全部見えるように流す。
         PCでは __panel を display:contents にして、中身をそのままグリッドに並べ直す。
       -->
       <div class="area-map__panel">
@@ -56,8 +57,12 @@ const groupedCategories = groupOrder.map((id) => {
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="area-map__filters">
+      {/* 何も選ばれていない間だけ出す案内。選んだら消える */}
+      <p class="area-map__prompt" data-prompt>知りたいカテゴリーを選んでください</p>
+
+      <div class="area-map__filters">
           {
             groupedCategories.map((group) => (
               <div class="area-map__filter-group">
@@ -84,7 +89,6 @@ const groupedCategories = groupOrder.map((id) => {
               </div>
             ))
           }
-        </div>
       </div>
 
       <!-- 使用頻度が低いので、貼り付ける領域には入れず流れるままにする -->
@@ -98,15 +102,14 @@ const groupedCategories = groupOrder.map((id) => {
       </div>
 
       <div class="area-map__list-col">
-        <p class="area-map__count">
-          <span data-visible-count>{pois.filter((p) => p.tier !== 3 || p.alwaysVisible).length}</span
-          >件を表示中
+        <p class="area-map__count" hidden>
+          <span data-visible-count>0</span>件を表示中
         </p>
 
         <ul class="area-map__list" data-poi-list>
           {
             pois.map((poi) => (
-              <li class="area-map__list-item">
+              <li class="area-map__list-item" hidden>
                 <AreaCard poi={poi} />
               </li>
             ))
@@ -120,9 +123,22 @@ const groupedCategories = groupOrder.map((id) => {
           </button>
         </p>
 
-        <button class="area-map__more" type="button" data-show-far>
+        <button class="area-map__more" type="button" data-show-far hidden>
           車で20分より遠いところも見る（{farCount}件）
         </button>
+
+        {/* JSが動かない環境では絞り込めないので、最初から全件出す */}
+        <noscript>
+          <style>
+            .area-map__count[hidden],
+            .area-map__list-item[hidden] {
+              display: block !important;
+            }
+            .area-map__prompt {
+              display: none !important;
+            }
+          </style>
+        </noscript>
       </div>
     </div>
   </div>
@@ -138,7 +154,9 @@ const groupedCategories = groupOrder.map((id) => {
     const canvas = section.querySelector<HTMLElement>("[data-map-canvas]");
     const moreButton = section.querySelector<HTMLButtonElement>("[data-show-far]");
     const emptyEl = section.querySelector<HTMLElement>("[data-empty]");
-    const countEl = section.querySelector<HTMLElement>("[data-visible-count]");
+    const countNumEl = section.querySelector<HTMLElement>("[data-visible-count]");
+    const countEl = section.querySelector<HTMLElement>(".area-map__count");
+    const promptEl = section.querySelector<HTMLElement>("[data-prompt]");
 
     // 地図＋チップのパネルは画面上部に貼り付くので、カードへスクロールするときは
     // その高さぶん手前で止めないと、カードがパネルの裏に入って見えなくなる。
@@ -162,16 +180,17 @@ const groupedCategories = groupOrder.map((id) => {
     };
 
     const allCategories = chips.map((chip) => chip.dataset.cat!);
-    let selected = new Set(allCategories);
+    // 最初は何も選ばない。68件がいきなり並ぶより、選んでから出したほうが分かりやすい
+    let selected = new Set<string>();
     let showFar = false;
 
     // --- URLクエリから状態を復元 -------------------------------------------
     // 滞在中の人が家族にURLを送るので、絞り込みが共有とリロードで保てること
     const params = new URLSearchParams(location.search);
+    // パラメータが無ければ未選択のまま（共有されたURLだけ復元する）
     const catParam = params.get("cat");
     if (catParam) {
-      const restored = catParam.split(",").filter((c) => allCategories.includes(c));
-      if (restored.length > 0) selected = new Set(restored);
+      selected = new Set(catParam.split(",").filter((c) => allCategories.includes(c)));
     }
     if (params.get("far") === "1") showFar = true;
 
@@ -185,7 +204,7 @@ const groupedCategories = groupOrder.map((id) => {
 
     const syncUrl = () => {
       const next = new URLSearchParams(location.search);
-      if (selected.size === allCategories.length) next.delete("cat");
+      if (selected.size === 0) next.delete("cat");
       else next.set("cat", allCategories.filter((c) => selected.has(c)).join(","));
       if (showFar) next.set("far", "1");
       else next.delete("far");
@@ -210,8 +229,14 @@ const groupedCategories = groupOrder.map((id) => {
         chip.classList.toggle("is-on", on);
       });
 
-      if (countEl) countEl.textContent = String(visible);
-      if (emptyEl) emptyEl.hidden = visible > 0;
+      // 何も選んでいないときは一覧まわりを一切出さず、案内文だけを見せる
+      const nothingSelected = selected.size === 0;
+      if (promptEl) promptEl.hidden = !nothingSelected;
+      if (countEl) {
+        if (countNumEl) countNumEl.textContent = String(visible);
+        countEl.hidden = nothingSelected;
+      }
+      if (emptyEl) emptyEl.hidden = nothingSelected || visible > 0;
 
       // tier3 が1件も該当しないなら「もっと見る」自体を出さない
       if (moreButton) {
@@ -221,7 +246,7 @@ const groupedCategories = groupOrder.map((id) => {
             card.dataset.alwaysVisible !== "true" &&
             (card.dataset.categories ?? "").split(" ").some((c) => selected.has(c))
         ).length;
-        moreButton.hidden = showFar || hiddenFar === 0;
+        moreButton.hidden = nothingSelected || showFar || hiddenFar === 0;
         moreButton.textContent = `車で20分より遠いところも見る（${hiddenFar}件）`;
       }
 
@@ -579,42 +604,58 @@ const groupedCategories = groupOrder.map((id) => {
       }
     }
 
+    // 何も選ばれていないときの案内
+    &__prompt {
+      position: relative;
+      z-index: 1;
+      @include tablet-up {
+        grid-area: prompt;
+      }
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      color: #3f5a5b;
+      text-align: center;
+      font-size: spx(26);
+      padding-top: spx(30);
+      @include tablet-up {
+        font-size: ppx(28);
+        padding-top: ppx(40);
+        padding-bottom: ppx(24);
+      }
+      @include tablet-only {
+        font-size: ppx(28 * 1.2);
+        padding-top: ppx(40 * 1.2);
+        padding-bottom: ppx(24 * 1.2);
+      }
+    }
+
+    // チップは最初に1回選ぶものなので、横スクロールに隠さず全部見せる
     &__filters {
       display: flex;
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      scrollbar-width: none;
-      // 地図とチップがくっついていると押しにくいので上下に余裕を取る
-      padding-top: spx(28);
-      padding-bottom: spx(6);
-      gap: spx(24);
+      flex-direction: column;
+      gap: spx(20);
+      padding-top: spx(24);
+      padding-bottom: spx(10);
       @include tablet-up {
         grid-area: filters;
-        flex-direction: column;
-        overflow-x: visible;
         padding-top: 0;
         padding-bottom: 0;
         gap: ppx(16);
       }
-      // タブレット縦は地図の真下にチップが来る（SPと同じ並び）ので、
-      // くっついて押しにくくならないよう上下に余裕を取る（820px幅で上28px／下20px相当）
+      // タブレット縦は地図の真下にチップが来るので、くっついて押しにくくならないよう
+      // 上下に余裕を取る（820px幅で上28px／下20px相当）
       @include tablet-only {
         padding-top: ppx(88);
         padding-bottom: ppx(62);
-      }
-
-      &::-webkit-scrollbar {
-        display: none;
       }
     }
 
     &__filter-group {
       display: flex;
-      flex-shrink: 0;
-      align-items: center;
+      flex-wrap: wrap;
+      align-items: baseline;
       gap: spx(14);
       @include tablet-up {
-        align-items: baseline;
         gap: ppx(20);
       }
     }
@@ -636,10 +677,9 @@ const groupedCategories = groupOrder.map((id) => {
     // SPは10個を1行に並べて横スクロールさせる。折り返すと貼り付けた領域が画面を食い潰す
     &__chips {
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       gap: spx(10);
       @include tablet-up {
-        flex-wrap: wrap;
         gap: ppx(14);
       }
 
@@ -746,6 +786,7 @@ const groupedCategories = groupOrder.map((id) => {
         display: grid;
         grid-template-columns: 3fr 2fr;
         grid-template-areas:
+          "prompt  prompt"
           "filters filters"
           "actions actions"
           "map     list";
@@ -870,6 +911,12 @@ const groupedCategories = groupOrder.map((id) => {
     }
 
     &__list-item[hidden] {
+      display: none;
+    }
+
+    // display 指定はブラウザ標準の [hidden]{display:none} を打ち消すので明示する
+    &__empty[hidden],
+    &__more[hidden] {
       display: none;
     }
 
