@@ -7,56 +7,58 @@ import JoinPc from "../../../images/top/4-season/join-pc.svg";
 // SPの繋ぎはユーザー支給のSVG
 import JoinSp from "../../../images/top/4-season/join-sp.svg";
 import Sunburst from "../../../images/top/3-activity/sunburst.png";
-import MoreArrow from "../../../images/top/3-activity/more-arrow.svg";
-import WinterMain from "../../../images/top/4-season/winter-main.jpg";
-import WinterSub from "../../../images/top/4-season/winter-sub.jpg";
-// イラストは四季ページ（/season/）と同じものを流用する
-import IllustSpring from "../../../images/season/illust-spring.svg";
-import IllustSummer from "../../../images/season/illust-summer.svg";
-import IllustAutumn from "../../../images/season/illust-autumn.svg";
-import IllustWinter from "../../../images/season/illust-winter.svg";
+// 四季ページ（/season/）と同じ実素材を使う。季節ごとの写真・イラストが揃っている
+import { seasons as seasonData } from "../../../../data/seasons";
 
-// 季節データ（写真は冬のみ実素材、春夏秋はダミー）
-const seasons = [
-  {
-    key: "spring",
-    ja: "春",
-    en: "Spring",
-    big: "Spring",
-    caption: "芽吹きの季節、鮮やかな新緑",
-    illust: IllustSpring.src,
-  },
-  {
-    key: "summer",
-    ja: "夏",
-    en: "Summer",
-    big: "Summer",
-    caption: "湖畔で過ごす、爽やかな夏",
-    illust: IllustSummer.src,
-  },
-  {
-    key: "autumn",
-    ja: "秋",
-    en: "Autumn",
-    big: "Autumn",
-    caption: "紅葉に染まる、実りの秋",
-    illust: IllustAutumn.src,
-  },
-  {
-    key: "winter",
-    ja: "冬",
-    en: "Winter",
-    big: "Winter",
-    caption: "凛とした空気で、際立つ景色",
-    illust: IllustWinter.src,
-  },
-];
+// 表示する季節（案イ: 4〜6月=春 / 7〜9月=夏 / 10〜11月=秋 / 12〜3月=冬）。
+// 判定はクライアント側でも行い html[data-season] に入れる（下のインラインスクリプト）。
+// ここで出す値は「JSが動かない環境」と、CSS変数の既定値のためのビルド時の季節
+const monthToSeason = (m: number) =>
+  m <= 3 ? "winter" : m <= 6 ? "spring" : m <= 9 ? "summer" : m <= 11 ? "autumn" : "winter";
+const buildSeason = monthToSeason(new Date().getMonth() + 1);
 
-// 初期表示の季節。ボタンの is-active と揃える
-const INITIAL = "winter";
+// キャプションはトップ独自の文言（Figma由来）。四季ページの catch とは別物なので
+// seasons.ts からは持ってこない
+const captions: Record<string, string> = {
+  spring: "芽吹きの季節、鮮やかな新緑",
+  summer: "湖畔で過ごす、爽やかな夏",
+  autumn: "紅葉に染まる、実りの秋",
+  winter: "凛とした空気で、際立つ景色",
+};
+
+// 写真・イラスト・季節名は四季ページ（seasons.ts）の実データを使う
+const seasons = seasonData.map((s) => ({
+  key: s.key,
+  ja: s.ja,
+  en: s.en,
+  big: s.en,
+  caption: captions[s.key] ?? "",
+  illust: s.illust,
+  main: s.mainPhoto.src,
+  sub: s.subPhoto.src,
+}));
+
+const current = seasons.find((s) => s.key === buildSeason) ?? seasons[3];
+
+// 8枚ぶんのURLをCSS変数で渡す。表示する1枚だけがダウンロードされるようにするため、
+// 写真は <img> ではなく background-image で出す
+const photoVars = [
+  ...seasons.map((s) => `--main-${s.key}: url(${s.main}); --sub-${s.key}: url(${s.sub});`),
+  // JSが動かない環境用の既定（ビルド時の季節）
+  `--main-default: url(${current.main}); --sub-default: url(${current.sub});`,
+].join(" ");
 ---
 
-<section class="season">
+{/* セクションが読み込まれる前に今の季節を確定させる（別の季節が一瞬見えないように） */}
+<script is:inline>
+  (function () {
+    var m = new Date().getMonth() + 1;
+    var s = m <= 3 ? "winter" : m <= 6 ? "spring" : m <= 9 ? "summer" : m <= 11 ? "autumn" : "winter";
+    document.documentElement.dataset.season = s;
+  })();
+</script>
+
+<section class="season" style={photoVars}>
   <!-- 本体（ライトグレー地＋粒子テクスチャ） -->
   <div class="season__body" style={`background-image: url(${BgTexture.src});`}>
     <div class="season__inner">
@@ -76,31 +78,47 @@ const INITIAL = "winter";
       <div class="season__content">
         <!-- メイン画像＋大きな季節名＋キャプション -->
         <div class="season__main">
-          <img class="season__main-img" src={WinterMain.src} alt="" />
+          <div class="season__main-img" role="img" aria-label="西湖の四季の風景"></div>
           <div class="season__label">
-            <p class="season__big" data-season-big>Winter</p>
-            <p class="season__caption" data-season-caption>
-              凛とした空気で、際立つ景色
-            </p>
+            {
+              seasons.map((s) => (
+                <p
+                  class:list={["season__big", { "is-default": s.key === buildSeason }]}
+                  data-season={s.key}
+                >
+                  {s.big}
+                </p>
+              ))
+            }
+            {
+              seasons.map((s) => (
+                <p
+                  class:list={["season__caption", { "is-default": s.key === buildSeason }]}
+                  data-season={s.key}
+                >
+                  {s.caption}
+                </p>
+              ))
+            }
           </div>
         </div>
 
         <!-- サブ画像＋季節イラスト（SPは横並び / PCは絶対配置） -->
         <div class="season__row">
-          <!-- 写真から選択中の季節のセクションへ飛ばす。hrefはボタン切替時に差し替える -->
-          <a class="season__sub" href={`/season/#${INITIAL}`} data-season-link>
-            <img class="season__sub-img" src={WinterSub.src} alt="" />
-          </a>
+          <div class="season__sub">
+            <div class="season__sub-img" aria-hidden="true"></div>
+          </div>
           <div class="season__illust">
             {
               seasons.map((s) => (
                 <img
                   class:list={[
                     "season__illust-img",
-                    { "is-active": s.key === INITIAL },
+                    { "is-default": s.key === buildSeason },
                   ]}
                   src={s.illust}
-                  alt={s.key === INITIAL ? `Enjoy ${s.en}` : ""}
+                  alt=""
+                  aria-hidden="true"
                   data-season-illust={s.key}
                 />
               ))
@@ -108,30 +126,22 @@ const INITIAL = "winter";
           </div>
         </div>
 
-        <!-- 季節ボタン -->
+        <!-- 季節ボタン。四季ページの該当セクションへ飛ばす -->
         <div class="season__buttons">
           {
             seasons.map((s) => (
-              <button
-                type="button"
-                class:list={["season__btn", { "is-active": s.key === "winter" }]}
+              <a
+                class:list={["season__btn", { "is-default": s.key === buildSeason }]}
+                href={`/season/#${s.key}`}
                 data-season={s.key}
-                data-big={s.big}
-                data-caption={s.caption}
               >
                 <span class="season__btn-ja">{s.ja}</span>
                 <span class="season__btn-en">{s.en}</span>
-              </button>
+              </a>
             ))
           }
         </div>
       </div>
-
-      <!-- MORE ボタン（四季を楽しむページへ） -->
-      <a class="season__more" href="/season/">
-        <span class="season__more-text">MORE</span>
-        <img class="season__more-arrow" src={MoreArrow.src} alt="" />
-      </a>
     </div>
   </div>
 
@@ -375,14 +385,15 @@ const INITIAL = "winter";
       }
     }
 
+    // 表示する1枚だけを読み込ませるため <img> ではなく背景画像で出す。
+    // どの季節を出すかは下の @each（html[data-season]）で決まる
     &__main-img {
       display: block;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      @include tablet-up {
-        border-radius: 0;
-      }
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
 
     // 大きな季節名＋キャプション（メイン画像に重なる）
@@ -402,6 +413,8 @@ const INITIAL = "winter";
     }
 
     &__big {
+      // 4季節ぶん出しておき、今の季節だけ表示する（下の @each）
+      display: none;
       margin: 0;
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 700;
@@ -417,6 +430,7 @@ const INITIAL = "winter";
     }
 
     &__caption {
+      display: none;
       margin: spx(24) 0 0 spx(53);
       font-family: "Noto Sans JP", sans-serif;
       font-weight: 700;
@@ -458,13 +472,6 @@ const INITIAL = "winter";
       width: spx(315);
       aspect-ratio: 1 / 1;
       overflow: hidden;
-      transition: opacity 0.3s ease;
-
-      @include hover {
-        &:hover {
-          opacity: 0.8;
-        }
-      }
       @include tablet-up {
         position: absolute;
         left: ppx(1677);
@@ -479,7 +486,9 @@ const INITIAL = "winter";
       display: block;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
 
     // Enjoy Winter イラスト
@@ -515,75 +524,6 @@ const INITIAL = "winter";
       height: auto;
       opacity: 0;
       transition: opacity 0.6s ease;
-
-      &.is-active {
-        opacity: 1;
-      }
-    }
-
-    // MORE ボタン（ACTIVITYセクションと同じ体裁）
-    &__more {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: spx(10);
-      background-color: #8aad61;
-      border: spx(4) solid #fff;
-      border-radius: 999px;
-      text-decoration: none;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 spx(10) spx(12) rgba(0, 0, 0, 0.08);
-      padding: spx(35) spx(110);
-      margin-top: spx(106);
-      @include tablet-up {
-        gap: ppx(10 * 1.2);
-        border-width: ppx(4 * 1.2);
-        box-shadow: 0 ppx(10 * 1.2) ppx(12 * 1.2) rgba(0, 0, 0, 0.08);
-        padding: ppx(35 * 1.2) ppx(110 * 1.2);
-        margin-top: ppx(106 * 1.2);
-      }
-      @include desktop-up {
-        gap: ppx(10);
-        border-width: ppx(4);
-        box-shadow: 0 ppx(10) ppx(12) rgba(0, 0, 0, 0.08);
-        padding: ppx(35) ppx(110);
-        margin-top: ppx(106);
-      }
-
-      @include hover {
-        &:hover {
-          background-color: #d6b156;
-        }
-      }
-    }
-
-    &__more-text {
-      font-family: "Noto Sans JP", sans-serif;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1;
-      font-size: spx(26);
-      letter-spacing: spx(1.3);
-      @include tablet-up {
-        font-size: ppx(26 * 1.2);
-        letter-spacing: ppx(1.3 * 1.2);
-      }
-      @include desktop-up {
-        font-size: ppx(26);
-        letter-spacing: ppx(1.3);
-      }
-    }
-
-    &__more-arrow {
-      display: block;
-      width: spx(28);
-      height: auto;
-      @include tablet-up {
-        width: ppx(28 * 1.2);
-      }
-      @include desktop-up {
-        width: ppx(28);
-      }
     }
 
     // 季節ボタン
@@ -626,21 +566,9 @@ const INITIAL = "winter";
         border-width: ppx(4);
       }
 
-      // アクティブ（選択中）
-      &.is-active {
-        background-color: #000;
-      }
-      &.is-active .season__btn-ja,
-      &.is-active .season__btn-en {
-        color: #fff;
-      }
-
       @include hover {
         &:hover {
           background-color: #fff;
-        }
-        &.is-active:hover {
-          background-color: #000;
         }
       }
     }
@@ -674,38 +602,49 @@ const INITIAL = "winter";
       }
     }
   }
+
+  // ── 表示する季節の出し分け ────────────────────────────────
+  // html[data-season] はセクションの直前のインラインスクリプトが入れる。
+  // JSが動かない環境では data-season が付かないので、ビルド時の季節（.is-default）を出す
+  :global(html:not([data-season])) {
+    .season__main-img { background-image: var(--main-default); }
+    .season__sub-img { background-image: var(--sub-default); }
+    .season__big.is-default,
+    .season__caption.is-default { display: block; }
+    .season__illust-img.is-default { opacity: 1; }
+    .season__btn.is-default {
+      background-color: #000;
+
+      .season__btn-ja,
+      .season__btn-en {
+        color: #fff;
+      }
+    }
+  }
+
+  @each $s in spring, summer, autumn, winter {
+    :global(html[data-season="#{$s}"]) {
+      .season__main-img { background-image: var(--main-#{$s}); }
+      .season__sub-img { background-image: var(--sub-#{$s}); }
+      .season__big[data-season="#{$s}"],
+      .season__caption[data-season="#{$s}"] { display: block; }
+      .season__illust-img[data-season-illust="#{$s}"] { opacity: 1; }
+
+      // 今の季節のボタンだけ黒地（Figmaの選択中と同じ見た目）
+      .season__btn[data-season="#{$s}"] {
+        background-color: #000;
+
+        .season__btn-ja,
+        .season__btn-en {
+          color: #fff;
+        }
+
+        @include hover {
+          &:hover {
+            background-color: #000;
+          }
+        }
+      }
+    }
+  }
 </style>
-
-<script>
-  // 季節ボタンで大きな季節名・キャプション・イラスト・写真のリンク先を切り替え
-  // ※写真は現状すべて冬のダミー（春夏秋の実素材は後で差し替え）
-  const buttons =
-    document.querySelectorAll<HTMLButtonElement>(".season__btn");
-  const bigEl = document.querySelector<HTMLElement>("[data-season-big]");
-  const captionEl =
-    document.querySelector<HTMLElement>("[data-season-caption]");
-  const illusts =
-    document.querySelectorAll<HTMLImageElement>("[data-season-illust]");
-  const subLink = document.querySelector<HTMLAnchorElement>("[data-season-link]");
-
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const key = btn.dataset.season || "";
-      buttons.forEach((b) => b.classList.remove("is-active"));
-      btn.classList.add("is-active");
-      if (bigEl) bigEl.textContent = btn.dataset.big || "";
-      if (captionEl) captionEl.textContent = btn.dataset.caption || "";
-
-      // イラストはCSSのopacityでディゾルブする
-      illusts.forEach((img) => {
-        const on = img.dataset.seasonIllust === key;
-        img.classList.toggle("is-active", on);
-        // 読み上げ対象は表示中の1枚だけにする
-        img.alt = on ? `Enjoy ${btn.dataset.big || ""}` : "";
-      });
-
-      // 写真のリンク先も選択中の季節に合わせる
-      if (subLink) subLink.href = `/season/#${key}`;
-    });
-  });
-</script>
