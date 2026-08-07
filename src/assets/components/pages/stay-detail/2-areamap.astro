@@ -7,21 +7,9 @@ import WavePc from "../../../images/stay/detail/wave-to-areamap.webp";
 import WaveSp from "../../../images/stay/detail/wave-to-areamap-sp.webp";
 import AreaMap from "../../../images/stay/detail/area-map.jpg";
 import Deco from "../../../images/stay/detail/area-map-deco.svg";
-import type { Stay } from "../../../../data/stays";
 
-interface Props {
-  stay: Stay;
-}
-
-const { stay } = Astro.props;
-
-// マップ画像（設計1868×1401）に対する赤枠の位置を％で置く
-const marker = {
-  left: `${(stay.mapMarker.left / 1868) * 100}%`,
-  top: `${(stay.mapMarker.top / 1401) * 100}%`,
-  width: `${(stay.mapMarker.width / 1868) * 100}%`,
-  height: `${(stay.mapMarker.height / 1401) * 100}%`,
-};
+// 区画ごとの赤枠は、位置の実データが無く仮の計算値だったため一旦廃止した。
+// 場内の全体像を見せるセクションとして、マップ画像だけを出す。
 ---
 
 <!-- 概要 → エリアマップ の繋ぎ -->
@@ -57,11 +45,6 @@ const marker = {
 
   <div class="stay-areamap__map">
     <img class="stay-areamap__map-img" src={AreaMap.src} alt="場内エリアマップ" />
-    <span
-      class="stay-areamap__marker"
-      aria-hidden="true"
-      style={`left:${marker.left};top:${marker.top};width:${marker.width};height:${marker.height};`}
-    ></span>
   </div>
 </section>
 

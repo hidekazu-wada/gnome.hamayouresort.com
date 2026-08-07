@@ -61,8 +61,6 @@ export type Stay = {
   heroBody: string;
   /** サイト概要のテーブル */
   spec: { label: string; lines: string[] }[];
-  /** エリアマップ上の位置。マップ画像(1868×1401)内の設計px */
-  mapMarker: { left: number; top: number; width: number; height: number };
   /** 料金表の1行目に出す金額 */
   priceAmount: string;
   /** 料金表。amountは大きく、notesは小さく表示する */
@@ -428,7 +426,6 @@ const base = [
     | "heroPhotos"
     | "heroBody"
     | "spec"
-    | "mapMarker"
     | "priceAmount"
     | "priceRows"
     | "notes"
@@ -458,13 +455,6 @@ export const stays: Stay[] = Array.from({ length: 16 }, (_, i) => {
           ? { ...row, lines: sizeLinesByKey[key] }
           : row,
     ),
-    // 実データ確定までは区画ごとに位置をずらしたダミー
-    mapMarker: {
-      left: 1221 - (i % 4) * 210,
-      top: 785 - Math.floor((i % 8) / 4) * 180,
-      width: 76,
-      height: 134,
-    },
     priceAmount:
       priceAmount ??
       `${rest.price.replace("¥", "").replace("〜", "")}円（税込）〜/1泊`,
