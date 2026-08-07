@@ -391,9 +391,7 @@ const groupedCategories = groupOrder.map((id) => {
           syncPanelHeight();
           // scroll-margin-top は li 側に持たせてあるので、カード本体ではなく li を寄せる
           // （カードを対象にすると余白が効かず、貼り付いた地図の裏で止まる）
-          const scrollTarget =
-            target?.card.closest<HTMLElement>(".area-map__list-item") ?? target?.card;
-          scrollTarget?.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+          target?.item.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
         };
 
         entries.forEach((entry) => {

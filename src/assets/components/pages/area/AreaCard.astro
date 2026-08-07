@@ -163,10 +163,8 @@ const telHref = poi.phone ? `tel:${poi.phone.replace(/[^0-9+]/g, "")}` : null;
     overflow: clip;
     font-family: "Noto Sans JP", sans-serif;
     color: #000;
-    // SPは地図とチップが画面上部に貼り付いているので、
-    // マーカーから scrollIntoView したときにその裏へ隠れないよう逃がす
-    scroll-margin-top: calc(30dvh + #{spx(150)});
-    scroll-margin-bottom: spx(20);
+    // 貼り付いた地図の裏で止まらないようにする指定は li 側（area-map__list-item）にある。
+    // scrollIntoView の対象も li なので、ここには持たせない
     transition:
       background-color 0.3s ease,
       box-shadow 0.3s ease;
@@ -174,19 +172,23 @@ const telHref = poi.phone ? `tel:${poi.phone.replace(/[^0-9+]/g, "")}` : null;
     border-radius: spx(20);
     box-shadow: 0 spx(4) spx(10) rgba(0, 0, 0, 0.08);
     @include tablet-up {
-      scroll-margin-top: ppx(20);
-      scroll-margin-bottom: ppx(20);
       padding: ppx(30) ppx(30) ppx(30) ppx(44);
       border-radius: ppx(20);
       box-shadow: 0 ppx(4) ppx(10) rgba(0, 0, 0, 0.08);
     }
 
-    // 地図のマーカーから選ばれたとき
+    // 地図のマーカーから選ばれたとき。
+    // 水色の地にするとセクション背景（#bee0e1）へ馴染んで逆に目立たないので、
+    // 地はクリームのまま、ティールの枠と強い影で立たせる
     &.is-active {
-      background-color: #e6f2f2;
-      box-shadow: 0 spx(6) spx(16) rgba(0, 0, 0, 0.18);
+      background-color: #fffdf7;
+      box-shadow:
+        0 0 0 #{spx(6)} #138185,
+        0 spx(8) spx(20) rgba(0, 0, 0, 0.22);
       @include tablet-up {
-        box-shadow: 0 ppx(6) ppx(16) rgba(0, 0, 0, 0.18);
+        box-shadow:
+          0 0 0 #{ppx(10)} #138185,
+          0 ppx(8) ppx(20) rgba(0, 0, 0, 0.22);
       }
     }
 
