@@ -596,6 +596,12 @@ const groupedCategories = groupOrder.map((id) => {
         padding-bottom: 0;
         gap: ppx(16);
       }
+      // タブレット縦は地図の真下にチップが来る（SPと同じ並び）ので、
+      // くっついて押しにくくならないよう上下に余裕を取る（820px幅で上28px／下20px相当）
+      @include tablet-only {
+        padding-top: ppx(88);
+        padding-bottom: ppx(62);
+      }
 
       &::-webkit-scrollbar {
         display: none;
