@@ -26,6 +26,14 @@
     }
 }
 
+// タブレット縦のみ（744〜1023px）。PC断面に影響を出さずに
+// タブレット縦だけ調整したいとき用
+@mixin tablet-only {
+    @media (min-width: $breakpoint-tablet-up) and (max-width: #{$breakpoint-desktop-up - 1px}) {
+        @content;
+    }
+}
+
 @mixin hover {
     @media (hover: hover) {
         @content;

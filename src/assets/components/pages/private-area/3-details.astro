@@ -640,6 +640,9 @@ const feeOf = (slug: string) =>
     }
   }
 
+  // タブレット縦でモーダルを 52.27vw → 92vw に広げる倍率。中の要素にも同じ倍率を掛ける
+  $tb-map-scale: 92 / (1338 / $viewport_pc * 100);
+
   // エリアマップモーダル（Figma: PC 1338幅 / SP 680幅の白パネル）
   .area-map-modal {
     margin: auto;
@@ -652,6 +655,11 @@ const feeOf = (slug: string) =>
     width: spx(680);
     @include tablet-up {
       width: ppx(1338);
+    }
+    // タブレット縦は ppx(1338)=52.27vw だと地図が小さすぎて読めないので画面幅いっぱいに近づける。
+    // 中のタイトルも同じ倍率で拡大して、PC設計の見た目の比率を保つ（$tb-map-scale）
+    @include tablet-only {
+      width: 92vw;
     }
 
     &::backdrop {
@@ -685,6 +693,12 @@ const feeOf = (slug: string) =>
         padding-bottom: ppx(47);
         border-bottom-width: ppx(2);
         margin-bottom: ppx(103);
+      }
+      @include tablet-only {
+        font-size: ppx(47 * $tb-map-scale);
+        padding-bottom: ppx(47 * $tb-map-scale);
+        border-bottom-width: ppx(2 * $tb-map-scale);
+        margin-bottom: ppx(103 * $tb-map-scale);
       }
     }
 
