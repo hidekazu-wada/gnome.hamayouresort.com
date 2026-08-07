@@ -2,9 +2,6 @@
 import BaseLayout from "../assets/components/common/layout/BaseLayout.astro";
 import PageHeader from "../assets/components/common/pageHeader/PageHeader.astro";
 import Map from "../assets/components/pages/area/1-map.astro";
-
-const lead =
-  'カテゴリで絞り込むと地図と一覧が連動します。<br class="page-header__br-sp">マーカーを選ぶと該当のお店の詳細が開きます。';
 ---
 
 <BaseLayout
@@ -13,11 +10,7 @@ const lead =
   flush
   breadcrumb={[{ label: "TOP", href: "/" }, { label: "周辺情報" }]}
 >
-  <PageHeader
-    titleEn="INFORMATION"
-    titleJa="周辺情報"
-    lead={lead}
-    leadVariant="info"
-  />
+  {/* 使い方の説明は置かない。カテゴリを選べば動きが分かるため */}
+  <PageHeader titleEn="INFORMATION" titleJa="周辺情報" />
   <Map />
 </BaseLayout>

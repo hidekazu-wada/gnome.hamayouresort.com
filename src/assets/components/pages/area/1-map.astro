@@ -31,12 +31,9 @@ const groupedCategories = groupOrder.map((id) => {
   <div class="area-map__texture" aria-hidden="true"></div>
 
   <div class="area-map__inner">
-    <!-- 「近くに何でもある」と見せかけないための一文。ここを隠すと現地で失望が起きる -->
-    <!-- 改行以外の空白が入らないよう set:html で流す（PCでは br が消えて1行になる） -->
-    <p
-      class="area-map__notice"
-      set:html={'西湖のまわりにコンビニ・スーパーはありません。<br class="area-map__br-sp">最寄りのコンビニで車11分、スーパーは13分。<br class="area-map__br-sp">買い出しは到着前に済ませておくと快適です。'}
-    />
+    <!-- 西湖のまわりに店がないことは現地で効いてくるので、行動が変わる一文だけ残す。
+         コンビニ11分・スーパー13分という距離は各カードの「車で◯分」で分かる -->
+    <p class="area-map__notice">買い出しは到着前に済ませておくと快適です</p>
 
 
     <div class="area-map__body">
@@ -548,15 +545,6 @@ const groupedCategories = groupOrder.map((id) => {
       @include tablet-up {
         font-size: ppx(28);
         margin-bottom: ppx(40);
-      }
-    }
-
-    // set:html で流し込んだ br にはスコープ属性が付かないので :global で当てる
-    // （PageHeader の __br-sp と同じ扱い）
-    :global(.area-map__br-sp) {
-      display: inline;
-      @include tablet-up {
-        display: none;
       }
     }
 
