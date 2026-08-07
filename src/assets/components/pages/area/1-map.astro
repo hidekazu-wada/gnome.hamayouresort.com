@@ -589,7 +589,8 @@ const groupedCategories = groupOrder.map((id) => {
       @include tablet-up {
         font-size: ppx(28);
         padding-top: ppx(40);
-        padding-bottom: ppx(24);
+        // チップとくっついて読みにくいので下に余裕を取る
+        padding-bottom: ppx(90);
       }
       @include tablet-only {
         font-size: ppx(28 * 1.2);
